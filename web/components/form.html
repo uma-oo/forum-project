@@ -1,0 +1,24 @@
+<!-- web/components/form.html -->
+<!-- components/form.html -->
+<!-- components/sign-in.html -->
+<div class="form-container">
+    <div class="form-wrapper">
+        <div class="form-signin" id="signin">
+            <h2>{{ . }}</h2>
+            <form>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required title="Enter your email address"
+                    placeholder="example@example.com">
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required title="Enter your password"
+                    placeholder="Your password">
+
+                <button type="submit">Sign In</button>
+                <div class="toggle">
+                    <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

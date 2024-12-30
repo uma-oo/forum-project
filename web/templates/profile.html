@@ -1,0 +1,58 @@
+<!-- web/templates/profile.html -->
+<!-- web/templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- web/components/header.html -->
+    <header>
+        <a href="/">
+            <h1 class="logo">Forum</h1>
+        </a>
+        <div class="register">
+            <div>
+                <a class="sign-in" href="/sign_in">Sign-In</a>
+                <a class="sign-up" href="/register">Sign-Up</a>
+            </div>
+            <div class="profile-container">
+                <div class="profile">?</div>
+                <div class="account-settings">
+                    <span></span>
+                    <a href="/settings">
+                        <i class="fas fa-cog icon"> </i> Account Settings</a>
+                    <a href="logout"> <i class="fas fa-sign-out-alt icon"> </i> Log Out</a>
+
+                </div>
+            </div>
+        </div>
+
+    </header>
+
+    <main>
+        <!-- web/components/aside.html -->
+        <aside>
+            <a href="/"><i class="fas fa-home"></i> Home</a>
+            <a href="/createpost"><i class="fas fa-plus"></i> Create Post</a>
+            <a href="/myposts"><i class="fas fa-user"></i> My Posts</a>
+            <a href="/likedposts"><i class="fas fa-heart"></i> Liked Posts</a>
+            <a href="/categorizePost"><i class="fas fa-tags"></i> Categories</a>
+            <a href="/filterPost"><i class="fas fa-filter"></i> Filter</a>
+        </aside>
+        <section class="content">
+            <h3 class="resent-post">{{ . }}</h3>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Web Forum. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

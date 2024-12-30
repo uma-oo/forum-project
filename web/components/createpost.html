@@ -1,0 +1,22 @@
+<!-- web/components/createpost.html -->
+<!-- components/createpost.html -->
+<!-- components/new_post.html -->
+<section class="post" id="post-creation">
+    <h2>Create a New Post</h2>
+    <form id="postForm">
+        <label for="postTitle">Title:</label>
+        <input type="text" id="postTitle" name="postTitle" required>
+
+        <label for="postContent">Content:</label>
+        <textarea id="postContent" name="postContent" required></textarea>
+
+        <label for="postCategory">Category:</label>
+        <select id="postCategory" name="postCategory">
+            <option value="general">General</option>
+            <option value="technology">Technology</option>
+            <option value="lifestyle">Lifestyle</option>
+        </select>
+
+        <button type="submit">Submit Post</button>
+    </form>
+</section>
