@@ -1,0 +1,1 @@
+understanding how the sql really work
