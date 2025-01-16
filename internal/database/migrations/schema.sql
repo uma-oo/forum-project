@@ -1,1 +1,0 @@
--- internal/database/migrations/schema.sql
