@@ -1,23 +1,13 @@
 <!-- web/components/header.html -->
-<header>
-    <a href="home.html">
-        <h1 class="logo">Forum</h1>
-    </a>
-    <div class="register">
-        <div>
-            <a class="sign-in" href="/login">Sign-In</a>
-            <a class="sign-up" href="/register">Sign-Up</a>
-        </div>
-        <div class="profile-container">
-            <div class="profile">?</div>
-            <div class="account-settings">
-                <span></span>
-                <a href="/settings">
-                    <i class="fas fa-cog icon"> </i> Account Settings</a>
-                <a href="logout"> <i class="fas fa-sign-out-alt icon"> </i> Log Out</a>
-
-            </div>
-        </div>
+{{define "Header"}}
+<header class="header">
+    <input type="checkbox" class="menu-toggle">
+    <div class="logo">Forum</div>
+    <div class="actions">
+        <a href="/register"><button>Register</button></a>
+        <a href="/sign_in"><button>Sign in</button></a>
     </div>
-
+    <a href="/createdPost"><i class="fas fa-plus"></i> Create Post <span></span></a>
+    {{template "avatar"}}
 </header>
+{{end}}
