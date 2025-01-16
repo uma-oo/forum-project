@@ -1,1 +1,4 @@
-understanding how the sql really work
+understanding how the sql relation  really work
+
+understqnding defer
+
