@@ -1,13 +1,20 @@
 <!-- web/components/header.html -->
 {{define "Header"}}
 <header class="header">
-    <input type="checkbox" class="menu-toggle">
+    <!-- <input type="checkbox" class="menu-toggle"> -->
     <div class="logo">Forum</div>
-    <div class="actions">
-        <a href="/register"><button>Register</button></a>
-        <a href="/sign_in"><button>Sign in</button></a>
+    <div class="header-right">
+        <!--* show if user not sign in  -->
+        <div class="actions">
+            <a href="/register"><button class="secondaryBtn">Register</button></a>
+            <a href="/sign_in"><button class="primaryBtn">Sign in</button></a>
+        </div>
+        <!--* -->
+        
+        <!--* show only if user is signed in. -->
+        <!-- <a class="primaryBtn" href="/createdPost"><i class="fas fa-plus"></i>  <span >Create Post</span></a> -->
+        {{template "AvatarContainer"}}
+        <!--* -->
     </div>
-    <a href="/createdPost"><i class="fas fa-plus"></i> Create Post <span></span></a>
-    {{template "avatar"}}
 </header>
 {{end}}

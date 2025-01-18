@@ -23,16 +23,16 @@ var pages Pages
 
 func init() {
 	var err error
-	// path, err := utils.GetFolderPath("..", "templates")
-	// fmt.Printf("path: %v\n", path)
-	// if err != nil {
-	// 	panic(err)
-	// }
-	pages.All_Templates, err = template.ParseGlob("../forum/web/templates" + "/*.html")
+	path, err := utils.GetFolderPath("..", "templates")
+	fmt.Printf("path: %v\n", path)
 	if err != nil {
 		panic(err)
 	}
-	pages.All_Templates, err = pages.All_Templates.ParseGlob("../forum/web/components" + "/*.html")
+	pages.All_Templates, err = template.ParseGlob("../Forum/web/templates" + "/*.html")
+	if err != nil {
+		panic(err)
+	}
+	pages.All_Templates, err = pages.All_Templates.ParseGlob("../Forum/web/components" + "/*.html")
 	if err != nil {
 		panic(err)
 	}
@@ -83,7 +83,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Button: "Create Account",
 	}
 
-	pages.All_Templates.ExecuteTemplate(w, "login.html", data)
+	pages.All_Templates.ExecuteTemplate(w, "register.html", data)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
