@@ -8,6 +8,7 @@ import (
 	"forum/internal/database"
 	"forum/internal/utils"
 )
+
 type Server struct {
 	Log bool
 }
@@ -67,13 +68,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	pages.All_Templates.ExecuteTemplate(w, "home.html", nil)
 }
 
-
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
 		email := r.FormValue("email")
 		password := r.FormValue("password")
 		_, err := database.Database.Exec("INSERT INTO users (username, password) VALUES (?, ?)", email, password)
-		_, err := database.Database.Exec("INSERT INTO users (username, password) VALUES (?, ?)", email, password)
+		//_, err := database.Database.Exec("INSERT INTO users (username, password) VALUES (?, ?)", email, password)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal server error")
@@ -96,7 +96,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	pages.All_Templates.ExecuteTemplate(w, "createpost.html", nil)
 }
 
-
 func Create_Account(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -105,7 +104,6 @@ func Create_Account(w http.ResponseWriter, r *http.Request) {
 	}
 	pages.All_Templates.ExecuteTemplate(w, "home.html", nil)
 }
-
 
 func Sign_In(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -138,7 +136,6 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	pages.All_Templates.ExecuteTemplate(w, "profile.html", "My Posts")
 }
 
-
 func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -147,7 +144,6 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	pages.All_Templates.ExecuteTemplate(w, "profile.html", "NO liked posts")
 }
-
 
 func CategorizePosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
@@ -158,7 +154,6 @@ func CategorizePosts(w http.ResponseWriter, r *http.Request) {
 	pages.All_Templates.ExecuteTemplate(w, "profile.html", "Category")
 }
 
-
 func Settings(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -167,7 +162,6 @@ func Settings(w http.ResponseWriter, r *http.Request) {
 	}
 	pages.All_Templates.ExecuteTemplate(w, "profile.html", "settings")
 }
-
 
 func Logout(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
