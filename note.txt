@@ -1,4 +1,4 @@
 understanding how the sql relation  really work
 
-understqnding defer
+understqnding defer deeplly
 
