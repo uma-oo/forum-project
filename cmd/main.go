@@ -6,14 +6,20 @@ import (
 	"log"
 	"net/http"
 
+	"forum/internal/auth"
+	"forum/internal/database"
 	"forum/internal/handlers"
 )
+
+func init() {
+	database.Create_database()
+}
 
 func main() {
 	// Get the current working directory
 	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/register", handlers.Register)
-	http.HandleFunc("/sign_in", handlers.Sign_In)
+	http.HandleFunc("/create_account", auth.Signup_treatment)
+	http.HandleFunc("/log_in", auth.Log_in)
 	http.HandleFunc("/create_post", handlers.CreatePost)
 	http.HandleFunc("/filterPost", handlers.FilterPosts)
 	http.HandleFunc("/myposts", handlers.MyPosts)
