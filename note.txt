@@ -1,4 +1,5 @@
 understanding how the sql relation  really work
 
 understanding defer deeplly
+understanding how to use defer in sql
 
