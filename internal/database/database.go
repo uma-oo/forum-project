@@ -3,62 +3,58 @@
 package database
 
 import (
+	"bufio"
 	"database/sql"
 	"fmt"
 	"log"
+	"os"
+	"strings"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 var Database *sql.DB
 
-func init() {
+func Create_database() {
 	var err error
-
 	Database, err = sql.Open("sqlite3", "./internal/database/forum.db")
 	if err != nil {
-		fmt.Println(0)
 		log.Fatal(err)
-	
 	}
+	defer Database.Close()
 
-	_, usererr := Database.Exec( `
-	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		username TEXT NOT NULL UNIQUE,
-		email TEXT NOT NULL UNIQUE,
-		password TEXT NOT NULL
-	);`)
-	if usererr != nil {
-		fmt.Println(1)
-		fmt.Println(usererr)
-	
+	// lets open the schema file to execute the sql commands inside it
+	schema, err := os.Open("./internal/database/schema.sql")
+	if err != nil {
+		log.Fatal(err)
 	}
-	_, posterr := Database.Exec(`CREATE TABLE IF NOT EXISTS posts ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "user_id" INTEGER NOT NULL, "title" TEXT, "content" TEXT,FOREIGN KEY ("user_id") REFERENCES users("id") ON DELETE CASCADE);`)
-	if posterr != nil {
-		fmt.Println(2)
-		log.Fatal(posterr)
-		
-	}
-	_, likeerr := Database.Exec(`CREATE TABLE IF NOT EXISTS likes ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"post_id" INTEGER NOT NULL , "like" INTEGER "dislike" INTEGER, FOREIGN KEY ("post_id") REFERENCES posts("id") ON DELETE CASCADE);`)
-	
-	if likeerr != nil {
-		fmt.Println(3)
-		log.Fatal(likeerr)
-		
-	}
-	_,commenterr := Database.Exec(`CREATE TABLE IF NOT EXISTS comments ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"post_id" INTEGER NOT NULL , "comment"  TEXT, FOREIGN KEY ("post_id") REFERENCES posts("id") ON DELETE CASCADE);`)
-	if commenterr != nil {
-		fmt.Println(4)
-		log.Fatal(commenterr)
-		
-	}
-	_, gategoryerr := Database.Exec(`CREATE TABLE IF NOT EXISTS gategories ("id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT ,"post_id" INTEGER NOT NULL, "gategory" TEXT, FOREIGN KEY ("post_id") REFERENCES posts("id") ON DELETE CASCADE);`)
+	defer schema.Close()
 
-	if gategoryerr != nil {
-		fmt.Println(5)
-		log.Fatal(gategoryerr)
-		
-	}
+	// now lets read the schema file using the bufio package
+	scanner := bufio.NewScanner(schema)
+	var sql_command string
+	lineIndex := 0
+	for scanner.Scan() {
 
+		lineIndex++
+		line := strings.TrimSpace(scanner.Text())
+
+		if strings.HasPrefix(line, "--") || strings.HasPrefix(line, "/*") || line == "" {
+			continue
+		}
+		sql_command += line + " "
+		// lets execute the sql command
+		if strings.HasSuffix(sql_command, "; ") {
+			_, err = Database.Exec(sql_command)
+			if err != nil {
+				log.Fatal(err, " line :", lineIndex)
+			}
+			// free up the sql command
+			sql_command = ""
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("data base creatd succesfully")
 }
