@@ -1,0 +1,4 @@
+understanding how the sql relation  really work
+
+understqnding defer deeplly
+
