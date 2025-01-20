@@ -3,15 +3,20 @@ package auth
 
 import (
 	"database/sql"
+	"net/http"
+
 	"forum/internal/database"
 	"forum/internal/handlers"
-	"net/http"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
-var pages handlers.Pages
-var server handlers.Server
+
+var (
+	pages  handlers.Pages
+	server handlers.Server
+)
+
 func Signup_treatment(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -24,9 +29,9 @@ func Signup_treatment(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
-	User := r.FormValue("username")
-	Pass := r.FormValue("password")
-	Email := r.FormValue("email")
+	User := r.FormValue("userName")
+	Pass := r.FormValue("userPassword")
+	Email := r.FormValue("userEmail")
 	if User == "" || Pass == "" || Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Bad Request")
@@ -38,15 +43,15 @@ func Signup_treatment(w http.ResponseWriter, r *http.Request) {
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
 		return
 	}
-	user_already_exist := database.Database.QueryRow("SELECT username FROM users WHERE username = $1 ", User).Scan(&User)
-	email_already_exist :=database.Database.QueryRow("SELECT email FROM users WHERE  email = $1", Email).Scan(&Email)
+	user_already_exist := database.Database.QueryRow("SELECT userName FROM users WHERE userName = $1 ", User).Scan(&User)
+	email_already_exist := database.Database.QueryRow("SELECT userEmail FROM users WHERE  userEmail = $1", Email).Scan(&Email)
 
 	if user_already_exist != nil && email_already_exist != nil {
 		if user_already_exist == sql.ErrNoRows && email_already_exist == sql.ErrNoRows {
 			server.Log = false
-		
+
 			token := uuid.New().String()
-			database.Database.Exec("INSERT INTO users  (username, password, email , token) VALUES ($1, $2, $3, $4)", User, Hach_pass, Email, token)
+			database.Database.Exec("INSERT INTO users  (userName, userPassword, userEmail) VALUES ($1, $2, $3)", User, Hach_pass, Email)
 			http.Redirect(w, r, "/", http.StatusFound)
 			http.SetCookie(w,
 				&http.Cookie{
