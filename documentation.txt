@@ -1,0 +1,7 @@
+i did creat a users table that help us to store the user information. We will use this table to store the user information in sql.
+plus i greated 3 function 
+register func that we get it using post to regester the user and set it's cokies
+login func that we get it using post to verfier the user and set it's cokies 
+and an iscokie set to verfier if the user is allready login or not
+
+
