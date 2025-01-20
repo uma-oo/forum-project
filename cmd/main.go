@@ -13,7 +13,6 @@ func main() {
 	// Get the current working directory
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/register", handlers.Register)
-	http.HandleFunc("/create_account", handlers.Create_Account)
 	http.HandleFunc("/sign_in", handlers.Sign_In)
 	http.HandleFunc("/createpost", handlers.CreatePost)
 	http.HandleFunc("/filterPost", handlers.FilterPosts)
