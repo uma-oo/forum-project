@@ -37,12 +37,12 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
-	for _, template := range pages.All_Templates.Templates() {
+	/*for _, template := range pages.All_Templates.Templates() {
 		fmt.Println("template :", template.Name())
 	}
 	for _, template := range pages.All_Templates.Templates() {
 		fmt.Println("template :", template.Name())
-	}
+	}*/
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
