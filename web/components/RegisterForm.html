@@ -1,26 +1,32 @@
 {{define "RegisterForm"}}
-<form class="register-form-container" method="post" action="/register">
-    <div class="form-grp">
-        <label for="userName"><img src="/static/images/person.svg" alt=""><span>User Name:</span></label>
-        <input type="text" id="userName" name="userName" placeholder="Enter your user name...">
-    </div>
-    <div class="form-grp">
-        <label for="userEmail"><img src="/static/images/email.svg" alt=""><span>Email:</span></label>
-        <input type="email" id="userEmail" name="userEmail" placeholder="Enter your email...">
-    </div>
-    <div class="form-grp">
-        <label for="userPassword"><img src="/static/images/lock.svg" alt=""><span>Password:</span></label>
-        <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
-    </div>
-    <!-- <div class="form-grp">
+<dialog id="register-form" popover=manual>
+    <form class="register-form-container" method="post" action="/create_account">
+        <button type="button" class="close-btn" popovertarget="register-form" popovertargetaction="hide">
+            <span aria-hidden=”true”><img src="/static/images/closeIcon.svg" alt="close"></span>
+            <span class="sr-only">Close</span>
+        </button>
+        <div class="form-grp">
+            <label for="userName"><img src="/static/images/person.svg" alt=""><span>User Name:</span></label>
+            <input type="text" id="userName" name="userName" placeholder="Enter your user name...">
+        </div>
+        <div class="form-grp">
+            <label for="userEmail"><img src="/static/images/email.svg" alt=""><span>Email:</span></label>
+            <input type="email" id="userEmail" name="userEmail" placeholder="Enter your email...">
+        </div>
+        <div class="form-grp">
+            <label for="userPassword"><img src="/static/images/lock.svg" alt=""><span>Password:</span></label>
+            <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
+        </div>
+        <!-- <div class="form-grp">
         <label for="userPasswordConfirmed"><span>Confirm Password:</span></label>
         <input type="password" id="userPasswordConfirmed" name="userPasswordConfirmed"
             placeholder="Confirm your password...">
     </div> -->
-    <hr class="seperator">
-    <div class="form_actions">
-        <p>Already have an account? <a href="/sign_in" type="reset">Sign In Here.</a></p>
-        <button class="primaryBtn" type="Login">Register</button>
-    </div>
-</form>
+        <hr class="seperator">
+        <div class="form_actions">
+            <button class="secondaryBtn" type="reset">Reset</button>
+            <button class="primaryBtn" type="submit">Register</button>
+        </div>
+    </form>
+</dialog>
 {{end}}

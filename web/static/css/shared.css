@@ -30,6 +30,17 @@
 }
 
 
+.sr-only:not(:focus):not(:active) {
+    clip: rect(0 0 0 0); 
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap; 
+    width: 1px;
+}
+
+
 * {
     padding: 0;
     margin: 0;
@@ -56,6 +67,20 @@ body {
         "header  header"
         "aside  main"
         "footer   footer";
+}
+
+
+
+dialog {
+    width: 100vw;
+    height: 100vh;
+    place-content: center;
+    background-color: transparent;
+    backdrop-filter: blur(8px);
+    border: none;
+}
+dialog .close-btn {
+    border: solid;
 }
 
 
@@ -192,12 +217,28 @@ button {
 form {
     padding: 2rem 4rem;
     border : solid var(--color-dark-navy);
-    width: max-content;
+    max-width: 600px;
+    min-width: 300px;
     margin: auto;
     /* color: var(--bg-color-light-gray); */
     border-radius: var(--border-radius-md);
     box-shadow: -2px 2px 4px 1px var(--color-dark-navy);
+    position: relative;
 }
+
+form .close-btn {
+    position: absolute;
+    top : 0;
+    right: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-round);
+    transform: translate(50%, -50%);
+    img {
+        width: 100%;
+    }
+}
+
 form .form-grp {
     margin-bottom: 15px;
 }
