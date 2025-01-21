@@ -2,70 +2,70 @@
 package auth
 
 import (
-	"database/sql"
+	"fmt"
 	"net/http"
 
 	"forum/internal/database"
 	"forum/internal/handlers"
 
-	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var (
-	pages  handlers.Pages
-	server handlers.Server
-)
-
-func Signup_treatment(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "POST" {
+func Register(w http.ResponseWriter, r *http.Request) {
+	pages := handlers.Pagess.All_Templates
+	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
 	if r.URL.Path != "/create_account" || IsCookieSet(r, "session") {
 		w.WriteHeader(http.StatusNotFound)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
+		pages.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
 
 	}
+
 	User := r.FormValue("userName")
 	Pass := r.FormValue("userPassword")
 	Email := r.FormValue("userEmail")
+	fmt.Println(User, Pass, Email)
+
 	if User == "" || Pass == "" || Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Bad Request")
+		pages.ExecuteTemplate(w, "error.html", "Bad Request")
 		return
 	}
 	Hach_pass, err := bcrypt.GenerateFromPassword([]byte(Pass), 10)
+	fmt.Println(Hach_pass)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
 		return
 	}
-	user_already_exist := database.Database.QueryRow("SELECT userName FROM users WHERE userName = $1 ", User).Scan(&User)
-	email_already_exist := database.Database.QueryRow("SELECT userEmail FROM users WHERE  userEmail = $1", Email).Scan(&Email)
+	var userExist bool
+	var emailExist bool
+	emailErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = $1)", Email).Scan(&emailExist)
+	userErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userName = $1)", User).Scan(&userExist)
 
-	if user_already_exist != nil && email_already_exist != nil {
-		if user_already_exist == sql.ErrNoRows && email_already_exist == sql.ErrNoRows {
-			server.Log = false
-
-			token := uuid.New().String()
-			database.Database.Exec("INSERT INTO users  (userName, userPassword, userEmail) VALUES ($1, $2, $3)", User, Hach_pass, Email)
-			http.Redirect(w, r, "/", http.StatusFound)
-			http.SetCookie(w,
-				&http.Cookie{
-					Name:   "token",
-					Value:  token,
-					MaxAge: 3600,
-				})
-
+	if userErr != nil || emailErr != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		return
+	}
+	fmt.Println(emailExist, userExist)
+	if userExist || emailExist {
+		fmt.Println(emailExist, userExist)
+		fmt.Println("exist")
+		pages.ExecuteTemplate(w, "error.html", "User already exists")
+		return
+	} else {
+		fmt.Println("not exist")
+		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword) VALUES ($1, $2, $3)", User, Email, string(Hach_pass))
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
 			return
 		}
-	} else {
-		w.WriteHeader(http.StatusConflict)
-		pages.All_Templates.ExecuteTemplate(w, "signup.html", "username or email already exist")
-		return
-
 	}
+	http.Redirect(w, r, "/", 302)
 }
