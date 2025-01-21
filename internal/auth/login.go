@@ -5,12 +5,14 @@ import (
 	"net/http"
 
 	"forum/internal/database"
+	"forum/internal/handlers"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/crypto/bcrypt"	
 )
 
 func Log_in(w http.ResponseWriter, r *http.Request) {
+	pages := handlers.Pagess
 	if r.Method != "POST" {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
@@ -58,7 +60,7 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		MaxAge: 3600,
 	}
 	http.SetCookie(w, cookie)
-	server.Log = false
+	// server.Log = false
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
