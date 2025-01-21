@@ -21,7 +21,6 @@ func Create_database() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer Database.Close()
 
 	// lets open the schema file to execute the sql commands inside it
 	schema, err := os.Open("./internal/database/schema.sql")
