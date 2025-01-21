@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"text/template"
 
-	"forum/internal/database"
 	"forum/internal/utils"
 )
 
@@ -20,156 +20,37 @@ type Form struct {
 	Button string
 }
 
-var pages Pages
+var Pagess Pages
 
-func init() {
+func ParseTemplates() {
 	var err error
 	path, err := utils.GetFolderPath("..", "templates")
 	fmt.Printf("path: %v\n", path)
 	if err != nil {
 		panic(err)
 	}
-	pages.All_Templates, err = template.ParseGlob("../forum/web/templates" + "/*.html")
+	Pagess.All_Templates, err = template.ParseGlob("./web/templates" + "/*.html")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	pages.All_Templates, err = pages.All_Templates.ParseGlob("../forum/web/components" + "/*.html")
+	Pagess.All_Templates, err = Pagess.All_Templates.ParseGlob("../forum/web/components" + "/*.html")
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	/*for _, template := range pages.All_Templates.Templates() {
-		fmt.Println("template :", template.Name())
-	}
-	for _, template := range pages.All_Templates.Templates() {
-		fmt.Println("template :", template.Name())
-	}*/
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page not found")
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page not found")
 		return
 	}
-	if r.Method != "GET" {
+	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
 		return
 	}
-	pages.All_Templates.ExecuteTemplate(w, "home.html", nil)
-}
-
-func Login(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "home.html", nil)
-}
-
-func Register(w http.ResponseWriter, r *http.Request) {
-	if r.Method == http.MethodPost {
-		email := r.FormValue("email")
-		password := r.FormValue("password")
-		_, err := database.Database.Exec("INSERT INTO users (username, password) VALUES (?, ?)", email, password)
-		//_, err := database.Database.Exec("INSERT INTO users (username, password) VALUES (?, ?)", email, password)
-		if err != nil {
-			w.WriteHeader(http.StatusInternalServerError)
-			pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal server error")
-			return
-		}
-	}
-	data := Form{
-		Title:  "Create Account",
-		Button: "Create Account",
-	}
-	pages.All_Templates.ExecuteTemplate(w, "register.html", data)
-}
-
-func CreatePost(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "createpost.html", nil)
-}
-
-func Create_Account(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "home.html", nil)
-}
-
-func Sign_In(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	data := Form{
-		Title:  "Login",
-		Button: "Login",
-	}
-	pages.All_Templates.ExecuteTemplate(w, "login.html", data)
-}
-
-func FilterPosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "filter.html", nil)
-}
-
-func MyPosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "profile.html", "My Posts")
-}
-
-func LikedPosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "profile.html", "NO liked posts")
-}
-
-func CategorizePosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "profile.html", "Category")
-}
-
-func Settings(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "profile.html", "settings")
-}
-
-func Logout(w http.ResponseWriter, r *http.Request) {
-	if r.Method != "GET" {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
-		return
-	}
-	pages.All_Templates.ExecuteTemplate(w, "profile.html", "Logout")
+	Pagess.All_Templates.ExecuteTemplate(w, "home.html", nil)
 }
 
 func Serve_Static(w http.ResponseWriter, r *http.Request) {
