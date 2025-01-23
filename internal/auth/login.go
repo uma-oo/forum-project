@@ -2,55 +2,55 @@ package auth
 
 import (
 	"database/sql"
+	"log"
 	"net/http"
 
 	"forum/internal/database"
 	"forum/internal/handlers"
 
 	"github.com/google/uuid"
-	"golang.org/x/crypto/bcrypt"	
+	"golang.org/x/crypto/bcrypt"
 )
 
 func Log_in(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
-	if r.Method != "POST" {
+	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		pages.
+			All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	if r.URL.Path != "/log_in" || IsCookieSet(r, "session") {
+	if IsCookieSet(r, "token") {
 		w.WriteHeader(http.StatusNotFound)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
 	}
-	User := r.FormValue("username")
-	Pass := r.FormValue("password")
+	UserName := r.FormValue("userName")
+	Password := r.FormValue("userPassword")
 
-	if User == "" || Pass == "" {
+	if UserName == "" || Password == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Invalid Request")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Bad Request")
 		return
 
 	}
-	var Pas string
+	var pasword string
+	var username string
 
-	err := database.Database.QueryRow("SELECT username , password  FROM users WHERE  username= $1 ", User).Scan(&User, &Pas)
+	err := database.Database.QueryRow("SELECT userName , userPassword  FROM users WHERE  username= $1 ", UserName).Scan(&username, &pasword)
 	if err != nil {
 		if err == sql.ErrNoRows {
-
 			w.WriteHeader(http.StatusUnauthorized)
-			pages.All_Templates.ExecuteTemplate(w, "login.html", "Invalid Password or username")
+			pages.All_Templates.ExecuteTemplate(w, "error.html", "user not exist") // should execute login page here for no rows err
 			return
 		}
-
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", err)
 		return
 	}
-	if err := bcrypt.CompareHashAndPassword([]byte(Pas), []byte(Pass)); err != nil {
-
+	if err := bcrypt.CompareHashAndPassword([]byte(pasword), []byte(Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
-		pages.All_Templates.ExecuteTemplate(w, "login.html", "Invalid Password or username")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Invalid Password or username or exist")
 		return
 	}
 	Token := uuid.New().String()
@@ -59,8 +59,9 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		Value:  Token,
 		MaxAge: 3600,
 	}
-	http.SetCookie(w, cookie)
-	// server.Log = false
 
+	http.SetCookie(w, cookie)
+	// lets log the user in
+	log.Println(UserName, "logged in")
 	http.Redirect(w, r, "/", http.StatusFound)
 }
