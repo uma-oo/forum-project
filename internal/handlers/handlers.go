@@ -86,6 +86,3 @@ func Serve_Static(w http.ResponseWriter, r *http.Request) {
 // 		}
 // 	}
 // }
-
-func CreateComment(w http.ResponseWriter, r *http.Request) {
-}
