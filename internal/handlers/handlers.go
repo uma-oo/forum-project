@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"text/template"
@@ -24,16 +23,12 @@ var Pagess Pages
 
 func ParseTemplates() {
 	var err error
-	path, err := utils.GetFolderPath("..", "templates")
-	fmt.Printf("path: %v\n", path)
-	if err != nil {
-		panic(err)
-	}
-	Pagess.All_Templates, err = template.ParseGlob("./web/templates" + "/*.html")
+
+	Pagess.All_Templates, err = template.ParseGlob("./web/templates/*.html")
 	if err != nil {
 		log.Fatal(err)
 	}
-	Pagess.All_Templates, err = Pagess.All_Templates.ParseGlob("../forum/web/components" + "/*.html")
+	Pagess.All_Templates, err = Pagess.All_Templates.ParseGlob("./web/components/*.html")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -47,7 +42,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	}
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed")
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed hassan")
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "home.html", nil)
