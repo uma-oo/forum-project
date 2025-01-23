@@ -2,12 +2,13 @@
 package auth
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 
 	"forum/internal/database"
 	"forum/internal/handlers"
 
+	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -18,54 +19,57 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
-	if r.URL.Path != "/create_account" || IsCookieSet(r, "session") {
+	if IsCookieSet(r, "token") {
 		w.WriteHeader(http.StatusNotFound)
-		pages.ExecuteTemplate(w, "error.html", "Page Not Found")
+		pages.ExecuteTemplate(w, "error.html", "you have a session")
 		return
-
 	}
 
-	User := r.FormValue("userName")
-	Pass := r.FormValue("userPassword")
+	userName := r.FormValue("userName")
+	userPassword := r.FormValue("userPassword")
 	Email := r.FormValue("userEmail")
-	fmt.Println(User, Pass, Email)
+	token := uuid.New().String()
 
-	if User == "" || Pass == "" || Email == "" {
+	if userName == "" || userPassword == "" || Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		pages.ExecuteTemplate(w, "error.html", "Bad Request")
 		return
 	}
-	Hach_pass, err := bcrypt.GenerateFromPassword([]byte(Pass), 10)
-	fmt.Println(Hach_pass)
+	Hach_pass, err := bcrypt.GenerateFromPassword([]byte(userPassword), 10)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		pages.ExecuteTemplate(w, "error.html", "error hasching passord")
 		return
 	}
 	var userExist bool
 	var emailExist bool
 	emailErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = $1)", Email).Scan(&emailExist)
-	userErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userName = $1)", User).Scan(&userExist)
+	userErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userName = $1)", userName).Scan(&userExist)
 
 	if userErr != nil || emailErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
 		return
 	}
-	fmt.Println(emailExist, userExist)
+
 	if userExist || emailExist {
-		fmt.Println(emailExist, userExist)
-		fmt.Println("exist")
 		pages.ExecuteTemplate(w, "error.html", "User already exists")
 		return
 	} else {
-		fmt.Println("not exist")
-		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword) VALUES ($1, $2, $3)", User, Email, string(Hach_pass))
+		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword,token) VALUES ($1, $2, $3 , $4 )", userName, Email, string(Hach_pass), token)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
 			return
 		}
+		log.Printf("%s account has been created", userName)
 	}
-	http.Redirect(w, r, "/", 302)
+
+	cookie := &http.Cookie{
+		Name:   "token",
+		Value:  token,
+		MaxAge: 3600,
+	}
+	http.SetCookie(w, cookie)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
