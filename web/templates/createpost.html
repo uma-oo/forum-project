@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/shared.css">
+    <link rel="stylesheet" href="/static/css/createpost.css">
 </head>
 
 <body>
@@ -16,9 +17,52 @@
     {{template "Header"}}
     {{template "Aside"}}
 
-    <main>
-        <h2><- Create New Post: </h2>
-        {{template "CreatePostForm"}}
+    <main class="create_post_section">
+        <h2>Create New Post: </h2>
+        <form method="post" action="/add_new_post">
+           
+            <div class="form-grp">
+                <label>Shoose Your Categories: </label>
+                <div class="category_list">
+                    <div>
+                        <label for="video_games1">video games</label>
+                        <input type="checkbox" id="video_games1" name="video_games" value="video_games" hidden>
+                    </div>
+                    <div>
+                        <label for="art1">art</label>
+                        <input type="checkbox" id="art1" name="art" value="art" hidden>
+                    </div>
+                    <div>
+                        <label for="coding1">coding</label>
+                        <input type="checkbox" id="coding1" name="coding" value="coding" hidden>
+                    </div>
+                    <div>
+                        <label for="animals1">animals</label>
+                        <input type="checkbox" id="animals1" name="animals" value="animals" hidden>
+                    </div>
+                    <div>
+                        <label for="crypto1">crypto</label>
+                        <input type="checkbox" id="crypto1" name="crypto" value="crypto" hidden>
+                    </div>
+                    <div>
+                        <label for="music1">music</label>
+                        <input type="checkbox" id="music1" name="music" value="music" hidden>
+                    </div>
+                </div>
+            </div>
+            <div class="form-grp">
+                <label for="postTitle">Post Title</label>
+                <input type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
+            </div>
+            <div class="form-grp">
+                <label for="postTitle">Post Body: </label>
+                <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
+            </div>
+            <div class="form_actions">
+                <button type="reset">Cancel</button>
+                <button type="submit">Create Post</button>
+            </div>
+        </form>
     </main>
     {{template "Footer"}}
 </body>
