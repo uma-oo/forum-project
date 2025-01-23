@@ -4,4 +4,7 @@ understanding defer deeplly
 understanding how to use defer in sql
 sql server 
 deffer betwen ? and $ in sql
+db.Begin() and Transactions
+db.Ping()
+Redirect understanding
 
