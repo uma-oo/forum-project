@@ -22,6 +22,7 @@ func main() {
 	http.HandleFunc("/create_account", auth.Register)
 	http.HandleFunc("/log_in", auth.Log_in)
 	http.HandleFunc("/static/", handlers.Serve_Static)
+	http.HandleFunc("/create_comment", handlers.CreateComment)
 	fmt.Println("server is running on port 8080 ... http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

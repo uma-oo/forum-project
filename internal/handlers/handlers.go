@@ -53,8 +53,39 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "home.html", nil)
 }
 
+// this is not a good way to serve static files
+
 func Serve_Static(w http.ResponseWriter, r *http.Request) {
 	path, _ := utils.GetFolderPath("..", "static")
 	fs := http.FileServer(http.Dir(path))
 	http.StripPrefix("/static/", fs).ServeHTTP(w, r)
+}
+
+// MODIFY this one after finishing the task
+
+// func StaticHandler(w http.ResponseWriter, r *http.Request) {
+// 	if r.Method != http.MethodGet {
+// 		w.WriteHeader(http.StatusMethodNotAllowed)
+// 		return
+// 	}
+
+// 	if !strings.HasPrefix(r.URL.Path, "/static") {
+// 		w.WriteHeader(http.StatusNotFound)
+// 		return
+// 	} else {
+// 		file_info, err := os.Stat(r.URL.Path[1:])
+// 		fmt.Println(file_info.Name())
+// 		if err != nil {
+// 			w.WriteHeader(http.StatusNotFound)
+// 			return
+// 		} else if file_info.IsDir() {
+// 			w.WriteHeader(http.StatusForbidden)
+// 			return
+// 		} else {
+// 			http.ServeFile(w, r, r.URL.Path[1:])
+// 		}
+// 	}
+// }
+
+func CreateComment(w http.ResponseWriter, r *http.Request) {
 }
