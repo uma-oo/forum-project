@@ -2,8 +2,9 @@ package handlers
 
 import (
 	"fmt"
-	"forum/internal/database"
 	"net/http"
+
+	"forum/internal/database"
 )
 
 func Craete_post(w http.ResponseWriter, r *http.Request) {
@@ -13,9 +14,9 @@ func Craete_post(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
-	user_Id := 1
-	title := "title"
-	content := "content"
+	user_Id := 3
+	title := "oumayma"
+	content := "post created by ouma to test!!!"
 	total_likes := 1
 	total_dislikes := 1
 
@@ -34,6 +35,5 @@ func Craete_post(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "internal server error")
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusFound)
-
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

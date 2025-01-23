@@ -46,7 +46,7 @@ func Create_database() {
 		if strings.HasSuffix(sql_command, "; ") {
 			_, err = Database.Exec(sql_command)
 			if err != nil {
-				log.Fatal(err, " line :", lineIndex)
+				log.Fatal(err, " line hna :", lineIndex)
 			}
 			// free up the sql command
 			sql_command = ""

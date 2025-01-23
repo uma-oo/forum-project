@@ -4,8 +4,10 @@ CREATE TABLE IF NOT EXISTS  users (
     id INTEGER PRIMARY KEY AUTOINCREMENT ,
     userName VARCHAR(50) NOT NULL , 
     userEmail VARCHAR(100) NOT NULL ,
-    userPassword VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    userPassword VARCHAR(255) NOT NULL ,
+    token  VARCHAR(255)  ,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  
 );
 
 /* create posts table*/

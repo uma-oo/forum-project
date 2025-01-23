@@ -1,8 +1,216 @@
-2025/01/22 16:19:14 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:20:10 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:20:35 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:22:12 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:22:38 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:25:28 open variables.env: no such file or directory
-2025/01/22 16:26:19 open variables.env: no such file or directory
-2025/01/23 10:46:47 listen tcp :8080: bind: address already in use
+2025/01/23 16:56:02  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52264
+2025/01/23 16:56:02 ------------------------
+2025/01/23 16:56:02 http: panic serving 127.0.0.1:52264: runtime error: invalid memory address or nil pointer dereference
+goroutine 74 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc00012e620}, 0xc0001910e0)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc00012e620?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc00012e620}, 0xc0001910e0)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc00019b260?}, {0x935bd8?, 0xc00012e620?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc0000defc0, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:05  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52276
+2025/01/23 16:56:05 ------------------------
+2025/01/23 16:56:05 http: panic serving 127.0.0.1:52276: runtime error: invalid memory address or nil pointer dereference
+goroutine 46 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc00012e700}, 0xc0001167e0)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc00012e700?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc00012e700}, 0xc0001167e0)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000114ab0?}, {0x935bd8?, 0xc00012e700?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc00011aab0, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:06  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52280
+2025/01/23 16:56:06 ------------------------
+2025/01/23 16:56:06 http: panic serving 127.0.0.1:52280: runtime error: invalid memory address or nil pointer dereference
+goroutine 48 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc00012e7e0}, 0xc000116900)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc00012e7e0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc00012e7e0}, 0xc000116900)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000114c00?}, {0x935bd8?, 0xc00012e7e0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc00011ac60, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:09  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52290
+2025/01/23 16:56:09 ------------------------
+2025/01/23 16:56:09 http: panic serving 127.0.0.1:52290: runtime error: invalid memory address or nil pointer dereference
+goroutine 82 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc00012e8c0}, 0xc000116a20)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc00012e8c0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc00012e8c0}, 0xc000116a20)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000114d50?}, {0x935bd8?, 0xc00012e8c0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc00011ae10, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:41  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52880
+2025/01/23 16:56:41 ------------------------
+2025/01/23 16:56:41 http: panic serving 127.0.0.1:52880: runtime error: invalid memory address or nil pointer dereference
+goroutine 84 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc00012e9a0}, 0xc000116b40)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc00012e9a0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc00012e9a0}, 0xc000116b40)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000114ea0?}, {0x935bd8?, 0xc00012e9a0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc00011afc0, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:41  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52892
+2025/01/23 16:56:41 ------------------------
+2025/01/23 16:56:41 http: panic serving 127.0.0.1:52892: runtime error: invalid memory address or nil pointer dereference
+goroutine 86 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc0002307e0}, 0xc000116c60)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc0002307e0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc0002307e0}, 0xc000116c60)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000114ff0?}, {0x935bd8?, 0xc0002307e0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc00011b170, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:41  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52896
+2025/01/23 16:56:41 ------------------------
+2025/01/23 16:56:41 http: panic serving 127.0.0.1:52896: runtime error: invalid memory address or nil pointer dereference
+goroutine 55 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc0002308c0}, 0xc00021ad80)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc0002308c0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc0002308c0}, 0xc00021ad80)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000205290?}, {0x935bd8?, 0xc0002308c0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc000209320, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:56:42  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:52910
+2025/01/23 16:56:42 ------------------------
+2025/01/23 16:56:42 http: panic serving 127.0.0.1:52910: runtime error: invalid memory address or nil pointer dereference
+goroutine 57 [running]:
+net/http.(*conn).serve.func1()
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x844f40?, 0xb79fe0?})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+main.main.Auth_Middleware.func1({0x935bd8, 0xc0002309a0}, 0xc00021aea0)
+	/home/ooumayma/Desktop/workplace/forum/internal/middlewares/auth_middelware.go:21 +0x1d0
+net/http.HandlerFunc.ServeHTTP(0xbb7580?, {0x935bd8?, 0xc0002309a0?}, 0x6a571a?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x935bd8, 0xc0002309a0}, 0xc00021aea0)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc0002053e0?}, {0x935bd8?, 0xc0002309a0?}, 0x6?)
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc0002094d0, {0x936310, 0xc00019a210})
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/ooumayma/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/01/23 16:57:41  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:44758
+2025/01/23 16:57:41 ------------------------
+2025/01/23 16:57:41 authorization Basic b291bWF5bWE6b3VtYQ== and cookie is : 
+2025/01/23 16:57:41 ------------------------
+2025/01/23 16:58:43  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:59244
+2025/01/23 16:58:43 ------------------------
+2025/01/23 16:58:43 authorization Basic b291bWF5bWE6b3VtYQ== and cookie is : 
+2025/01/23 16:58:43 ------------------------
+2025/01/23 16:58:53  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:32996
+2025/01/23 16:58:53 ------------------------
+2025/01/23 16:58:53 authorization Basic b291bWF5bWE6b3VtYQ== and cookie is : 
+2025/01/23 16:58:53 ------------------------
+2025/01/23 16:59:19  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56750
+2025/01/23 16:59:19 ------------------------
+2025/01/23 16:59:19 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:19 ------------------------
+2025/01/23 16:59:20  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56766
+2025/01/23 16:59:20 ------------------------
+2025/01/23 16:59:20 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:20 ------------------------
+2025/01/23 16:59:21  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56778
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:21 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:21  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56790
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:21 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:21  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56798
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:21 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:21 ------------------------
+2025/01/23 16:59:22  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:56812
+2025/01/23 16:59:22 ------------------------
+2025/01/23 16:59:22 authorization Bearer 940a02a8-6758-4643-8bb9-1fa4908b56c9 and cookie is : 
+2025/01/23 16:59:22 ------------------------
+2025/01/23 17:03:46  recieved a request >>   Method: GET, URL: /create_comment, Client IP: 127.0.0.1:59996
+2025/01/23 17:03:46 ------------------------
+2025/01/23 17:03:46 authorization aghyor and cookie is : 
+2025/01/23 17:03:46 ------------------------
+2025/01/23 17:04:09  recieved a request >>   Method: GET, URL: /create_comment, Client IP: 127.0.0.1:45394
+2025/01/23 17:04:09 ------------------------
+2025/01/23 17:04:09 authorization aghyor boda and cookie is : 
+2025/01/23 17:04:09 ------------------------
+2025/01/23 17:04:21  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:45502
+2025/01/23 17:04:21 ------------------------
+2025/01/23 17:04:21 authorization aghyor boda and cookie is : 
+2025/01/23 17:04:21 ------------------------
+2025/01/23 17:04:26  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:45514
+2025/01/23 17:04:26 ------------------------
+2025/01/23 17:04:26 authorization aghyor boda and cookie is : 
+2025/01/23 17:04:26 ------------------------
+2025/01/23 17:04:33  recieved a request >>   Method: POST, URL: /create_comment, Client IP: 127.0.0.1:37104
+2025/01/23 17:04:33 ------------------------
+2025/01/23 17:04:33 authorization aghyor bod and cookie is : 
+2025/01/23 17:04:33 ------------------------
