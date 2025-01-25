@@ -1,12 +1,29 @@
 {{define "AvatarContainer"}}
     <div class="avatar-container">
-        {{template "avatar"}}
-        <div class="user-menu">
-            <a href="#">Profile</a>
-            <hr class="seperator">
-            <a href="#">Settings</a>
-            <hr class="seperator">
-            <a href="#">Log Out</a>
+        <button id="menu-toggle" class="avatar" popovertarget="user_menu">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlOLBRK-3wEFFeCojWlHou4nooggl5iI2PJQ&s" alt="user avatar">
+        </button>
+        <div class="user_menu" id="user_menu" popover anchor="menu-toggle">
+            <div>
+                <a class="profile_link" href="#">
+                    <div class="avatar">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlOLBRK-3wEFFeCojWlHou4nooggl5iI2PJQ&s" alt="user avatar">
+                    </div>
+                    <div>
+                        <span>View Profile</span>
+                        <span class="txt-light">user_name</span>
+                    </div>
+                </a>
+            </div>
+            <div>
+                <a href="#">
+                    <span>S:</span>
+                    <span>Setting.</span>
+                </a>
+            </div>
+            <div>
+                <a href="/log_out">Log Out</a>
+            </div>
         </div> 
     </div>
 {{end}}
