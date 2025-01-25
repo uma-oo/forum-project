@@ -37,16 +37,48 @@ func ParseTemplates() {
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page not found")
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
 	}
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method not allowed hassan")
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "home.html", nil)
 }
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
+	http.Redirect(w ,r , "/", http.StatusSeeOther)
+}
+
+func Register(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
+}
+
+
+func Create_Post(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", nil)
+	http.Redirect(w ,r , "/", http.StatusSeeOther)
+}
+
+
 
 // this is not a good way to serve static files
 
@@ -55,6 +87,9 @@ func Serve_Static(w http.ResponseWriter, r *http.Request) {
 	fs := http.FileServer(http.Dir(path))
 	http.StripPrefix("/static/", fs).ServeHTTP(w, r)
 }
+
+
+
 
 // MODIFY this one after finishing the task
 

@@ -19,14 +19,15 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	if r.URL.Path != "/log_in" || IsCookieSet(r, "session") {
+	if r.URL.Path != "/api/log_in" || IsCookieSet(r, "session") {
 		w.WriteHeader(http.StatusNotFound)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
 	}
+
 	username := r.FormValue("userName")
 	password_got := r.FormValue("userPassword")
-	fmt.Printf("username%v\n", username)
+	fmt.Printf("username: %v\n", username)
 	fmt.Printf("password_got: %v\n", password_got)
 	if username == "" || password_got == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -37,7 +38,6 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 
 	var password string
 
-	
 	err := database.Database.QueryRow("SELECT userName , userPassword  FROM users WHERE  userName= $1 ", username).Scan(&username, &password)
 	fmt.Printf("password: %v\n", bcrypt.CompareHashAndPassword([]byte(password), []byte(password_got)))
 	if err != nil {
@@ -50,23 +50,24 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", err)
 		return
+		
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(password), []byte(password_got)); err != nil {
-		print("heeere !!!!!!")
 		w.WriteHeader(http.StatusUnauthorized)
-		pages.All_Templates.ExecuteTemplate(w, "login.html", "Invalid Credentials")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Invalid Credentials")
 		return
 	}
 	Token := uuid.New().String()
 	statement, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
+	if err != nil {
+		fmt.Printf("err in statement of the database: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		return
+	}
 	_, err = statement.Exec(Token, username)
 	if err != nil {
-		fmt.Printf("err: %v\n", err)
-	}
-	// _, err = database.Database.Exec("UPDATE users set token = $1 where userName = $2", Token, User)
-	// _, err = database.Database.Exec("UPDATE users set token = $1 where userName = $2", Token, User)
-	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("err in the exec of database: %v\n", err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
 		return
@@ -80,6 +81,5 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 	}
 	http.SetCookie(w, cookie)
 	// server.Log = false
-    print("hhhhhhhhhhhhhhhh")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

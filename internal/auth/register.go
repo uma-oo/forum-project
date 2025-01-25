@@ -15,10 +15,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.ExecuteTemplate(w, "error.html", "method not allowed")
+		pages.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	if r.URL.Path != "/create_account" || IsCookieSet(r, "session") {
+	if r.URL.Path != "/api/create_account" || IsCookieSet(r, "session") {
 		w.WriteHeader(http.StatusNotFound)
 		pages.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
@@ -55,11 +55,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(emailExist, userExist)
 	if userExist || emailExist {
 		fmt.Println(emailExist, userExist)
-		fmt.Println("exist")
 		pages.ExecuteTemplate(w, "error.html", "User already exists")
 		return
 	} else {
-		fmt.Println("not exist")
 		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword) VALUES ($1, $2, $3)", User, Email, string(Hach_pass))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
