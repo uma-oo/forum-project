@@ -105,6 +105,7 @@ dialog .close-btn {
 
 .footer {
     grid-area: footer;
+    /* border: solid red ; */
 }
 
 /** -------------------------------------------------------------  */
@@ -116,15 +117,6 @@ dialog .close-btn {
     padding: var(--padding-sm);
     /* background: var(--bg-color-gray);/ */
 
-}
-
-.seperator {
-    border: none;
-    background-color: var(--color-primary);
-    border-radius: 3px;
-    height: 1px;
-    width: 85%;
-    margin: 20px auto;
 }
 
 button {
@@ -180,7 +172,18 @@ aside>nav>a {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 1rem;
+    gap: 2rem;
+}
+
+.header-right > a > button {
+    padding: 8px 32px 8px 16px;
+    border: solid 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px    ;
+    fill: var(--bg-color-gray);
+    background-color: transparent;
+    color: var(--bg-color-gray);
 }
 
 .avatar {
@@ -245,28 +248,32 @@ aside>nav>a {
 }
 
 .aside .filter_container form {
-    border: solid;
+    border: none;
     padding: 1rem;
     display: flex;
+    gap: 5px;
     flex-wrap: wrap;
-
     button {
         padding: 10px;
         margin-top: 1rem;
         width: 100%;
+        font-weight: 800px;
     }
 }
 
 .aside .filter_container form .form-grp {
     width: max-content;
-    border: solid 1px red;
     padding: 2px 10px;
     /* border: solid 1px; */
     margin-bottom: .6rem;
 
     label {
+        width: 100%;
         cursor: pointer;
         transition: all 0.1s ease-in-out;
+    }
+    label:hover {
+        color: var(--color-primary);
     }
 }
 
@@ -295,8 +302,6 @@ aside>nav>a {
 
 /** posts and post cards styling  */
 .post_card {
-    /* border: ; */
-    /* box-shadow: 0 10px 1rem -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px var(--color-dark-navy); */
     margin: auto;
     margin-bottom: 2rem;
     max-width: 800px;
@@ -359,7 +364,6 @@ aside>nav>a {
         text-indent: 20px;
         text-align: justify;
     }
-
     /* padding:5% 10%; */
 }
 
@@ -368,19 +372,79 @@ aside>nav>a {
     margin-top: 2rem;
 }
 
+#comment_form_container {
+    border: none;
+    color: var(--bg-color-gray);
+    background-color: var(--color-dark-navy);
+    height: 200px;
+    max-width: 800px;
+    width: 80%;
+    min-width: 300px;
+    margin-inline:auto;
+    position: fixed;
+    top: calc(100% - 250px);
+    transform: translateX(150px);
+}
+
+#comment_form_container form {
+    height: 100%;
+    padding: 1rem;
+    display: grid;
+    gap: 20px;
+    grid-template-rows: auto max-content;
+}
+
+#comment_form_container .form-grp {
+    display: flex;
+    gap: 15px;
+    flex-direction: column;
+}
+#comment_form_container textarea {
+    resize: none;
+    flex-grow: 1;
+    padding: 1rem;
+    color: var(--bg-color-light-gray);
+    background-color: var(--color-dark-navy);
+}
+
+.form-actions {
+    margin-left: auto;
+}
+
+#comment_form_container .form-actions button {
+    padding: 10px 32px;
+    color: var(--bg-color-gray);
+    border: solid var(--bg-color-gray) 2px ;
+}
+
+#comment_form_container .form-actions button[type="submit"] {
+    background-color: var(--bg-color-gray);
+    color: var(--color-dark-navy);
+}
+
+
 .reactions_container {
     display: flex;
     gap: 25px;
 }
 
+.reaction_container button{
+    /* position: absolute; */
+    /* margin: auto; */
+    background-color: transparent;
+    bottom: 0;
+}
 .reaction_container {
+    /* background-color: var(--color-dark-navy); */
     /* border: solid red; */
     width: max-content;
     position: relative;
     /* border: solid red 1px; */
 }
 
-
+.reaction_icon {
+    fill: var(--bg-color-light-gray);
+}
 
 .reaction_icon:hover {
     fill: var(--color-primary);
@@ -400,20 +464,17 @@ aside>nav>a {
     left: 70%;
 }
 
-
 /** Responsive Design */
 @media (max-width: 576px) {
     body {
         grid-template-areas:
             "header" "sidebar" "main" "footer";
     }
-
     .post_header {
         gap: 0;
         /* border: solid red; */
         flex-direction: column;
     }
-
     .post_header .post_creator_info_container .post_creator_info {
         display: flex;
         flex-direction: column;
