@@ -39,3 +39,4 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	// nwita jdiiida
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+

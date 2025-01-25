@@ -15,6 +15,7 @@ func Auth_Middleware(next http.Handler) http.Handler {
 		// now lets check for authorisation
 
 		cookie, err := r.Cookie("token")
+		fmt.Printf("cookie: %v\n", cookie)
 		if err != nil {
 			fmt.Printf("err: %v\n", err)
 		}
@@ -23,8 +24,4 @@ func Auth_Middleware(next http.Handler) http.Handler {
 		// now call the next hamdel in the chain
 		next.ServeHTTP(w, r)
 	})
-}
-
-func validToken(token string) bool {
-	return token == "boda"
 }
