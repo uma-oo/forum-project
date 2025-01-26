@@ -6,4 +6,3 @@
 2025/01/22 16:25:28 open variables.env: no such file or directory
 2025/01/22 16:26:19 open variables.env: no such file or directory
 2025/01/23 10:46:47 listen tcp :8080: bind: address already in use
-2025/01/26 10:36:54 listen tcp :8080: bind: address already in use

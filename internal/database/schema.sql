@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS  users (
     userName VARCHAR(50) NOT NULL , 
     userEmail VARCHAR(100) NOT NULL ,
     userPassword VARCHAR(255) NOT NULL,
+    token VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
 
