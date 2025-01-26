@@ -16,6 +16,7 @@ import (
 func init() {
 	database.Create_database()
 	handlers.ParseTemplates()
+	// just add a comenter
 }
 
 func main() {
