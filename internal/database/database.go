@@ -87,6 +87,11 @@ func Fetch_Database(r *http.Request) *models.Data {
 
 	// lets check if the user have a token
 
+	if t, err := r.Cookie("token"); err == nil {
+		if t.Value != "" {
+			data.User.IsLoged = true
+		}
+	}
 	// lets extract hus username
 	userName := r.FormValue("userName")
 	Email := r.FormValue("userEmail")
@@ -95,6 +100,8 @@ func Fetch_Database(r *http.Request) *models.Data {
 		Database.QueryRow("SELECT userEmail FROM users WHERE userName = $1 ", userName).Scan(&Email)
 	}
 
+	data.User.UserName = userName
+	data.User.UserEmail = Email
 	// fmt.Println(data.Userr.UserName, data.Userr.UserEmail, data.Userr.IsLoged, " after in data base ")
 
 	for rows.Next() {
