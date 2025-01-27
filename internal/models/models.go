@@ -4,11 +4,11 @@ type User struct {
 	IsLoged   bool
 	UserName  string
 	UserEmail string
-	//Profile   string // about imges we can store them in databse as blob dont wory
+	// Profile   string // about imges we can store them in databse as blob dont wory
 }
 
 type Data struct {
-	//User       User
+	User       User
 	Posts      []Post
 	Categories []Categorie
 }
