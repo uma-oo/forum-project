@@ -24,7 +24,6 @@ func main() {
 	// Get the current working directory
 	logger, err := logger.Create_Logger()
 	if err != nil {
-		fmt.Println("here")
 		log.Fatal(err)
 	}
 	defer logger.Close()
@@ -36,6 +35,7 @@ func main() {
 	http.HandleFunc("/", handlers.Home)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
+	http.HandleFunc("/log_out", auth.LogOut)
 	http.HandleFunc("/create_post", handlers.Create_Post)
 	http.HandleFunc("/static/", handlers.Serve_Static)
 	// handlers that does some checking
