@@ -2,7 +2,6 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -17,11 +16,10 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.
-			All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	if IsCookieSet(r, "token") {
+	if !IsCookieSet(r, "token") {
 		w.WriteHeader(http.StatusNotFound)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
@@ -56,30 +54,29 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Token := uuid.New().String()
-	statement, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
-	if err != nil {
-		fmt.Printf("err in statement of the database: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
-		return
-	}
-	_, err = statement.Exec(Token, username)
-	if err != nil {
-		fmt.Printf("err in the exec of database: %v\n", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
-		return
-	}
-
-	fmt.Println("Token:", Token)
+	// statement, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
+	// if err != nil {
+	// 	fmt.Printf("err in statement of the database: %v\n", err)
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+	// 	return
+	// }
+	// _, err = statement.Exec(Token, username)
+	// if err != nil {
+	// 	fmt.Printf("err in the exec of database: %v\n", err)
+	// 	w.WriteHeader(http.StatusInternalServerError)
+	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+	// 	return
+	// }
 	cookie := &http.Cookie{
 		Name:   "token",
 		Value:  Token,
 		MaxAge: 3600,
+		Path:   "/",
 	}
-
 	http.SetCookie(w, cookie)
-	// lets log the user in
+	r.AddCookie(cookie)
 	log.Println(UserName, "logged in")
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+	return
 }

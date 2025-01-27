@@ -28,7 +28,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userName := r.FormValue("userName")
 	userPassword := r.FormValue("userPassword")
 	Email := r.FormValue("userEmail")
-	token := uuid.New().String()
+	Token := uuid.New().String()
 	// fmt.Println(userName, Email, "register form ")
 	if userName == "" || userPassword == "" || Email == "" {
 		w.WriteHeader(http.StatusBadRequest)
@@ -57,7 +57,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "User already exists")
 		return
 	} else {
-		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword,token) VALUES ($1, $2, $3 , $4 )", userName, Email, string(Hach_pass), token)
+		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword,token) VALUES ($1, $2, $3 , $4 )", userName, Email, string(Hach_pass), Token)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
@@ -68,13 +68,13 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	cookie := &http.Cookie{
 		Name:   "token",
-		Value:  token,
+		Value:  Token,
 		MaxAge: 3600,
+		Path:   "/",
 	}
 
 	http.SetCookie(w, cookie)
 	r.AddCookie(cookie)
-	data := database.Fetch_Database(r)
-	pages.ExecuteTemplate(w, "home2.html", data)
+	http.Redirect(w, r, "/", http.StatusFound)
 	return
 }

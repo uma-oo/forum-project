@@ -32,4 +32,5 @@ func Log_out(w http.ResponseWriter, r *http.Request) {
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "page not fount")
 		return
 	}
+	return
 }
