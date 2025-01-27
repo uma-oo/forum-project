@@ -9,15 +9,8 @@ import (
 	"forum/internal/utils"
 )
 
-type Server struct {
-	Log bool
-}
 type Pages struct {
 	All_Templates *template.Template
-}
-type Form struct {
-	Title  string
-	Button string
 }
 
 var Pagess Pages
@@ -57,7 +50,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	return
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -67,6 +60,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
+	return
 }
 
 func Create_Post(w http.ResponseWriter, r *http.Request) {
@@ -75,8 +69,9 @@ func Create_Post(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", nil)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	data := database.Fetch_Database(r)
+	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
+	return
 }
 
 // this is not a good way to serve static files
