@@ -7,7 +7,7 @@ import (
 	"forum/internal/database"
 )
 
-func Like_Post(w http.ResponseWriter, r *http.Request) {
+func LikePost(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -39,7 +39,7 @@ func Like_Post(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
-func Like_Comment(w http.ResponseWriter, r *http.Request) {
+func LikeComment(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)

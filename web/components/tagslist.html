@@ -1,8 +1,9 @@
 {{define "TagsList"}}
+
 <div class="tags_list txt-light">
-    <div class="tag">video games</div>
-    <div class="tag">coding</div>
-    <div class="tag">music</div>
-    <div class="tag">art</div>
+    {{ range . }}
+    <div class="tag">{{ .CatergoryName }}</div>
+    {{ end }}
+   
 </div>  
 {{end}}

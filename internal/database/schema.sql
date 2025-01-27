@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS posts (
     total_likes INT DEFAULT 0,
     total_dislikes INT DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 /* craete comments table*/
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS comments (
     user_id INT ,
     total_likes INT DEFAULT 0,
     total_dislikes INT DEFAULT 0,
+    TotalComments INT DEFAULT 0,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
     content TEXT NOT NULL ,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE,
@@ -41,3 +43,13 @@ CREATE TABLE IF NOT EXISTS categories (
     post_id INT ,
     FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
 );
+
+INSERT INTO categories (category, post_id) 
+VALUES 
+  ('Technology', 1),
+  ('Science', 2),
+  ('Health', 3),
+  ('Lifestyle', 4),
+  ('Education', 5),
+  ('Gaming', 6),
+  ('Business', 7);

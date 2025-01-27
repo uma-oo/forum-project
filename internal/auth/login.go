@@ -2,6 +2,7 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -47,6 +48,7 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", err)
 		return
+
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(pasword), []byte(Password)); err != nil {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -54,6 +56,22 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Token := uuid.New().String()
+	statement, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
+	if err != nil {
+		fmt.Printf("err in statement of the database: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		return
+	}
+	_, err = statement.Exec(Token, username)
+	if err != nil {
+		fmt.Printf("err in the exec of database: %v\n", err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		return
+	}
+
+	fmt.Println("Token:", Token)
 	cookie := &http.Cookie{
 		Name:   "token",
 		Value:  Token,

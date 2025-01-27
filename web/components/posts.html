@@ -1,14 +1,31 @@
 {{define "PostsContainer"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
-    {{template "PostCard"}}
+{{ range .Posts }}
+<div class="post_card">
+    <div class="post_header">
+        <div class="post_creator_info_container">
+            {{template "avatar" }} 
+            <div class="post_creator_info">
+                <p>.PostCreator</p>
+                <p class="timestamp txt-light txt-sm">.PostCreatedAt</p> 
+            </div>
+        </div>
+        <div class="post_meta_data">
+            <a href="/Posts/{{.PostId}}"><h2>.PostTitle</h2></a>
+            {{template "TagsList" .Categories}} 
+        </div>
+    </div>
+    <div class="post_body">
+        <p>
+          {{ .PostContent }}
+        </p>
+    </div>
+    <div class="post_footer">
+        <div class="reactions_container">
+            {{template "Likes" .TotalLikes }}
+            {{template "Dislikes" .TotalDeslikes }}
+            {{template "Comments" .TotalComments }}
+        </div>
+    </div>
+</div>
+ {{ end }}
 {{end}}

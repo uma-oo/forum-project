@@ -3,9 +3,11 @@
 <aside class="aside">
     <nav class="navigation-container">
         <a href="/"><img src="/static/images/home.svg" alt=""> <span>Home</span></a>
+        {{ if .User.IsLoged }}
         <a href="/my_posts"><img src="/static/images/post.svg" alt=""> <span>My Posts</span></a>
         <a href="/liked_posts"><img src="/static/images/loved.svg" alt=""> <span>Liked Posts</span></a>
+        {{ end }}
     </nav>
-    {{template "Filter"}}
+    {{template "Filter" .Categories }}
 </aside>
 {{end}}

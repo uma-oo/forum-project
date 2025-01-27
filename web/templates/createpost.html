@@ -14,47 +14,29 @@
 
 <body>
     <!-- web/components/header.html -->
-    {{template "Header"}}
-    {{template "Aside"}}
+    {{template "Header" .User }}
+    {{template "Aside" .}}
 
     <main class="create_post_section">
         <h2>Create New Post: </h2>
-        <form method="post" action="/add_new_post">
+        <form method="post" action="/api/create_post">
             <div class="form-grp">
                 <label>Shoose Your Categories: </label>
+                {{ range .Categories }}
                 <div class="category_list">
                     <div>
-                        <label for="video_games1">video games</label>
-                        <input type="checkbox" id="video_games1" name="video_games" value="video_games" hidden>
+                        <label for="{{ .CatergoryName }}"> {{ .CatergoryName }} </label>
+                        <input type="checkbox" id="{{ .CatergoryName }}" name="{{ .CatergoryName }}" value="{{ .CatergoryName }}" hidden>
                     </div>
-                    <div>
-                        <label for="art1">art</label>
-                        <input type="checkbox" id="art1" name="art" value="art" hidden>
-                    </div>
-                    <div>
-                        <label for="coding1">coding</label>
-                        <input type="checkbox" id="coding1" name="coding" value="coding" hidden>
-                    </div>
-                    <div>
-                        <label for="animals1">animals</label>
-                        <input type="checkbox" id="animals1" name="animals" value="animals" hidden>
-                    </div>
-                    <div>
-                        <label for="crypto1">crypto</label>
-                        <input type="checkbox" id="crypto1" name="crypto" value="crypto" hidden>
-                    </div>
-                    <div>
-                        <label for="music1">music</label>
-                        <input type="checkbox" id="music1" name="music" value="music" hidden>
-                    </div>
+                {{ end }}
                 </div>
             </div>
             <div class="form-grp">
-                <label for="postTitle">Post Title</label>
+                <label for="postTitle">Title</label>
                 <input type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
             </div>
             <div class="form-grp">
-                <label for="postTitle">Post Body: </label>
+                <label for="postBody">Content</label>
                 <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
             </div>
             <div class="form_actions">

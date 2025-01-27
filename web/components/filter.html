@@ -2,33 +2,12 @@
 <div class="filter_container">
     <h3>Categories</h3>
     <form action="/filter-by-categories" method="post">
+        {{ range . }}
         <div class="form-grp">
-            <label for="video_games">video games</label>
-            <input type="checkbox" id="video_games" name="video_games" value="video_games" hidden>
+            <label for="filter-{{ .CatergoryName }}">{{ .CatergoryName }}</label>
+            <input type="checkbox" id="filter-{{ .CatergoryName }} " name="{{ .CatergoryName }}" value="{{ .CatergoryName }}" hidden >
         </div>
-        <div class="form-grp">
-            <label for="art">art</label>
-            <input type="checkbox" id="art" name="art" value="art" hidden>
-        </div>
-        <div class="form-grp">
-            <label for="coding">coding</label>
-            <input type="checkbox" id="coding" name="coding" value="coding" hidden>
-        </div>
-        <div class="form-grp">
-            <label for="animals">animals</label>
-            <input type="checkbox" id="animals" name="animals" value="animals" hidden>
-        </div>
-        <div class="form-grp">
-            <label for="crypto">crypto</label>
-            <input type="checkbox" id="crypto" name="crypto" value="crypto" hidden>
-        </div>
-        <div class="form-grp">
-            <label for="music">music</label>
-            <input type="checkbox" id="music" name="music" value="music" hidden>
-        </div>
-        <div class="form_actions">
-            <button type="submit">Filter</button>
-        </div>
+        {{ end }}
     </form>
 </div>
 {{end}}

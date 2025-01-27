@@ -4,20 +4,27 @@
     <div class="logo">Forum</div>
     <div class="header-right">
         <!--todo: show if user not sign in  -->
-        <div class="actions">
-            <a href="/register"><button popovertarget="register-form" class="secondaryBtn">Register</button></a>
-            <a href="/login"><button  popovertarget="login-form" class="primaryBtn">Sign in</button></a>
-        </div>
+
         <!-- ------------------------------ -->
 
         <!--todo : show if user is log in  -->
+        {{ if .IsLoged }}
         <a href="/create_post">
             <button>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                    <path d="M440-440H200v-80h240v-240h80v240h240v80H520v240h-80v-240Z" />
+                </svg>
                 <span>Add New Post</span>
             </button>
         </a>
+
         {{template "AvatarContainer"}}
+        {{ else }}
+        <div class="actions">
+            <a href="/register"><button popovertarget="register-form" class="secondaryBtn">Register</button></a>
+            <a href="/login"><button popovertarget="login-form" class="primaryBtn">Sign in</button></a>
+        </div>
+        {{ end }}
         <!----------------------------------------------------------- -->
     </div>
 </header>

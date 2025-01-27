@@ -12,12 +12,11 @@
 
 <body>
     <!-- web/components/header.html -->
-    {{template "Header"}}
-    {{template "Aside"}}
+    {{template "Header" .User }}
+    {{template "Aside" .}}
     <main class="main">
         <!-- web/components/aside.html -->
-        {{template "PostsContainer"}}
-
+        {{template "PostsContainer" .}}
     </main>
     {{template "Footer"}}
 </body>
