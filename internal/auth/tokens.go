@@ -1,17 +1,18 @@
 package auth
 
 import (
-	"fmt"
 	"net/http"
 )
 
 func IsCookieSet(r *http.Request, cookieName string) bool {
-	_, err := r.Cookie(cookieName)
+	cookie, err := r.Cookie(cookieName)
 	if err != nil {
 		if err == http.ErrNoCookie {
 			return false
 		}
-		fmt.Println("Error retrieving cookie:", err)
+		return false
+	}
+	if cookie.Value == "" {
 		return false
 	}
 	// lets extract the token value from the cookie and compare it with the one we have in databse

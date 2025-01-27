@@ -8,7 +8,7 @@ import (
 	"forum/internal/handlers"
 )
 
-func Log_out(w http.ResponseWriter, r *http.Request) {
+func LogOut(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -27,6 +27,7 @@ func Log_out(w http.ResponseWriter, r *http.Request) {
 		})
 		log.Print("A User logged out")
 		http.Redirect(w, r, "/", http.StatusFound)
+
 	} else {
 		w.WriteHeader(http.StatusNotFound)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "page not fount")
