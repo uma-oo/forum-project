@@ -73,6 +73,10 @@ func Fetch_Database(r *http.Request) *models.Data {
 			users
 		ON 
 			posts.user_id = users.id
+		LEFT JOIN
+			categories
+		ON 
+			posts.id = categories.post_id
 		ORDER BY 
 			posts.created_at DESC
 	`
@@ -112,9 +116,43 @@ func Fetch_Database(r *http.Request) *models.Data {
 		if err != nil {
 			log.Fatalf("Failed to scan row: %v", err)
 		}
+		// Fetch categories for the post
+		query := "SELECT category FROM categories WHERE post_id = ?"
+		rows2, err := Database.Query(query, post.PostId)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer rows2.Close()
+		for rows2.Next() {
+			var category string
+			err := rows2.Scan(&category)
+			if err != nil {
+				log.Fatal(err)
+			}
+			post.Categories = append(post.Categories, models.Categorie{CatergoryName: category})
+		}
 		data.Posts = append(data.Posts, *post)
 	}
 
+	if err := rows.Err(); err != nil {
+		log.Fatal(err)
+	}
+	/// lets fetch cetegories
+	query2 := `SELECT category FROM stoke_categories`
+	rows, err = Database.Query(query2)
+	if err != nil {
+		fmt.Println("Error executing query:", err)
+		log.Fatal("Error executing query:", err)
+	}
+	defer rows.Close()
+	for rows.Next() {
+		category := &models.Categorie{}
+		err := rows.Scan(&category.CatergoryName)
+		if err != nil {
+			log.Fatalf("Failed to scan row: %v", err)
+		}
+		data.Categories = append(data.Categories, *category)
+	}
 	if err := rows.Err(); err != nil {
 		log.Fatal(err)
 	}
