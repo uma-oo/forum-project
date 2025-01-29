@@ -21,12 +21,12 @@
         <h2>Create New Post: </h2>
         <form method="post" action="/api/create_post">
             <div class="form-grp">
-                <label>Shoose Your Categories: </label>
+                <label>Categories: </label>
                 {{ range .Categories }}
                 <div class="category_list">
                     <div>
                         <label for="{{ .CatergoryName }}"> {{ .CatergoryName }} </label>
-                        <input type="checkbox" id="{{ .CatergoryName }}" name="{{ .CatergoryName }}" value="{{ .CatergoryName }}" hidden>
+                        <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie" value="{{ .CatergoryName }}" hidden>
                     </div>
                 {{ end }}
                 </div>
