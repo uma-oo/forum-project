@@ -3,7 +3,6 @@ package auth
 import (
 	"log"
 	"net/http"
-	"time"
 
 	"forum/internal/handlers"
 )
@@ -18,12 +17,12 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 	// lets check in first that is already have a session
 	if IsCookieSet(r, "token") {
 		http.SetCookie(w, &http.Cookie{
-			Name:     "token",         // name of the cookie
-			Value:    "",              // clear the cookie value
-			Expires:  time.Unix(0, 0), // set expiration time to a time in the past
-			Path:     "/",             // scope of the cookie
-			HttpOnly: true,            // prevent JavaScript access
-			Secure:   true,            // ensure cookie is only sent over HTTPS
+			Name:   "token", // name of the cookie
+			Value:  "",      // clear the cookie value
+			MaxAge: -1,      // set expiration time to a time in the past
+			Path:   "/",     // scope of the cookie
+			// HttpOnly: true,            // prevent JavaScript access
+			// Secure:   true,            // ensure cookie is only sent over HTTPS
 		})
 		log.Print("A User logged out")
 		http.Redirect(w, r, "/", http.StatusFound)
