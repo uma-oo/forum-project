@@ -18,24 +18,26 @@
     {{template "Aside" .}}
 
     <main class="create_post_section">
-        <h2>Create New Post: </h2>
+        <h2>Create New Post </h2>
         <form method="post" action="/api/create_post">
-            <div class="form-grp">
-                <label>Categories: </label>
+
+            <label>Categories: </label>
+            <div class="category_list">
                 {{ range .Categories }}
-                <div class="category_list">
-                    <div>
-                        <label for="{{ .CatergoryName }}"> {{ .CatergoryName }} </label>
-                        <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie" value="{{ .CatergoryName }}" hidden>
-                    </div>
-                {{ end }}
+                <div>
+                    <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie" value="{{ .CatergoryName }}"
+                        hidden>
+                    <label for="{{ .CatergoryName }}"> {{ .CatergoryName }} </label>
                 </div>
+                {{ end }}
             </div>
-            <div class="form-grp">
+          
+            </div>
+            <div class="form-grp-title">
                 <label for="postTitle">Title</label>
-                <input type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
+                <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
             </div>
-            <div class="form-grp">
+            <div class="form-grp-body">
                 <label for="postBody">Content</label>
                 <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
             </div>
