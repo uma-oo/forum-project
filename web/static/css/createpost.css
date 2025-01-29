@@ -87,6 +87,13 @@ textarea {
     flex-wrap: wrap;
     gap:10px;
 }
+.title-input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #80808070;
+    border: none;
+}
 
 .category_list > div:has(input:checked) label {
     border-color: var(--color-primary);
