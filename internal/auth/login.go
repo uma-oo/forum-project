@@ -2,9 +2,9 @@ package auth
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
-
 	"forum/internal/database"
 	"forum/internal/handlers"
 
@@ -68,6 +68,13 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
 	// 	return
 	// }
+	_, err = database.Database.Exec("UPDATE users SET token = ? WHERE userName = ?", Token, username)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "internal server error")
+		return
+	}
 	cookie := &http.Cookie{
 		Name:   "token",
 		Value:  Token,
