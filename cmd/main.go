@@ -42,7 +42,7 @@ func main() {
 	http.Handle("/api/create_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.CreateComment)))
 
 	http.HandleFunc("/api/log_in", auth.Log_in)
-	http.HandleFunc("/api/create_post", handlers.CreatePost)
+	http.HandleFunc("/api/create_post", handlers.Submmit_Post)
 	http.HandleFunc("/api/create_account", auth.Register)
 	http.HandleFunc("/api/like_post", handlers.LikePost)
 	http.HandleFunc("/api/like_comment", handlers.LikeComment)
