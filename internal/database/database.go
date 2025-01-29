@@ -65,7 +65,7 @@ func Fetch_Database(r *http.Request) *models.Data {
 	// lets connect to our dtatbase
 	query := `
 		SELECT 
-			posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
+			posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
 			users.userName
 		FROM 
 			posts
@@ -73,10 +73,6 @@ func Fetch_Database(r *http.Request) *models.Data {
 			users
 		ON 
 			posts.user_id = users.id
-		LEFT JOIN
-			categories
-		ON 
-			posts.id = categories.post_id
 		ORDER BY 
 			posts.created_at DESC
 	`
@@ -96,7 +92,7 @@ func Fetch_Database(r *http.Request) *models.Data {
 			data.User.IsLoged = true
 		}
 	}
-	// lets extract hus username
+	// lets extract his username
 	userName := r.FormValue("userName")
 	Email := r.FormValue("userEmail")
 	if Email == "" {
@@ -111,7 +107,7 @@ func Fetch_Database(r *http.Request) *models.Data {
 	for rows.Next() {
 		post := &models.Post{}
 		err := rows.Scan(
-			&post.PostTitle, &post.PostContent, &post.TotalLikes, &post.TotalDeslikes, &post.PostCreatedAt, &post.PostCreator,
+			&post.PostId, &post.PostTitle, &post.PostContent, &post.TotalLikes, &post.TotalDeslikes, &post.PostCreatedAt, &post.PostCreator,
 		)
 		if err != nil {
 			log.Fatalf("Failed to scan row: %v", err)
@@ -124,12 +120,12 @@ func Fetch_Database(r *http.Request) *models.Data {
 		}
 		defer rows2.Close()
 		for rows2.Next() {
-			var category string
-			err := rows2.Scan(&category)
+			categ := &models.Categorie{}
+			err := rows2.Scan(&categ.CatergoryName)
 			if err != nil {
 				log.Fatal(err)
 			}
-			post.Categories = append(post.Categories, models.Categorie{CatergoryName: category})
+			post.Categories = append(post.Categories, *categ)
 		}
 		data.Posts = append(data.Posts, *post)
 	}
