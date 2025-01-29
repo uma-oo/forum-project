@@ -1,13 +1,8 @@
 <!-- web/components/header.html -->
 {{define "Header"}}
 <header class="header">
-    <div class="logo">Forum</div>
+   <h1 class="logo"><a href="/">Forum</a></h1>
     <div class="header-right">
-        <!--todo: show if user not sign in  -->
-
-        <!-- ------------------------------ -->
-        
-        <!--todo : show if user is log in  -->
         {{ if .IsLoged }}
         <a href="/create_post">
             <button>
@@ -17,7 +12,6 @@
                 <span>Add New Post</span>
             </button>
         </a>
-
         {{template "AvatarContainer"}}
         {{ else }}
         <div class="actions">
