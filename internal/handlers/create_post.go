@@ -7,54 +7,66 @@ import (
 	"forum/internal/database"
 )
 
-type Post struct {
-	UserId        int
-	Content       string
-	Title         string
-	TotalLikes    int
-	TotalDislikes int
-}
-
-func CreatePost(w http.ResponseWriter, r *http.Request) {
+func Submmit_Post(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
-	post := NewPost()
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
-	post.Content = r.FormValue("postBody")
-	post.Title = r.FormValue("postTitle")
+	r.ParseForm()
+	categories := r.Form["post-categorie"]
+	postContent := r.FormValue("postBody")
+	postTitle := r.FormValue("postTitle")
 	// lets check for emptyness
-	if post.Content == "" || post.Title == "" {
+	if postContent == "" || postTitle == "" {
 		w.WriteHeader(http.StatusBadRequest)
 		pages.ExecuteTemplate(w, "error.html", "bad request")
 		return
 	}
-	post.UserId = 1
-
-	// lets insert this data to our database
-	_, err := database.Database.Exec("INSERT INTO posts (user_id,title,content,total_likes,total_dislikes) VALUES ( ?,?,?,?,?)", post.UserId, post.Title, post.Content, post.TotalLikes, post.TotalDislikes)
+	// get the user ID from the session
+	cookie, err := r.Cookie("token")
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		pages.ExecuteTemplate(w, "error.html", "unauthorized")
+		return
+	}
+	// get the user ID from the users table
+	var userId int
+	err = database.Database.QueryRow("SELECT id FROM users WHERE token = ?", cookie.Value).Scan(&userId)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error")
 		return
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-}
 
-func NewPost() *Post {
-	return &Post{
-		UserId:        0,
-		Content:       "",
-		Title:         "",
-		TotalLikes:    0,
-		TotalDislikes: 0,
+	// lets insert this data to our database
+	_, err = database.Database.Exec("INSERT INTO posts (user_id,title,content) VALUES ( ?,?,?)", userId, postTitle, postContent)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		return
 	}
-}
-
-
-func AllPosts(){
-	
+	// get the last inserted post id
+	var postId int
+	err = database.Database.QueryRow("SELECT last_insert_rowid()").Scan(&postId)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		return
+	}
+	// insert categories
+	for _, category := range categories {
+		_, err = database.Database.Exec("INSERT INTO categories (category, post_id) VALUES (?, ?)", category, postId)
+		if err != nil {
+			fmt.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			return
+		}
+	}
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
