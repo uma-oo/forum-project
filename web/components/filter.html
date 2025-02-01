@@ -1,13 +1,14 @@
 {{define "Filter"}}
 <div class="filter_container">
     <h3>Categories</h3>
-    <form action="/filter-by-categories" method="post">
+    <form action="/filter_posts" method="post">
         {{ range . }}
         <div class="form-grp">
             <label for="filter-{{ .CatergoryName }}">{{ .CatergoryName }}</label>
-            <input type="checkbox" id="filter-{{ .CatergoryName }} " name="{{ .CatergoryName }}" value="{{ .CatergoryName }}" hidden >
+            <input type="checkbox" id="filter-{{ .CatergoryName }}" name="filter-{{ .CatergoryName }}" value="{{ .CatergoryName }}" hidden >
         </div>
         {{ end }}
+        <button type="submit"> Filter </button>
     </form>
 </div>
 {{end}}

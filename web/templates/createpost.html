@@ -16,11 +16,9 @@
     <!-- web/components/header.html -->
     {{template "Header" .User }}
     {{template "Aside" .}}
-
     <main class="create_post_section">
         <h2>Create New Post </h2>
-        <form method="post" action="/api/create_post">
-
+        <form method="post" action="/api/add_post">
             <label>Categories: </label>
             <div class="category_list">
                 {{ range .Categories }}
@@ -31,7 +29,6 @@
                 </div>
                 {{ end }}
             </div>
-          
             </div>
             <div class="form-grp-title">
                 <label for="postTitle">Title</label>
@@ -49,5 +46,4 @@
     </main>
     {{template "Footer"}}
 </body>
-
 </html>

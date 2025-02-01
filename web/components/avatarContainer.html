@@ -1,9 +1,9 @@
 {{define "AvatarContainer"}}
     <div class="avatar-container">
-        <button id="menu-toggle" class="avatar" popovertarget="user_menu">
+        <button class="avatar" popovertarget="user_menu">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlOLBRK-3wEFFeCojWlHou4nooggl5iI2PJQ&s" alt="user avatar">
         </button>
-        <div class="user_menu" id="user_menu" popover anchor="menu-toggle">
+        <div class="user_menu" id="user_menu" popover>
             <div>
                 <a class="profile_link" href="#">
                     <div class="avatar">
@@ -22,7 +22,7 @@
                 </a>
             </div>
             <div>
-                <a href="/log_out">Log Out</a>
+                <a href="/aut/logout">Log Out</a>
             </div>
         </div> 
     </div>
