@@ -43,6 +43,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
 
+
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -50,7 +51,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
-	return
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -60,22 +60,31 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
-	return
 }
 
-func Create_Post(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
+func CreatePost(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
 	data := database.Fetch_Database(r)
 	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
-	return
 }
 
-// this is not a good way to serve static files
+// todo : complete handeler for single post 
+func Post(w http.ResponseWriter, r *http.Request) {
+}
 
+// todo : complete handeler for created posts 
+func MyPosts(w http.ResponseWriter, r *http.Request) {
+}
+
+// todo : complete handeler for liked posts 
+func LikedPosts(w http.ResponseWriter, r *http.Request) {
+}
+
+// todo : need to prevent folders listing
 func Serve_Static(w http.ResponseWriter, r *http.Request) {
 	path, _ := utils.GetFolderPath("..", "static")
 	fs := http.FileServer(http.Dir(path))

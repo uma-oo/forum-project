@@ -7,7 +7,7 @@ import (
 	"forum/internal/database"
 )
 
-func Submmit_Post(w http.ResponseWriter, r *http.Request) {
+func AddPost(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -69,4 +69,45 @@ func Submmit_Post(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+func LikePost(w http.ResponseWriter, r *http.Request) {
+	pages := Pagess.All_Templates
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		pages.ExecuteTemplate(w, "error.html", "method not allowed")
+		return
+	}
+	// lets extract the post id
+	post_id := r.URL.Query().Get("id")
+
+	result, err := database.Database.Exec("UPDATE posts SET total_likes = total_likes + 1 WHERE id = $1", post_id)
+	if err != nil {
+		fmt.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		return
+	}
+
+	// Check the number of rows affected
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		fmt.Printf("could not retrieve rows affected: %v", err)
+		return
+	}
+
+	if rowsAffected == 0 {
+		fmt.Printf("no post found with id %v", post_id)
+		return
+	}
+	fmt.Printf("Successfully updated total likes for post ID %v\n", post_id)
+	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+// todo : complete Dislike handelers
+func DislikePost(w http.ResponseWriter, r *http.Request) {
+}
+
+// todo : complete the FilterPosts handeler
+func FilterPosts(w http.ResponseWriter, r *http.Request) {
 }

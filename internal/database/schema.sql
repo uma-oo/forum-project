@@ -8,6 +8,8 @@ CREATE TABLE
         token VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+-- table of session ??
+
 
 /* create posts table*/
 CREATE TABLE

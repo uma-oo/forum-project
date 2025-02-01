@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func Log_in(w http.ResponseWriter, r *http.Request) {
+func LogIn(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -85,5 +85,4 @@ func Log_in(w http.ResponseWriter, r *http.Request) {
 	r.AddCookie(cookie)
 	log.Println(UserName, "logged in")
 	http.Redirect(w, r, "/", http.StatusSeeOther)
-	return
 }
