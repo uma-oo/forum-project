@@ -62,7 +62,8 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
+	
+	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
