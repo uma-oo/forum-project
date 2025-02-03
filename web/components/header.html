@@ -1,7 +1,12 @@
 <!-- web/components/header.html -->
 {{define "Header"}}
 <header class="header">
-   <h1 class="logo"><a href="/">Forum</a></h1>
+    <div class="header-left flex">
+        <label for="menu-toggle">
+            <img src="/web/static/images/closeIcon.svg" alt="X">
+        </label>
+        <h1 class="logo"><a href="/">Forum</a></h1>
+    </div>
     <div class="header-right">
         {{ if .IsLoged }}
         <a href="/create_post">
