@@ -20,7 +20,7 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 
 	user_id := 1
 	post_id := 1
-	comment := "hi there this is someone else"
+	comment := r.FormValue("comment")
 
 	if comment == "" {
 		w.WriteHeader(http.StatusBadRequest)
