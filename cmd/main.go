@@ -31,14 +31,14 @@ func main() {
 	configuration := config.LoadConfig()
 
 	// server static files
-	http.HandleFunc("/static/", handlers.Serve_Static)
+	http.HandleFunc("/web/", handlers.Serve_Files)
 
 	// routes for pages handling and rendering
 	http.HandleFunc("/", handlers.Home)
-	http.HandleFunc("/{post_id}", handlers.Post)
+	//http.HandleFunc("/{post_id}", handlers.Post)
 	http.HandleFunc("/create_post", handlers.CreatePost)
-	http.HandleFunc("/my_posts", handlers.MyPosts)
-	http.HandleFunc("/liked_posts", handlers.LikedPosts)
+	// http.HandleFunc("/my_posts", handlers.MyPosts)
+	// http.HandleFunc("/liked_posts", handlers.LikedPosts)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
 
@@ -48,15 +48,14 @@ func main() {
 	http.HandleFunc("/auth/logout", auth.LogOut)
 
 	// routes for forms actions
-	http.HandleFunc("/filter_posts", handlers.FilterPosts)
+	//http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.HandleFunc("/api/add_post", handlers.AddPost)
 	http.HandleFunc("/api/like_post", handlers.LikePost)
-	http.HandleFunc("/api/dislike_post", handlers.DislikePost)
+	//http.HandleFunc("/api/dislike_post", handlers.DislikePost)
 	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPostComment)))
 	http.HandleFunc("/api/like_comment", handlers.LikeComment)
 	http.HandleFunc("/api/dislike_comment", handlers.DislikeComment)
-	 //fmt.Println("server is running on port 8080 ... http://localhost:8080")
-	 fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
+	// fmt.Println("server is running on port 8080 ... http://localhost:8080")
+	fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil))
-	
 }

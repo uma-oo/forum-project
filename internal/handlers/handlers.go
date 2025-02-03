@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 
 	"forum/internal/database"
-	"forum/internal/utils"
 )
 
 type Pages struct {
@@ -62,7 +63,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-	
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
@@ -72,8 +72,9 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
 }
 
-// todo : complete handeler for single post
+// // todo : complete handeler for single post
 func Post(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("inside single post")
 }
 
 // todo : complete handeler for created posts
@@ -84,35 +85,19 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 func LikedPosts(w http.ResponseWriter, r *http.Request) {
 }
 
-// todo : need to prevent folders listing
-func Serve_Static(w http.ResponseWriter, r *http.Request) {
-	path, _ := utils.GetFolderPath("..", "static")
-	fs := http.FileServer(http.Dir(path))
-	http.StripPrefix("/static/", fs).ServeHTTP(w, r)
+func Serve_Files(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+
+	path := r.URL.Path[1:]
+	fileinfo, err := os.Stat(path)
+	if err != nil || fileinfo.IsDir() {
+		w.WriteHeader(http.StatusNotFound)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "File Not Found")
+		return
+	}
+	http.ServeFile(w, r, path)
 }
-
-// MODIFY this one after finishing the task
-
-// func StaticHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet {
-// 		w.WriteHeader(http.StatusMethodNotAllowed)
-// 		return
-// 	}
-
-// 	if !strings.HasPrefix(r.URL.Path, "/static") {
-// 		w.WriteHeader(http.StatusNotFound)
-// 		return
-// 	} else {
-// 		file_info, err := os.Stat(r.URL.Path[1:])
-// 		fmt.Println(file_info.Name())
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusNotFound)
-// 			return
-// 		} else if file_info.IsDir() {
-// 			w.WriteHeader(http.StatusForbidden)
-// 			return
-// 		} else {
-// 			http.ServeFile(w, r, r.URL.Path[1:])
-// 		}
-// 	}
-// }
