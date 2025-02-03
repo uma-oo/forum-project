@@ -55,7 +55,8 @@ func main() {
 	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPostComment)))
 	http.HandleFunc("/api/like_comment", handlers.LikeComment)
 	http.HandleFunc("/api/dislike_comment", handlers.DislikeComment)
-	// fmt.Println("server is running on port 8080 ... http://localhost:8080")
+	 //fmt.Println("server is running on port 8080 ... http://localhost:8080")
+	 fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil))
-	fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
+	
 }
