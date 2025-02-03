@@ -43,7 +43,6 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
 
-
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -72,15 +71,15 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
 }
 
-// todo : complete handeler for single post 
+// todo : complete handeler for single post
 func Post(w http.ResponseWriter, r *http.Request) {
 }
 
-// todo : complete handeler for created posts 
+// todo : complete handeler for created posts
 func MyPosts(w http.ResponseWriter, r *http.Request) {
 }
 
-// todo : complete handeler for liked posts 
+// todo : complete handeler for liked posts
 func LikedPosts(w http.ResponseWriter, r *http.Request) {
 }
 
