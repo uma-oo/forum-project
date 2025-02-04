@@ -50,8 +50,7 @@ func main() {
 	// routes for forms actions
 	// http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.HandleFunc("/api/add_post", handlers.AddPost)
-	http.HandleFunc("/api/like_post", handlers.LikePost)
-	// http.HandleFunc("/api/dislike_post", handlers.DislikePost)
+	http.HandleFunc("/api/react_to_post", handlers.PostReactions)
 	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPostComment)))
 	http.HandleFunc("/api/like_comment", handlers.LikeComment)
 	http.HandleFunc("/api/dislike_comment", handlers.DislikeComment)
