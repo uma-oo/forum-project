@@ -2,12 +2,13 @@
 {{define "Aside"}}
 <aside class="aside">
     <nav class="navigation-container">
-        <a href="/"><img src="/static/images/home.svg" alt=""> <span>Home</span></a>
+        <a href="/"><img src="/web/static/images/home.svg" alt=""> <span>Home</span></a>
         {{ if .User.IsLoged }}
-        <a href="/my_posts"><img src="/static/images/post.svg" alt=""> <span>My Posts</span></a>
-        <a href="/liked_posts"><img src="/static/images/loved.svg" alt=""> <span>Liked Posts</span></a>
+        <a href="/my_posts"><img src="/web/static/images/post.svg" alt=""> <span>My Posts</span></a>
+        <a href="/liked_posts"><img src="/web/static/images/loved.svg" alt=""> <span>Liked Posts</span></a>
         {{ end }}
     </nav>
     {{template "Filter" .Categories }}
+    <input type="checkbox" id="menu-toggle" hidden>
 </aside>
 {{end}}

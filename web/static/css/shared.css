@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
-
+@import url("header.css");
+@import url("aside.css");
 :root {
     /** font variables */
     --global-font-family: Verdana, sans-serif;
@@ -29,16 +30,6 @@
     --border-radius-round: 50%;
 }
 
-.sr-only:not(:focus):not(:active) {
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    height: 1px;
-    overflow: hidden;
-    position: absolute;
-    white-space: nowrap;
-    width: 1px;
-}
-
 * {
     padding: 0;
     margin: 0;
@@ -60,6 +51,30 @@ a {
     font-size: 12px;
 }
 
+.flex {
+    display: flex;
+}
+
+.flex-left {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.flex-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
 
 body {
     min-height: 100vh;
@@ -73,19 +88,6 @@ body {
         "header header"
         "aside main"
         "footer footer";
-}
-
-dialog {
-    width: 100vw;
-    height: 100vh;
-    place-content: center;
-    background-color: transparent;
-    backdrop-filter: blur(10px);
-    border: none;
-}
-
-dialog .close-btn {
-    border: solid;
 }
 
 /** set up the grid areas ----------------------------------------- */
@@ -120,7 +122,6 @@ dialog .close-btn {
 }
 
 button {
-    border: solid var(--color-primary) 2px;
     border: none;
     background-color: none;
     font-size: 14px;
@@ -142,49 +143,6 @@ button {
     border-radius: var(--border-radius-sm);
 }
 
-
-
-
-.aside {
-    padding: 0;
-    border-right: solid 1px var(--color-dark-navy);
-}
-
-aside>nav>a {
-    padding: 20px 60px 20px 1rem;
-    /* border: solid red; */
-    border-bottom: solid 2px var(--color-dark-navy);
-    display: flex;
-    gap: 14px;
-    align-items: center;
-}
-
-.header {
-    /* border: solid red; */
-    padding-inline: 5%;
-    border-bottom: solid 1px var(--color-dark-navy);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header-right {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-}
-
-.header-right > a > button {
-    padding: 8px 32px 8px 16px;
-    border: solid 2px;
-    display: flex;
-    align-items: center;
-    gap: 8px    ;
-    fill: var(--bg-color-gray);
-    background-color: transparent;
-    color: var(--bg-color-gray);
-}
 
 .avatar {
     border: solid 1px var(--color-primary);
@@ -242,48 +200,7 @@ aside>nav>a {
     flex-direction: column;
 }
 
-.aside .filter_container {
-    padding: 1rem;
-    margin-top: 2rem;
-}
 
-.aside .filter_container form {
-    border: none;
-    padding: 1rem;
-    display: flex;
-    gap: 5px;
-    flex-wrap: wrap;
-    button {
-        padding: 10px;
-        margin-top: 1rem;
-        width: 100%;
-        font-weight: 800px;
-    }
-}
-
-.aside .filter_container form .form-grp {
-    width: max-content;
-    padding: 2px 10px;
-    /* border: solid 1px; */
-    margin-bottom: .6rem;
-
-    label {
-        width: 100%;
-        cursor: pointer;
-        transition: all 0.1s ease-in-out;
-    }
-    label:hover {
-        color: var(--color-primary);
-    }
-}
-
-.aside .filter_container form .form_actions {
-    width: 100%;
-}
-
-.aside .filter_container form .form-grp:has(input:checked) {
-    border: solid 1px;
-}
 
 .bg-Primary {
     background-color: var(--color-primary);
@@ -291,11 +208,7 @@ aside>nav>a {
     border: solid var(--color-dark-navy);
 }
 
-.logo {
-    color: var(--color-primary);
-    font-weight: 600;
-    font-size: 26px;
-}
+
 
 /** Forms styling  */
 
@@ -495,26 +408,6 @@ aside>nav>a {
         position: sticky;
     }
 
-    .aside {
-        border: none;
-        backdrop-filter: blur(8px);
-        top: 80px;
-        position: sticky;
-        padding-bottom: 1rem;
-    }
-
-    .aside nav {
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        flex-direction: row;
-    }
-
-    .aside nav a {
-        padding: unset;
-        padding: 10px 30px;
-        width: max-content;
-    }
 }
 
 
