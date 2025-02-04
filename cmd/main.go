@@ -32,7 +32,6 @@ func main() {
 
 	// server static files
 	http.HandleFunc("/web/", handlers.Serve_Files)
-
 	// routes for pages handling and rendering
 	http.HandleFunc("/", handlers.Home)
 	// http.HandleFunc("/{post_id}", handlers.Post)
@@ -41,12 +40,10 @@ func main() {
 	// http.HandleFunc("/liked_posts", handlers.LikedPosts)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
-
 	// routes for auth handlers
 	http.HandleFunc("/auth/register", auth.Register)
 	http.HandleFunc("/auth/log_in", auth.LogIn)
 	http.HandleFunc("/auth/logout", auth.LogOut)
-
 	// routes for forms actions
 	// http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.HandleFunc("/api/add_post", handlers.AddPost)

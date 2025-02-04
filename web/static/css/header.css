@@ -4,6 +4,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    /* border: solid red ; */
 }
 
 .header-left {
@@ -41,6 +42,15 @@
     body {
         display: block;
     }
+
+    header {
+        .header-right {
+            button{
+
+            }
+        }
+    }
+
     .post_header {
         gap: 0;
         /* border: solid red; */
@@ -56,6 +66,22 @@
     body {
         display: block;
     }
+    /* border: solid red; */
+
+    .header {
+        backdrop-filter: blur(8px);
+        top: 0;
+        position: sticky;
+    }
+
+}
+
+@media only screen and (max-width: 1200px) {
+    body {
+        display: block;
+        background-color: black !important;
+    }
+    /* border: solid red; */
 
     .header {
         backdrop-filter: blur(8px);
@@ -63,3 +89,4 @@
         position: sticky;
     }
 }
+

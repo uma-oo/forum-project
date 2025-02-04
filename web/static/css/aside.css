@@ -1,8 +1,17 @@
 .aside {
     padding: 0;
     border-right: solid 1px var(--color-dark-navy);
+    border:solid green ;
+    display: flex;
+    flex-direction: column;
 }
 
+.aside .filter_container {
+    flex-grow: 1 !important;
+}
+.aside nav {
+
+}
 .aside>nav>a {
     padding: 20px 60px 20px 1rem;
     border-bottom: solid 2px var(--color-dark-navy);
@@ -13,7 +22,6 @@
 
 .aside .filter_container {
     padding: 1rem;
-    margin-top: 2rem;
 }
 
 .aside .filter_container form {
@@ -35,7 +43,6 @@
     padding: 2px 10px;
     /* border: solid 1px; */
     margin-bottom: .6rem;
-
     label {
         width: 100%;
         cursor: pointer;
@@ -55,20 +62,19 @@
 }
 
 @media only screen and (max-width: 980px) {
-    .aside {
-        display: none;
-    }
-
+  
     .aside:has(#menu-toggle:checked) {
-        display: block;
+        height: max-content;
+        display: flex;
         position: fixed;
+        visibility: visible;
         top: 80px;
         left: 0;
         z-index: 1;
         max-width: 300px;
         width: 100%;
-        min-height: 100%;
         transition: all 0.3s ease-in-out;
-        background-color: var(--border-color);
+        background-color: var(--dark-color);
+        overflow: scroll;
     }
 }
