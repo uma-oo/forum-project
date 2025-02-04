@@ -8,19 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/shared.css">
-    <link rel="stylesheet" href="/static/css/createpost.css">
+    <link rel="stylesheet" href="web/static/css/shared.css">
+    <link rel="stylesheet" href="web/static/css/createpost.css">
 </head>
 
 <body>
     <!-- web/components/header.html -->
     {{template "Header" .User }}
     {{template "Aside" .}}
-
     <main class="create_post_section">
         <h2>Create New Post </h2>
-        <form method="post" action="/api/create_post">
-
+        <form method="post" action="/api/add_post">
             <label>Categories: </label>
             <div class="category_list">
                 {{ range .Categories }}
@@ -31,7 +29,6 @@
                 </div>
                 {{ end }}
             </div>
-          
             </div>
             <div class="form-grp-title">
                 <label for="postTitle">Title</label>
@@ -49,5 +46,4 @@
     </main>
     {{template "Footer"}}
 </body>
-
 </html>

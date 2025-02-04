@@ -18,7 +18,7 @@ type Post struct { /// after use your own envpreption
 	PostCreatedAt                                    string
 	PostTitle                                        string
 	PostContent                                      string
-	TotalLikes, TotalDeslikes, TotalComments, PostId int
+	TotalLikes, TotalDeslikes, TotalComments, PostId,UserID int
 	Categories                                       []Categorie
 }
 type Categorie struct {

@@ -1,12 +1,13 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"text/template"
 
 	"forum/internal/database"
-	"forum/internal/utils"
 )
 
 type Pages struct {
@@ -50,7 +51,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
-	return
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -60,10 +60,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
-	return
 }
 
-func Create_Post(w http.ResponseWriter, r *http.Request) {
+func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
@@ -71,39 +70,34 @@ func Create_Post(w http.ResponseWriter, r *http.Request) {
 	}
 	data := database.Fetch_Database(r)
 	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
-	return
 }
 
-// this is not a good way to serve static files
-
-func Serve_Static(w http.ResponseWriter, r *http.Request) {
-	path, _ := utils.GetFolderPath("..", "static")
-	fs := http.FileServer(http.Dir(path))
-	http.StripPrefix("/static/", fs).ServeHTTP(w, r)
+// // todo : complete handeler for single post
+func Post(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("inside single post")
 }
 
-// MODIFY this one after finishing the task
+// todo : complete handeler for created posts
+func MyPosts(w http.ResponseWriter, r *http.Request) {
+}
 
-// func StaticHandler(w http.ResponseWriter, r *http.Request) {
-// 	if r.Method != http.MethodGet {
-// 		w.WriteHeader(http.StatusMethodNotAllowed)
-// 		return
-// 	}
+// todo : complete handeler for liked posts
+func LikedPosts(w http.ResponseWriter, r *http.Request) {
+}
 
-// 	if !strings.HasPrefix(r.URL.Path, "/static") {
-// 		w.WriteHeader(http.StatusNotFound)
-// 		return
-// 	} else {
-// 		file_info, err := os.Stat(r.URL.Path[1:])
-// 		fmt.Println(file_info.Name())
-// 		if err != nil {
-// 			w.WriteHeader(http.StatusNotFound)
-// 			return
-// 		} else if file_info.IsDir() {
-// 			w.WriteHeader(http.StatusForbidden)
-// 			return
-// 		} else {
-// 			http.ServeFile(w, r, r.URL.Path[1:])
-// 		}
-// 	}
-// }
+func Serve_Files(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+
+	path := r.URL.Path[1:]
+	fileinfo, err := os.Stat(path)
+	if err != nil || fileinfo.IsDir() {
+		w.WriteHeader(http.StatusNotFound)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "File Not Found")
+		return
+	}
+	http.ServeFile(w, r, path)
+}

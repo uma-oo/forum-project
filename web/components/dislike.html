@@ -1,7 +1,9 @@
 {{define "Dislikes"}}
 <div class="reaction_container">
-    <form action="/dislike_post" method="post">
-        <input type="text" id="post_id" name="post_id" value="" hidden>
+    <form action="/api/react_to_post" method="post">
+        <input type="hidden" name="post_id" value="{{ .PostId }}">
+        <input type="hidden" name="user_id" value="{{ .UserID }}">
+        <input type="hidden" name="reaction" value="-1">
         <button type="submit">
             <svg class="reaction_icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                 width="24px">
@@ -9,7 +11,7 @@
                     d="M240-840h440v520L400-40l-50-50q-7-7-11.5-19t-4.5-23v-14l44-174H120q-32 0-56-24t-24-56v-80q0-7 2-15t4-15l120-282q9-20 30-34t44-14Zm360 80H240L120-480v80h360l-54 220 174-174v-406Zm0 406v-406 406Zm80 34v-80h120v-360H680v-80h200v520H680Z" />
             </svg>
             <p>
-                <span class="txt-light">{{ . }}</span>
+                <span class="txt-light">{{ .TotalDeslikes }}</span>
             </p>
         </button>
     </form>
