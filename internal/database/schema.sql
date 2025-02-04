@@ -8,9 +8,8 @@ CREATE TABLE
         token VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+
 -- table of session ??
-
-
 /* create posts table*/
 CREATE TABLE
     IF NOT EXISTS posts (
@@ -54,10 +53,9 @@ DROP TABLE IF EXISTS stoke_categories;
 CREATE TABLE
     IF NOT EXISTS stoke_categories (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        category TEXT ,
+        category TEXT,
         category_id INT
     );
-
 
 INSERT INTO
     stoke_categories (category, category_id)
@@ -69,3 +67,25 @@ VALUES
     ('Education', 5),
     ('Gaming', 6),
     ('Business', 7);
+
+CREATE TABLE
+    IF NOT EXISTS likes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        post_id INTEGER NOT NULL,
+        reaction INTEGER NOT NULL CHECK (reaction IN (-1, 1)) DEFAULT -1,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (post_id) REFERENCES posts (id)
+    );
+
+CREATE TABLE
+    IF NOT EXISTS dislikes (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        post_id INTEGER NOT NULL,
+        reaction INTEGER NOT NULL CHECK (reaction IN (-1, 1)),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users (id),
+        FOREIGN KEY (post_id) REFERENCES posts (id)
+    );

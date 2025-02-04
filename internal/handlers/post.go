@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"forum/internal/database"
 )
@@ -14,7 +15,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
-	r.ParseForm()
+	r.ParseForm() ///////////////////////////
 	categories := r.Form["post-categorie"]
 	postContent := r.FormValue("postBody")
 	postTitle := r.FormValue("postTitle")
@@ -71,6 +72,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
+
 func LikePost(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
@@ -78,36 +80,55 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")
 		return
 	}
-	// lets extract the post id
-	post_id := r.URL.Query().Get("id")
-
-	result, err := database.Database.Exec("UPDATE posts SET total_likes = total_likes + 1 WHERE id = $1", post_id)
+	err := r.ParseForm()
 	if err != nil {
-		fmt.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+		pages.ExecuteTemplate(w, "error.html", "invalid request")
+		return
+	}
+	userid, erruser := strconv.Atoi(r.FormValue("user_id"))
+	postid, errpost := strconv.Atoi(r.FormValue("post_id"))
+	reaction, errreaction := strconv.Atoi(r.FormValue("reaction"))
+	if erruser != nil || errpost != nil || errreaction != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		pages.ExecuteTemplate(w, "error.html", "bad request")
+		return
+	}
+	// check if user has already reacted
+	var reactionExist int
+	err = database.Database.QueryRow("SELECT reaction FROM likes WHERE user_id = ? AND post_id = ?", userid, postid).Scan(&reactionExist)
+	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error")
 		return
 	}
 
-	// Check the number of rows affected
-	rowsAffected, err := result.RowsAffected()
-	if err != nil {
-		fmt.Printf("could not retrieve rows affected: %v", err)
-		return
+	if reactionExist == 1 {
+		// update reaction instead of inserting a new one
+		_, err = database.Database.Exec("UPDATE likes SET reaction = ? WHERE user_id = ? AND post_id = ?", -1, userid, postid)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			return
+		}
+		if _,err = database.Database.Exec("UPDATE posts SET  total_likes =  total_likes - 1 WHERE id = ?", postid);err != nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate( w, "error.html", "internal server error")
+			return
+		}
+	} else {
+		// insert reaction
+		_, err = database.Database.Exec("UPDATE   likes SET (user_id, post_id, reaction) VALUES (?, ?, ?)", userid, postid, reaction)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			return
+		}
+		if _,err = database.Database.Exec("UPDATE posts SET  total_likes =  total_likes + 1 WHERE id = ?", postid);err != nil{
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate( w, "error.html", "internal server error")
+			return
+		}
 	}
-
-	if rowsAffected == 0 {
-		fmt.Printf("no post found with id %v", post_id)
-		return
-	}
-	fmt.Printf("Successfully updated total likes for post ID %v\n", post_id)
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w , r, "/", http.StatusFound)
 }
-
-// // todo : complete Dislike handelers
-// func DislikePost(w http.ResponseWriter, r *http.Request) {
-// }
-
-// // todo : complete the FilterPosts handeler
-// func FilterPosts(w http.ResponseWriter, r *http.Request) {
-// }
