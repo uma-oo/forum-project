@@ -86,47 +86,61 @@ func LikePost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "invalid request")
 		return
 	}
-	userid, erruser := strconv.Atoi(r.FormValue("user_id"))
+	
 	postid, errpost := strconv.Atoi(r.FormValue("post_id"))
 	reaction, errreaction := strconv.Atoi(r.FormValue("reaction"))
-	if erruser != nil || errpost != nil || errreaction != nil {
+	Token, terr := r.Cookie("token")
+	fmt.Println(Token.Value)
+	if terr != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		pages.ExecuteTemplate(w, "error.html", "bad request")
+		return
+	}
+	if  errpost != nil || errreaction != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		pages.ExecuteTemplate(w, "error.html", "bad request")
 		return
 	}
 	// check if user has already reacted
 	var reactionExist int
+	var userid int
+	err = database.Database.QueryRow("SELECT id FROM users WHERE token = ?", Token.Value).Scan(&userid)
+
+	_,err = database.Database.Exec("INSERT INTO likes (user_id,post_id ) VALUES (?,?)",userid,postid)
 	err = database.Database.QueryRow("SELECT reaction FROM likes WHERE user_id = ? AND post_id = ?", userid, postid).Scan(&reactionExist)
 	if err != nil {
+		
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		pages.ExecuteTemplate(w, "error.html", "internal server error5 ")
 		return
 	}
+	
 
 	if reactionExist == 1 {
 		// update reaction instead of inserting a new one
 		_, err = database.Database.Exec("UPDATE likes SET reaction = ? WHERE user_id = ? AND post_id = ?", -1, userid, postid)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			pages.ExecuteTemplate(w, "error.html", "internal server error4")
 			return
 		}
 		if _,err = database.Database.Exec("UPDATE posts SET  total_likes =  total_likes - 1 WHERE id = ?", postid);err != nil{
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate( w, "error.html", "internal server error")
+			pages.ExecuteTemplate( w, "error.html", "internal server error3")
 			return
 		}
 	} else {
 		// insert reaction
-		_, err = database.Database.Exec("UPDATE   likes SET (user_id, post_id, reaction) VALUES (?, ?, ?)", userid, postid, reaction)
+		_, err = database.Database.Exec("UPDATE   likes SET  reaction = ? ", reaction)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			pages.ExecuteTemplate(w, "error.html", "internal server error2")
 			return
 		}
+		fmt.Println(userid)
 		if _,err = database.Database.Exec("UPDATE posts SET  total_likes =  total_likes + 1 WHERE id = ?", postid);err != nil{
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate( w, "error.html", "internal server error")
+			pages.ExecuteTemplate( w, "error.html", "internal server error1")
 			return
 		}
 	}

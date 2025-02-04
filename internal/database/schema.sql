@@ -76,7 +76,9 @@ CREATE TABLE
         reaction INTEGER NOT NULL CHECK (reaction IN (-1, 1)) DEFAULT -1,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (user_id) REFERENCES users (id),
-        FOREIGN KEY (post_id) REFERENCES posts (id)
+        FOREIGN KEY (post_id) REFERENCES posts (id),
+        CONSTRAINT unique_columns UNIQUE (user_id,post_id )
+
     );
 
 CREATE TABLE
