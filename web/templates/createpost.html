@@ -14,9 +14,8 @@
 
 <body>
     {{template "Header" .User }}
-    <main class="create_post_section">
-        {{template "Aside" .}}
-        <section>
+    {{template "Aside" .}}
+    <main  class="main create_post_section">
             <h2>Create New Post </h2>
             <form method="post" action="/api/add_post">
                 <label>Categories: </label>
@@ -43,9 +42,7 @@
                     <button type="submit">Create Post</button>
                 </div>
             </form>
-        </section>
     </main>
-    {{template "Footer"}}
 </body>
 
 </html>

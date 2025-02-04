@@ -12,11 +12,9 @@
 
 <body>
     {{template "Header" .User }}
+    {{template "Aside" .}}
     <main class="main">
-        {{template "Aside" .}}
-        <section>
-            {{template "PostsContainer" .}}
-        </section>
+        {{template "PostsContainer" .}}
     </main>
 </body>
 

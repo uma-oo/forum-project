@@ -2,6 +2,7 @@
 @import url("header.css");
 @import url("aside.css");
 @import url("login.css");
+
 :root {
     /** font variables */
     --global-font-family: Verdana, sans-serif;
@@ -15,13 +16,12 @@
     --padding-lg: 50px;
 
     /** color variables */
-    --bg-color-gray: #F2F2F2;
-    --bg-color-light-gray: #ccc;
+    --color-light: #F2F2F2;
+    --color-dark: #17202A;
     --color-primary: #C56D48;
     --color-dark-navy: #394349;
     --main-text-color: var(--color-dark-navy);
     --light-text-color: #8A98A4;
-    --dark-color: #17202A;
     /* --color-secondary: #779fa1;
     --color-warning: #e28413;
     --color-danger: #ff6542; */
@@ -80,52 +80,39 @@ a {
 
 body {
     /* border: solid red; */
-    background: var(--dark-color);
-    color: var(--bg-color-light-gray);
+    background: var(--color-dark) !important;
+    color: var(--color-light) !important;
     height: 100vh;
-    border: solid red ;
+    border: solid red;
+    grid-template-columns: 300px auto;
+    grid-template-rows: 80px auto;
+    display: grid;
 }
-
-
 
 
 .header,
 .aside,
 .footer {
-    padding: var(--padding-sm);
-    background: var(--dark-color);
+    background: var(--color-dark);
     color: var(--bg-color-light-gray);
 }
 
 .header {
+    grid-column: 1/3;
+    padding: 1rem;
     position: sticky;
     top: 0px;
     left: 0;
 }
 
-.main {
-    background: var(--dark-color);
-    height: calc(100% - 80px - var(--padding-sm) * 2) ;
-}
-
 .aside {
-    position: fixed;
-    top: calc(80px + var(--padding-sm) * 2) ;
-    width: 300px;
-    height: 100%;
-    margin: left;
-}
-
-section {
-    width:calc( 100% - 300px);
-    position: absolute;
-    top: calc(80px + var(--padding-sm) * 2) ;
-    right:0;
-    border: solid yellow;
+    grid-row: 2/3;
     overflow: auto;
 }
 
-
+.main {
+    overflow: auto;
+}
 
 button {
     border: none;
@@ -138,8 +125,9 @@ button {
 .primaryBtn {
     padding: 10px 36px;
     background-color: var(--color-primary);
-    color: var(--bg-color-gray);
+    color: var(--color-light);
     border-radius: var(--border-radius-sm);
+    border: solid red;
 }
 
 .secondaryBtn {
@@ -247,6 +235,7 @@ button {
 .post_meta_data {
     text-align: center;
     flex-grow: 1;
+
     h2 {
         margin-bottom: 10px;
     }
@@ -280,6 +269,7 @@ button {
         text-indent: 20px;
         text-align: justify;
     }
+
     /* padding:5% 10%; */
 }
 
@@ -290,13 +280,13 @@ button {
 
 #comment_form_container {
     border: none;
-    color: var(--bg-color-gray);
+    color: var(--color-light);
     background-color: var(--color-dark-navy);
     height: 200px;
     max-width: 800px;
     width: 80%;
     min-width: 300px;
-    margin-inline:auto;
+    margin-inline: auto;
     position: fixed;
     top: calc(100% - 250px);
     transform: translateX(150px);
@@ -315,6 +305,7 @@ button {
     gap: 15px;
     flex-direction: column;
 }
+
 #comment_form_container textarea {
     resize: none;
     flex-grow: 1;
@@ -329,12 +320,12 @@ button {
 
 #comment_form_container .form-actions button {
     padding: 10px 32px;
-    color: var(--bg-color-gray);
-    border: solid var(--bg-color-gray) 2px ;
+    color: var(--color-light);
+    border: solid var(--color-light) 2px;
 }
 
 #comment_form_container .form-actions button[type="submit"] {
-    background-color: var(--bg-color-gray);
+    background-color: var(--color-light);
     color: var(--color-dark-navy);
 }
 
@@ -343,7 +334,7 @@ button {
     gap: 25px;
 }
 
-.reaction_container button{
+.reaction_container button {
     /* position: absolute; */
     /* margin: auto; */
     background-color: transparent;
@@ -387,6 +378,7 @@ button {
         /* border: solid red; */
         flex-direction: column;
     }
+
     .post_header .post_creator_info_container .post_creator_info {
         display: flex;
         flex-direction: column;
@@ -394,7 +386,9 @@ button {
 }
 
 @media only screen and (max-width: 980px) {
-
+    .main {
+        grid-column: 1/3;
+    }
 }
 
 
