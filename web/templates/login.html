@@ -6,27 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
     <link rel="stylesheet" href="web/static/css/styles.css">
-
 </head>
 
 <body>
-    <main>
+    {{template "Header" . }}
+    <main class=" flex main register-login-section">
+        <h2>Log In :</h2>
         <form class="login-form-container" method="post" action="/auth/log_in">
             <div class="form-grp">
-                <label for="userName"><img src="/web/static/images/person.svg" alt=""><span>User Name:</span></label>
+                <label for="userName"><img src="/web/static/images/person.svg" alt=""><span class="txt-light">User Name.</span></label>
                 <input type="text" id="userName" name="userName" placeholder="Enter your user name...">
             </div>
             <div class="form-grp">
-                <label for="userPassword"><img src="/web/static/images/lock.svg" alt=""><span>Password:</span></label>
+                <label for="userPassword"><img src="/web/static/images/lock.svg" alt=""><span class="txt-light">Password.</span></label>
                 <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
             </div>
             <hr class="seperator">
-            <p class="form_error_msg">{{ .Message}}</p>
             <div class="form_actions">
-                <span>Already have an account ? <a href="/register"> Register.. </a></span> 
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Log in</button>
             </div>
+            <div>Already have an account ? <a href="/register"> Register.. </a></div>
         </form>
     </main>
 </body>

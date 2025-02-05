@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 @import url("header.css");
 @import url("aside.css");
-@import url("login.css");
+@import url("registerlogin.css");
 
 :root {
     /** font variables */
@@ -53,10 +53,6 @@ a {
     font-size: 12px;
 }
 
-.flex {
-    display: flex;
-}
-
 .flex-left {
     display: flex;
     justify-content: flex-start;
@@ -83,12 +79,10 @@ body {
     background: var(--color-dark) !important;
     color: var(--color-light) !important;
     height: 100vh;
-    border: solid red;
     grid-template-columns: 300px auto;
     grid-template-rows: 80px auto;
     display: grid;
 }
-
 
 .header,
 .aside,
@@ -114,29 +108,47 @@ body {
     overflow: auto;
 }
 
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: var(--color-primary);
+    background: transparent;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 button {
+    padding: 10px 36px;
     border: none;
     background-color: none;
     font-size: 14px;
     font-weight: 500;
     cursor: pointer;
+    border-radius: var(--border-radius-sm);
 }
 
 .primaryBtn {
-    padding: 10px 36px;
     background-color: var(--color-primary);
     color: var(--color-light);
-    border-radius: var(--border-radius-sm);
-    border: solid red;
 }
 
 .secondaryBtn {
-    padding: 10px 36px;
     background: transparent;
     color: var(--color-primary);
     border-radius: var(--border-radius-sm);
 }
-
 
 .avatar {
     border: solid 1px var(--color-primary);
@@ -158,8 +170,6 @@ button {
     padding: 10px 0;
     position: relative;
 }
-
-
 
 .user_menu {
     position: absolute;
@@ -278,7 +288,7 @@ button {
     margin-top: 2rem;
 }
 
-#comment_form_container {
+#comment_form_container { 
     border: none;
     color: var(--color-light);
     background-color: var(--color-dark-navy);

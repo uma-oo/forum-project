@@ -5,11 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="web/static/css/register.css">
+    <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
 
 <body>
-    <main>
+    {{template "Header" .User }}
+    <main class="flex main register-login-section">
+        <h2>Register :</h2>
         <form class="register-form-container" method="post" action="/auth/register">
             <div class="form-grp">
                 <label for="userName"><img src="/web/static/images/person.svg" alt=""><span>User Name:</span></label>
@@ -26,10 +28,10 @@
             <hr class="seperator">
             <p class="form_error_msg">{{ .Message}}</p>
             <div class="form_actions">
-                <span>Don't have an account ? <a href="/login">Log In.. </a></span>
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Register</button>
             </div>
+            <div>Don't have an account ? <a href="/login">Log In.. </a></div>
         </form>
     </main>
 </body>

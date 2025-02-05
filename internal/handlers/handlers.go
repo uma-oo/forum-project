@@ -8,6 +8,7 @@ import (
 	"text/template"
 
 	"forum/internal/database"
+	"forum/internal/models"
 )
 
 type Pages struct {
@@ -18,7 +19,6 @@ var Pagess Pages
 
 func ParseTemplates() {
 	var err error
-
 	Pagess.All_Templates, err = template.ParseGlob("./web/templates/*.html")
 	if err != nil {
 		log.Fatal(err)
@@ -41,7 +41,8 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	data := database.Fetch_Database(r)
-	Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+	err := Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+	fmt.Printf("err: %v\n", err)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
@@ -50,7 +51,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
+	data := models.Data{}
+	data.User.CurrentPath = r.URL.Path
+	err := Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+	fmt.Printf("err: %v\n", err)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -59,7 +63,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
+	data := models.Data{}
+	data.User.CurrentPath = r.URL.Path
+	err := Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+	fmt.Printf("err: %v\n", err)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -72,7 +79,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
 }
 
-// // todo : complete handeler for single post
 func Post(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("inside single post")
 }

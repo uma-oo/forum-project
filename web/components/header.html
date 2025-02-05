@@ -2,9 +2,11 @@
 {{define "Header"}}
 <header class="header">
     <div class="header-left flex">
+        {{ if and (ne .CurrentPath "/login") (ne .CurrentPath "/register")}}
         <label class="menu-toggle" for="menu-toggle">
             <div></div>
         </label>
+        {{end}}
         <h1 class="logo"><a href="/">Forum</a></h1>
     </div>
     <div class="header-right">
