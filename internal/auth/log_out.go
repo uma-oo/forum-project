@@ -14,6 +14,7 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
+
 	// lets check in first that is already have a session
 	if IsCookieSet(r, "token") {
 		http.SetCookie(w, &http.Cookie{
@@ -26,6 +27,11 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 		})
 		log.Print("A User logged out")
 		http.Redirect(w, r, "/", http.StatusFound)
+	} else {
+		w.WriteHeader(http.StatusNotFound)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "Not Found")
+		return
 	}
+	http.Redirect(w, r, "/", http.StatusFound)
 	return
 }
