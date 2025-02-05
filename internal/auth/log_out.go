@@ -26,11 +26,6 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 		})
 		log.Print("A User logged out")
 		http.Redirect(w, r, "/", http.StatusFound)
-
-	} else {
-		w.WriteHeader(http.StatusNotFound)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "page not fount")
-		return
 	}
 	return
 }
