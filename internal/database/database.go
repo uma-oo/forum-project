@@ -116,7 +116,7 @@ func Fetch_Database(r *http.Request) *models.Data {
 		}
 		if post.TotalDeslikes < 0 {
 			post.TotalDeslikes = 0
-			}
+		}
 		if err != nil {
 			log.Fatalf("Failed to scan row: %v", err)
 		}
