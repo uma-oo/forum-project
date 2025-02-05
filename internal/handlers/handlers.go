@@ -170,14 +170,14 @@ func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, path)
 }
 
-func LikedPosts(w http.ResponseWriter, r *http.Request){
-fmt.Println("Aloha")
+func LikedPosts(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Aloha")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusInternalServerError)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	Token , errToken := r.Cookie("token")
+	Token, errToken := r.Cookie("token")
 	if errToken != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed hhh")

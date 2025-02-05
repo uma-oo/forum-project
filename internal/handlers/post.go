@@ -75,7 +75,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
 
 const (
@@ -166,7 +166,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes + 1 WHERE id = ?", postid)
-		
+
 		} else if reactionExist == Neutre && reaction == ReactionDislike {
 			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionDislike, userid, postid)
 			if err != nil {
@@ -175,7 +175,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "internal server error966")
 				return
 			}
-			
+
 			_, err = tx.Exec("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?", postid)
 		} else if reactionExist == ReactionLike && reaction == ReactionLike {
 			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", Neutre, userid, postid)
@@ -186,7 +186,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?", postid)
-		
+
 		} else if reactionExist == ReactionLike && reaction == ReactionDislike {
 			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionDislike, userid, postid)
 			if err != nil {
@@ -239,4 +239,3 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
-
