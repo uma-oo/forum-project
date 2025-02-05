@@ -1,16 +1,25 @@
 .aside {
-    padding: 0;
     border-right: solid 1px var(--color-dark-navy);
-    border:solid green ;
     display: flex;
     flex-direction: column;
+}
+
+.aside .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9;
+    display: none;
 }
 
 .aside .filter_container {
     flex-grow: 1 !important;
 }
 .aside nav {
-
+border: solid ;
 }
 .aside>nav>a {
     padding: 20px 60px 20px 1rem;
@@ -61,20 +70,25 @@
     border: solid 1px;
 }
 
-@media only screen and (max-width: 980px) {
-  
-    .aside:has(#menu-toggle:checked) {
-        height: max-content;
-        display: flex;
-        position: fixed;
-        visibility: visible;
-        top: 80px;
-        left: 0;
-        z-index: 1;
+@media (max-width: 980px) {
+    .aside {
         max-width: 300px;
-        width: 100%;
-        transition: all 0.3s ease-in-out;
-        background-color: var(--dark-color);
-        overflow: scroll;
+        position: absolute;
+        top: 80px;
+        left: -100%;
+        height:calc( 100% - 80px);
+        z-index: 10;
+        overlay: auto;
+        transition: left .5s ease-in;
+    }
+    .aside:has(#menu-toggle:checked) {
+        display: flex;
+        position: absolute;
+        left: 0;
+        overflow: auto;
+        transition: left .5s ease-in;
+        .overlay {
+            display: block;
+        }
     }
 }

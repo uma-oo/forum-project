@@ -1,19 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
     <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
+
 <body>
     {{template "Header"}}
+    {{template "Aside"}}
     <main class="main">
-        {{template "Aside"}}
-        <section>
-            <h2>Liked Posts:</h2>
-            {{template "PostsContainer"}}
-        </section>
+        <h2>Liked Posts:</h2>
+        {{template "PostsContainer"}}
     </main>
 </body>
+
 </html>
