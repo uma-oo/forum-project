@@ -76,6 +76,8 @@ func Fetch_Database(r *http.Request) *models.Data {
 		ORDER BY 
 			posts.created_at DESC
 	`
+	// prep, err := Database.Prepare(query)
+
 	rows, err := Database.Query(query)
 	if err != nil {
 		fmt.Println("Error executing query:", err)

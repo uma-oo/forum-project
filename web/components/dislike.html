@@ -1,7 +1,9 @@
 {{define "Dislikes"}}
 <div class="reaction_container">
-    <form action="/api/dislike_post" method="post">
-        <input type="text" id="post_id" name="post_id" value="" hidden>
+    <form action="/api/react_to_post" method="post">
+        <input type="hidden" name="post_id" value="{{ .PostId }}">
+        <input type="hidden" name="user_id" value="{{ .UserID }}">
+        <input type="hidden" name="reaction" value="-1">
         <button type="submit">
             <svg class="reaction_icon" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960"
                 width="24px">
