@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="web/static/css/shared.css">
 </head>
 <body>
-    {{template "Header"}}
-    {{template "Aside"}}
+    {{template "Header" .User}}
+    {{template "Aside" .}}
     <main class="main">
         <h2>Liked Posts:</h2>
-        {{template "PostsContainer"}}
+        {{template "PostsContainer" .}}
     </main>
     {{template "Footer"}}
 </body>

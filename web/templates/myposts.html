@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="web/static/css/shared.css">
 </head>
 <body>
-    {{template "Header"}}
-    {{template "Aside"}}
-    <main class="main">
-        <h2>My Posts:</h2>
-        {{template "PostsContainer"}}
-    </main>
-    {{template "Footer"}}
+   <!-- web/components/header.html -->
+   {{template "Header" .User }}
+   {{template "Aside" .}}
+   <main class="main">
+       <!-- web/components/aside.html -->
+       {{template "PostsContainer" .}}
+   </main>
+   {{template "Footer"}}
 </body>
 </html>

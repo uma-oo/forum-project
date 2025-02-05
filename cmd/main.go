@@ -35,10 +35,10 @@ func main() {
 
 	// routes for pages handling and rendering
 	http.HandleFunc("/", handlers.Home)
-	// http.HandleFunc("/{post_id}", handlers.Post)
+	//http.HandleFunc("//{post_id}", handlers.Post)
 	http.HandleFunc("/create_post", handlers.CreatePost)
-	// http.HandleFunc("/my_posts", handlers.MyPosts)
-	// http.HandleFunc("/liked_posts", handlers.LikedPosts)
+	http.HandleFunc("/my_posts", handlers.MyPosts)
+	 http.HandleFunc("/liked_posts", handlers.LikedPosts)
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
 
