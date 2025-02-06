@@ -7,18 +7,20 @@ import (
 	"strconv"
 
 	"forum/internal/database"
+	"forum/pkg/logger"
 )
 
-var (
-	like    bool
-	dislike bool
+const (
+	ReactionLike    = 1
+	ReactionDislike = -1
+	Neutre          = 0
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.ExecuteTemplate(w, "error.html", "method not allowed")
+		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
 		return
 	}
 	r.ParseForm() ///////////////////////////
@@ -27,20 +29,24 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	postTitle := r.FormValue("postTitle")
 	// lets check for emptyness
 	if postContent == "" || postTitle == "" {
+		logger.LogWithDetails(fmt.Errorf("%s", "empty post content or title"))
 		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "bad request")
+		pages.ExecuteTemplate(w, "error.html", "400 bad request")
 		return
 	}
 	// get the user ID from the session
-	cookie, err := r.Cookie("token")
-	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
-		pages.ExecuteTemplate(w, "error.html", "unauthorized")
-		return
-	}
+	cookie, _ := r.Cookie("token")
+
 	// get the user ID from the users table
 	var userId int
-	err = database.Database.QueryRow("SELECT id FROM users WHERE token = ?", cookie.Value).Scan(&userId)
+	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+	err = stm.QueryRow(cookie.Value).Scan(&userId)
 	if err != nil {
 		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -49,53 +55,69 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// lets insert this data to our database
-	_, err = database.Database.Exec("INSERT INTO posts (user_id,title,content) VALUES ( ?,?,?)", userId, postTitle, postContent)
+	stm, err = database.Database.Prepare("INSERT INTO posts (user_id,title,content) VALUES ( ?,?,?)")
 	if err != nil {
-		fmt.Println(err)
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+	_, err = stm.Exec(userId, postTitle, postContent)
+	if err != nil {
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error")
 		return
 	}
 	// get the last inserted post id
 	var postId int
-	err = database.Database.QueryRow("SELECT last_insert_rowid()").Scan(&postId) /////////////////////////// jjbcjkjnkjnkjnkjnkjnkj
+	stm, err = database.Database.Prepare("SELECT last_insert_rowid()")
 	if err != nil {
-		fmt.Println(err)
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+	err = stm.QueryRow().Scan(&postId)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
 	// insert categories
+	stm, err = database.Database.Prepare("INSERT INTO categories (category, post_id) VALUES (?, ?)")
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
 	for _, category := range categories {
-		_, err = database.Database.Exec("INSERT INTO categories (category, post_id) VALUES (?, ?)", category, postId)
+		_, err = stm.Exec(category, postId)
 		if err != nil {
-			fmt.Println(err)
+			logger.LogWithDetails(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "internal server error")
+			pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 			return
 		}
 	}
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-const (
-	ReactionLike    = 1
-	ReactionDislike = -1
-	Neutre          = 0
-)
-
 func PostReactions(w http.ResponseWriter, r *http.Request) {
 	pages := Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.ExecuteTemplate(w, "error.html", "method not allowed")
+		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
 		return
 	}
 
 	err := r.ParseForm()
 	if err != nil {
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "invalid request")
+		pages.ExecuteTemplate(w, "error.html", "400 bad request")
 		return
 	}
 
@@ -103,135 +125,356 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 	reaction, errreaction := strconv.Atoi(r.FormValue("reaction"))
 	Token, terr := r.Cookie("token")
 	if terr != nil {
+		logger.LogWithDetails(terr)
 		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "bad request")
+		pages.ExecuteTemplate(w, "error.html", "400 bad request")
 		return
 	}
 
 	if errpost != nil || errreaction != nil {
+		logger.LogWithDetails(fmt.Errorf("%s", " Itoi Errors"))
 		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "bad request")
+		pages.ExecuteTemplate(w, "error.html", "400 bad request")
 		return
 	}
 
 	var reactionExist int
 	var userid int
-	err = database.Database.QueryRow("SELECT id FROM users WHERE token = ?", Token.Value).Scan(&userid)
+	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
 	if err != nil {
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+	err = stm.QueryRow(Token.Value).Scan(&userid)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
 
 	// Start a transaction
 	tx, err := database.Database.Begin()
 	if err != nil {
+		tx.Rollback()
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "internal server error")
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
 
 	// Check if the user has already reacted
-	err = tx.QueryRow("SELECT reaction FROM post_reaction WHERE user_id = ? AND post_id = ?", userid, postid).Scan(&reactionExist)
+	stm, err = tx.Prepare("SELECT reaction FROM post_reaction WHERE user_id = ? AND post_id = ?")
+	if err != nil {
+		tx.Rollback()
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+	err = stm.QueryRow(userid, postid).Scan(&reactionExist)
 	if err == sql.ErrNoRows {
-		fmt.Println("haarani")
+
 		// No existing like, insert new like
-		_, err = tx.Exec("INSERT INTO post_reaction (user_id, post_id, reaction) VALUES (?, ?, ?)", userid, postid, reaction)
+		stm, err = tx.Prepare("INSERT INTO post_reaction (user_id, post_id, reaction) VALUES (?, ?, ?)")
 		if err != nil {
 			tx.Rollback()
+			logger.LogWithDetails(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "internal server error4")
+			pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+			return
+		}
+		_, err = stm.Exec(userid, postid, reaction)
+		if err != nil {
+			logger.LogWithDetails(err)
+			tx.Rollback()
+			w.WriteHeader(http.StatusInternalServerError)
+			pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 			return
 		}
 		if reaction == 1 {
-			fmt.Println("waldi")
-			_, err = tx.Exec("UPDATE posts SET total_likes =   total_likes  + 1 WHERE id = ?", postid)
+			stm, err = tx.Prepare("UPDATE posts SET total_likes =   total_likes  + 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec(postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		} else {
-			_, err = tx.Exec("UPDATE posts SET total_dislikes = total_dislikes + 1 WHERE id = ?", postid)
+			stm, err = tx.Prepare("UPDATE posts SET total_dislikes = total_dislikes + 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec(postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		}
 
 	} else if err != nil {
+		logger.LogWithDetails(err)
 		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error3527")
 		return
 	} else {
 		if reactionExist == Neutre && reaction == ReactionLike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionLike, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
 			if err != nil {
 				tx.Rollback()
-				fmt.Println(err)
+				logger.LogWithDetails(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error2528552")
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes + 1 WHERE id = ?", postid)
-		
+			_, err = stm.Exec(ReactionLike, userid, postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes + 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+
 		} else if reactionExist == Neutre && reaction == ReactionDislike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionDislike, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
 			if err != nil {
 				tx.Rollback()
+				logger.LogWithDetails(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error966")
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			
-			_, err = tx.Exec("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?", postid)
+			_, err = stm.Exec( ReactionDislike, userid, postid)
+			if err != nil {
+				logger.LogWithDetails(err)
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		} else if reactionExist == ReactionLike && reaction == ReactionLike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", Neutre, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
 			if err != nil {
 				tx.Rollback()
+				logger.LogWithDetails(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error58/28/")
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?", postid)
-		
+			_, err = stm.Exec( Neutre, userid, postid)
+			if err != nil {
+				logger.LogWithDetails(err)
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		} else if reactionExist == ReactionLike && reaction == ReactionDislike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionDislike, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
 			if err != nil {
 				tx.Rollback()
+				logger.LogWithDetails(err)
 				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error2582858858")
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( ReactionDislike, userid, postid)
+			if err != nil {
+				logger.LogWithDetails(err)
+				tx.Rollback()
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
 
-			_, err = tx.Exec("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?", postid)
-
-			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?", postid)
+			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		} else if reactionExist == ReactionDislike && reaction == ReactionDislike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", Neutre, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec(Neutre, userid, postid)
 			if err != nil {
 				tx.Rollback()
 				w.WriteHeader(http.StatusInternalServerError)
 				pages.ExecuteTemplate(w, "error.html", "internal server error25828588589")
 				return
 			}
-
-			_, err = tx.Exec("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?", postid)
+			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		} else if reactionExist == ReactionDislike && reaction == ReactionLike {
-			_, err = tx.Exec("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?", ReactionLike, userid, postid)
+			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( ReactionLike, userid, postid)
 			if err != nil {
 				tx.Rollback()
 				w.WriteHeader(http.StatusInternalServerError)
 				pages.ExecuteTemplate(w, "error.html", "internal server error258285885825")
 				return
 			}
-
-			_, err = tx.Exec("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?", postid)
-			_, err = tx.Exec("UPDATE posts SET total_likes = total_likes +1 WHERE id = ?", postid)
+			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes +1 WHERE id = ?")
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
+			_, err = stm.Exec( postid)
+			if err != nil {
+				tx.Rollback()
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+				return
+			}
 		}
 
-		// if err != nil {
-		// 	tx.Rollback()
-		// 	w.WriteHeader(http.StatusInternalServerError)
-		// 	pages.ExecuteTemplate(w, "error.html", "internal server error2")
-		// 	return
-		// }
+		
 	}
 
 	err = tx.Commit()
 	if err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error1")
 		return
@@ -239,4 +482,3 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 
 	http.Redirect(w, r, "/", http.StatusFound)
 }
-

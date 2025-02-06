@@ -2,11 +2,12 @@ package auth
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
+
 	"forum/internal/database"
 	"forum/internal/handlers"
+	"forum/pkg/logger"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -16,23 +17,19 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
-	if IsCookieSet(r, "token") {
-		w.WriteHeader(http.StatusNotFound)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found hhhhh")
-		return
-	}
+
 	UserName := r.FormValue("userName")
 	Password := r.FormValue("userPassword")
 
-	if UserName == "" || Password == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "Bad Request")
-		return
+	// if UserName == "" || Password == "" {
+	// 	w.WriteHeader(http.StatusBadRequest)
+	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Bad Request") should be removed and apliuc this logic auth middleware
+	// 	return
+	// }
 
-	}
 	var pasword string
 	var username string
 
@@ -54,25 +51,19 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Token := uuid.New().String()
-	// statement, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
-	// if err != nil {
-	// 	fmt.Printf("err in statement of the database: %v\n", err)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
-	// 	return
-	// }
-	// _, err = statement.Exec(Token, username)
-	// if err != nil {
-	// 	fmt.Printf("err in the exec of database: %v\n", err)
-	// 	w.WriteHeader(http.StatusInternalServerError)
-	// 	pages.All_Templates.ExecuteTemplate(w, "error.html", "Internal Server Error")
-	// 	return
-	// }
-	_, err = database.Database.Exec("UPDATE users SET token = ? WHERE userName = ?", Token, username)
+	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
 	if err != nil {
-		fmt.Println(err)
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "internal server error")
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+
+	_, err = stm.Exec(Token, username)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.All_Templates.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
 	cookie := &http.Cookie{
@@ -82,7 +73,7 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		Path:   "/",
 	}
 	http.SetCookie(w, cookie)
-	r.AddCookie(cookie)
+
 	log.Println(UserName, "logged in")
-	http.Redirect(w, r, "/", http.StatusSeeOther)
+	http.Redirect(w, r, "/", http.StatusFound)
 }
