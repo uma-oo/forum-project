@@ -45,7 +45,6 @@ func main() {
 	http.HandleFunc("/auth/register", auth.Register)
 	http.HandleFunc("/auth/log_in", auth.LogIn)
 	http.HandleFunc("/auth/logout", auth.LogOut)
-
 	// routes for forms actions
 	// http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.Handle("/api/add_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPost)))
