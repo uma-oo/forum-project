@@ -6,12 +6,13 @@ import (
 	"forum/internal/database"
 )
 
+
+// TODO: When the expiration date comes to the end we have to delete the token from the database using a trigger !!!
+// otherwise the token will be there forever and this is not secure at all 
+
 func IsCookieSet(r *http.Request, cookieName string) bool {
 	cookie, err := r.Cookie(cookieName)
 	if err != nil {
-		if err == http.ErrNoCookie {
-			return false
-		}
 		return false
 	}
 	if cookie.Value == "" {

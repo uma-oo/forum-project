@@ -23,7 +23,6 @@ func main() {
 	// Get the current working directory
 	logger, err := logger.Create_Logger()
 	if err != nil {
-		fmt.Println("here")
 		log.Fatal(err)
 	}
 	defer logger.Close()
