@@ -10,7 +10,7 @@
             <span class="txt-light">{{ .TotalComments }}</span>
         </p>
     </button>
-    <div id="comment_form_container" popover>
+    <div id="comment_form_container" hidden>
         <form action="/api/add_post_comment" method="post">
             <div class="form-grp">
                 <Label for="comment">Comment: </Label>
