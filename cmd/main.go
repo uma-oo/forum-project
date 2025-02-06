@@ -21,6 +21,7 @@ func init() {
 
 func main() {
 	// Get the current working directory
+	// just for commentts
 	logger, err := logger.Create_Logger()
 	if err != nil {
 		log.Fatal(err)
