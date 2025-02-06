@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS posts (
     content TEXT NOT NULL,
     total_likes INT DEFAULT 0 CHECK (total_likes >= 0),
     total_dislikes INT DEFAULT 0 CHECK (total_dislikes >= 0),
+    total_comments INT DEFAULT 0 CHECK (total_comments >= 0),
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
@@ -81,7 +82,7 @@ CREATE TABLE IF NOT EXISTS post_reaction (
 --CREATE INDEX IF NOT EXISTS idx_user_post ON likes (user_id, post_id);
 
 CREATE TABLE
-    IF NOT EXISTS dislikes (
+    IF NOT EXISTS comment_reaction (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         post_id INTEGER NOT NULL,
