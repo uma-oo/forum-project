@@ -9,9 +9,9 @@
 </head>
 
 <body>
-    {{template "Header" . }}
+    {{template "Header" .User }}
     <main class=" flex main register-login-section">
-        <h2>Log In :</h2>
+        <h2>Connect to your account :</h2>
         <form class="login-form-container" method="post" action="/auth/log_in">
             <div class="form-grp">
                 <label for="userName"><img src="/web/static/images/person.svg" alt=""><span class="txt-light">User Name.</span></label>
@@ -26,9 +26,8 @@
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Log in</button>
             </div>
-            <div>Already have an account ? <a href="/register"> Register.. </a></div>
+            <div class="alternative-action txt-light txt-sm">Already have an account ? <a href="/register"> Register.. </a></div>
         </form>
     </main>
 </body>
-
 </html>

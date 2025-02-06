@@ -11,7 +11,7 @@
 <body>
     {{template "Header" .User }}
     <main class="flex main register-login-section">
-        <h2>Register :</h2>
+        <h2>create your new account :</h2>
         <form class="register-form-container" method="post" action="/auth/register">
             <div class="form-grp">
                 <label for="userName"><img src="/web/static/images/person.svg" alt=""><span>User Name:</span></label>
@@ -26,12 +26,11 @@
                 <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
             </div>
             <hr class="seperator">
-            <p class="form_error_msg">{{ .Message}}</p>
             <div class="form_actions">
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Register</button>
             </div>
-            <div>Don't have an account ? <a href="/login">Log In.. </a></div>
+            <div class="alternative-action txt-light txt-sm">Don't have an account ? <a href="/login">Log In.. </a></div>
         </form>
     </main>
 </body>

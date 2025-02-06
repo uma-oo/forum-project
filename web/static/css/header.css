@@ -35,24 +35,6 @@
     background-color: var(--color-light);
 }
 
-.header-left .menu-toggle div::after,
-.header-left .menu-toggle div::before {
-    content: "";
-    height: 3px;
-    width: 100%;
-    position: absolute;
-    background-color: var(--color-light);
-} 
-
-.header-left .menu-toggle div::after {
-    bottom: 8px;
-    right: 0;
-}
-.header-left .menu-toggle div::before {
-    top: 8px;
-    right: 0;
-}
-
 .header-right {
     display: flex;
     justify-content: center;
@@ -61,30 +43,57 @@
 }
 
 .header-right > a > button {
-    padding: 8px 32px 8px 16px;
+    height: 32px;
+    font-size: 14px;
+    padding: 0px 16px 0px 12px;
     border: solid 2px;
     display: flex;
     align-items: center;
-    gap: 8px    ;
-    fill: var(--bg-color-gray);
+    gap: 4px    ;
     background-color: transparent;
-    color: var(--bg-color-gray);
+    color: var(--color-light);
+    svg  {
+        fill: var(--color-light);
+    }
 }
 
-@media (max-width: 576px) {
-    body {
-        display: block;
-    }
 
-    .post_header {
-        gap: 0;
-        /* border: solid red; */
-        flex-direction: column;
-    }
-    .post_header .post_creator_info_container .post_creator_info {
+
+.header-right .user_menu{
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    right: 5%;
+    top: 80px;
+    background-color: var(--bg-color);
+    div {
         display: flex;
-        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
     }
+}
+
+.header-right .user_menu div > a {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+}
+
+.header-right .user_menu div > a > span:hover {
+    color : var(--color-red);
+}
+
+.seperator {
+    background-color: var(--color-dark);
+}
+.header-right .user_menu:has( #user_menu_toggle:checked ){
+    display: flex;
+}
+
+
+@media (max-width: 576px) {
+    
 }
 
 @media only screen and (max-width: 980px) {
@@ -98,22 +107,11 @@
         top: 0;
         position: sticky;
     }
+    
+   
     .header-left .menu-toggle {
         display: flex;
     }
 
-}
-
-@media only screen and (max-width: 1200px) {
-    body {
-        display: block;
-        background-color: black !important;
-    }
-    /* border: solid red; */
-    .header {
-        backdrop-filter: blur(8px);
-        top: 0;
-        position: sticky;
-    }
 }
 
