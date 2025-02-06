@@ -63,10 +63,23 @@
 .post_body {
     width: 80%;
     margin: auto;
-    p {
-        /* text-justify: ; */
-        max-height: 5rem;
+    text-overflow: auto;
+    text-wrap: 1;
+
+    h3 {
+        overflow-wrap: anywhere;
+        text-decoration: underline solid 1px;
     }
+
+    p {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis !important;
+        text-indent: 10px;
+        margin-top: 1rem;
+        border: solid 1px red;
+    }
+
     /* padding:5% 10%; */
 }
 
