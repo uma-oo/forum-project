@@ -15,33 +15,32 @@
 <body>
     {{template "Header" .User }}
     {{template "Aside" .}}
-    <main  class="main create_post_section">
-            <h2>Create New Post </h2>
-            <form method="post" action="/api/add_post">
-                <label>Categories: </label>
-                <div class="category_list">
-                    {{ range .Categories }}
-                    <div>
-                        <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie"
-                            value="{{ .CatergoryName }}" hidden>
-                        <label for="{{ .CatergoryName }}"> {{ .CatergoryName }} </label>
-                    </div>
-                    {{ end }}
-                </div>
-                </div>
-                <div class="form-grp-title">
-                    <label for="postTitle">Title</label>
-                    <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
-                </div>
-                <div class="form-grp-body">
-                    <label for="postBody">Content</label>
-                    <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
-                </div>
-                <div class="form_actions">
-                    <button type="reset">Cancel</button>
-                    <button type="submit">Create Post</button>
-                </div>
-            </form>
+    <main class="main create_post_section">
+        <h2>Create New Post </h2>
+        <form method="post" action="/api/add_post">
+            <label>Categories: </label>
+            <div class="category_list">
+                {{ range .Categories }}
+                <label for="{{ .CatergoryName }}"> {{ .CatergoryName }}
+                    <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie" value="{{ .CatergoryName }}"
+                        hidden>
+                </label>
+                {{ end }}
+            </div>
+            </div>
+            <div class="form-grp-title">
+                <label for="postTitle">Title</label>
+                <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
+            </div>
+            <div class="form-grp-body">
+                <label for="postBody">Content</label>
+                <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
+            </div>
+            <div class="form_actions">
+                <button type="reset" class="secondaryBtn">Cancel</button>
+                <button type="submit" class="primaryBtn">Create Post</button>
+            </div>
+        </form>
     </main>
 </body>
 
