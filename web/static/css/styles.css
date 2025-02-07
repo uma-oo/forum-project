@@ -3,6 +3,7 @@
 @import url("aside.css");
 @import url("registerlogin.css");
 @import url("posts.css");
+@import url("post.css");
 
 :root {
     /** font variables */
@@ -89,6 +90,9 @@ svg {
 .main {
     overflow: auto;
     padding: 2rem 1rem 2rem 2rem;
+    h2 {
+        margin-bottom: 1rem;
+    }
 }
 
 ::-webkit-scrollbar {

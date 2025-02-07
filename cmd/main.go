@@ -35,7 +35,7 @@ func main() {
 
 	// routes for pages handling and rendering
 	http.HandleFunc("/", handlers.Home)
-	// http.HandleFunc("//{post_id}", handlers.Post)
+	http.HandleFunc("/post", handlers.Post)
 	http.Handle("/create_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.CreatePost)))
 	http.Handle("/my_posts", middlewares.Auth_Middleware(http.HandlerFunc(handlers.MyPosts)))
 	http.Handle("/liked_posts", middlewares.Auth_Middleware(http.HandlerFunc(handlers.LikedPosts)))

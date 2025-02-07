@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/web/static/css/styles.css">
+
+</head>
+
+<body>
+    {{template "Header" .User }}
+    {{template "Aside" .}}
+    <main class="main post">
+        {{range .Posts}}
+        <div class="post_creator_info_container">
+            {{template "avatar" }}
+            <div class="post_creator_info">
+                <p>{{.PostCreator}}</p>
+                <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>
+            </div>
+        </div>
+        <h2> This is a post title</h2>
+
+        {{template "TagsList" .Categories}}
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate harum, consequatur nulla, alias vel
+            dignissimos assumenda cupiditate hic veritatis dolores commodi. Natus earum cupiditate dolorum harum,
+            deserunt amet provident molestiae?</p>
+
+        {{template "PostReactions" .}}
+        <div class="comment_form_container">
+            <form action="/api/add_post_comment" method="post">
+                <input name="postComment" id="postComment" placeholder="Add your comment here ..."></input>
+                <div class="form-actions">
+                    <button type="reset">Reset</button>
+                    <button type="submit">Comment</button>
+                </div>
+            </form>
+            <input type="number" value="{{.PostId}}" hidden name="post_id" id="post_id" value="{{.PostId}}">
+            <input type="checkbox" name="comment_form_toggle" id="comment_form_toggle" hidden>
+        </div>
+
+        <h4>Comments :</h4>
+        <div class="post_comments">
+            <div class="post_container">
+                {{template "avatar"}}
+                <div class="post_comment_content">
+                    <div class="post_creator_info">
+                        <p>{{.PostCreator}}</p>
+                        <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>
+                    </div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores, doloribus.</p>
+                    {{template "CommentReactions" .}}
+                </div>
+            </div>
+            <div class="post_container">
+                {{template "avatar"}}
+                <div class="post_comment_content">
+                    <div class="post_creator_info">
+                        <p>{{.PostCreator}}</p>
+                        <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>
+                    </div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores, doloribus.</p>
+                    {{template "CommentReactions" .}}
+                </div>
+            </div>
+            <div class="post_container">
+                {{template "avatar"}}
+                <div class="post_comment_content">
+                    <div class="post_creator_info">
+                        <p>{{.PostCreator}}</p>
+                        <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>
+                    </div>
+                    <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Maiores, doloribus.</p>
+                    {{template "CommentReactions" .}}
+                </div>
+            </div>
+        </div>
+        {{end}}
+    </main>
+</body>
+
+</html>
