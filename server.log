@@ -1,1 +1,88 @@
-2025/02/08 11:56:34 http: superfluous response.WriteHeader call from main.main.Reg_Log_Middleware.func4 (reg_log_midlleware.go:41)
+2025/02/08 15:46:52 2025-02-08T15:46:52+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] row value misused
+2025/02/08 15:47:35 2025-02-08T15:47:35+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] row value misused
+2025/02/08 15:48:20 2025-02-08T15:48:20+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] row value misused
+2025/02/08 15:49:22 2025-02-08T15:49:22+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] near ")": syntax error
+2025/02/08 15:51:00 2025-02-08T15:51:00+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] no such column: Technology
+2025/02/08 15:52:38 2025-02-08T15:52:38+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] no such column: Health
+2025/02/08 15:54:21 2025-02-08T15:54:21+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] near ",": syntax error
+2025/02/08 15:54:45 2025-02-08T15:54:45+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] no such column: Health
+2025/02/08 16:00:44 http: panic serving [::1]:48024: strings: negative Repeat count
+goroutine 7 [running]:
+net/http.(*conn).serve.func1()
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x855840?, 0x9686c0?})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+strings.Repeat({0x8cbcad?, 0xc0001aeee0?}, 0xc0001a6b40?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/strings/strings.go:549 +0x318
+forum/internal/handlers.FilterPosts({0x96b918, 0xc0001aeee0}, 0xc0001a6b40)
+	/home/helouaziz/Desktop/zone/forum/internal/handlers/handlers.go:321 +0x111
+net/http.HandlerFunc.ServeHTTP(0xc0b660?, {0x96b918?, 0xc0001aeee0?}, 0x6a903a?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x96b918, 0xc0001aeee0}, 0xc0001a6b40)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc0001a1da0?}, {0x96b918?, 0xc0001aeee0?}, 0x6?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc0000e6090, {0x96c0b0, 0xc0001a1cb0})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/02/08 16:00:44 http: panic serving [::1]:48040: strings: negative Repeat count
+goroutine 9 [running]:
+net/http.(*conn).serve.func1()
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x855840?, 0x9686c0?})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+strings.Repeat({0x8cbcad?, 0xc000130000?}, 0xc00020e000?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/strings/strings.go:549 +0x318
+forum/internal/handlers.FilterPosts({0x96b918, 0xc000130000}, 0xc00020e000)
+	/home/helouaziz/Desktop/zone/forum/internal/handlers/handlers.go:321 +0x111
+net/http.HandlerFunc.ServeHTTP(0xc0b660?, {0x96b918?, 0xc000130000?}, 0x6a903a?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x96b918, 0xc000130000}, 0xc00020e000)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000202030?}, {0x96b918?, 0xc000130000?}, 0x6?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc0000e6bd0, {0x96c0b0, 0xc0001a1cb0})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/02/08 16:00:44 http: panic serving [::1]:43546: strings: negative Repeat count
+goroutine 35 [running]:
+net/http.(*conn).serve.func1()
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x855840?, 0x9686c0?})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+strings.Repeat({0x8cbcad?, 0xc0002142a0?}, 0xc00020e360?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/strings/strings.go:549 +0x318
+forum/internal/handlers.FilterPosts({0x96b918, 0xc0002142a0}, 0xc00020e360)
+	/home/helouaziz/Desktop/zone/forum/internal/handlers/handlers.go:321 +0x111
+net/http.HandlerFunc.ServeHTTP(0xc0b660?, {0x96b918?, 0xc0002142a0?}, 0x6a903a?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x96b918, 0xc0002142a0}, 0xc00020e360)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000202990?}, {0x96b918?, 0xc0002142a0?}, 0x6?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc0001141b0, {0x96c0b0, 0xc0001a1cb0})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/02/08 16:02:32 http: panic serving [::1]:53844: strings: negative Repeat count
+goroutine 23 [running]:
+net/http.(*conn).serve.func1()
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:1903 +0xbe
+panic({0x855840?, 0x9686c0?})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/runtime/panic.go:770 +0x132
+strings.Repeat({0x8cbcad?, 0xc0001300e0?}, 0xc000158000?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/strings/strings.go:549 +0x318
+forum/internal/handlers.FilterPosts({0x96b918, 0xc0001300e0}, 0xc000158000)
+	/home/helouaziz/Desktop/zone/forum/internal/handlers/handlers.go:321 +0x111
+net/http.HandlerFunc.ServeHTTP(0xc0b660?, {0x96b918?, 0xc0001300e0?}, 0x6a903a?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2171 +0x29
+net/http.(*ServeMux).ServeHTTP(0x46da79?, {0x96b918, 0xc0001300e0}, 0xc000158000)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2688 +0x1ad
+net/http.serverHandler.ServeHTTP({0xc000118270?}, {0x96b918?, 0xc0001300e0?}, 0x6?)
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3142 +0x8e
+net/http.(*conn).serve(0xc000212870, {0x96c0b0, 0xc0001a1cb0})
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
+created by net/http.(*Server).Serve in goroutine 1
+	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
