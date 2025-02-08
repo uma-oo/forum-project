@@ -168,13 +168,11 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		users
 	ON 
 		posts.user_id = users.id
-	ORDER BY 
-		posts.created_at DESC
+
 `
 	data, _ := database.Fetch_Database(r, query, -1, false)
 	data.Posts = data.Posts[0:1]
 	fmt.Println(Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
-	fmt.Println("inside single post")
 }
 
 func MyPosts(w http.ResponseWriter, r *http.Request) {
