@@ -1,4 +1,5 @@
 /* create a table called "users" */
+/* Expiration date to be added and also */
 CREATE TABLE
     IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -6,7 +7,7 @@ CREATE TABLE
         userEmail VARCHAR(100) NOT NULL,
         userPassword VARCHAR(255) NOT NULL,
         token VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP /*for the user*/
     );
 
 -- table of session ??

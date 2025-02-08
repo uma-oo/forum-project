@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"forum/internal/models"
+	"forum/pkg/logger"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -61,18 +62,31 @@ func Create_database() {
 	fmt.Println("data base creatd succesfully")
 }
 
-func Fetch_Database(r *http.Request, query string, userid int) *models.Data {
-	rows, err := Database.Query(query, userid)
+func Fetch_Database(r *http.Request, query string, userid int, liked bool) (*models.Data, error) {
+	var finalQuery string
+	if userid > 0 && !liked{
+		finalQuery = fmt.Sprintf("%s WHERE users.id = %d ORDER BY posts.created_at DESC;", query, userid)
+	}else if userid > 0 && liked{
+		finalQuery = fmt.Sprintf("%s WHERE  post_reaction.user_id = %d AND  post_reaction.reaction = 1", query, userid)
+	} else {
+		finalQuery = fmt.Sprintf("%s ORDER BY posts.created_at DESC", query)
+	}
+
+	stm, err := Database.Prepare(finalQuery)
 	if err != nil {
-		fmt.Println("Error executing query:", err)
-		log.Fatal("Error executing query:", err)
+		logger.LogWithDetails(err)
+		return nil, err
+	}
+	rows, err := stm.Query()
+	if err != nil {
+		logger.LogWithDetails(err)
+		return nil, err
 	}
 	defer rows.Close()
 	// lets iterate over rows and store them in our models
 	data := &models.Data{}
 
 	// lets check if the user have a token
-
 	if t, err := r.Cookie("token"); err == nil {
 		if t.Value != "" {
 			data.User.IsLoged = true
@@ -82,13 +96,15 @@ func Fetch_Database(r *http.Request, query string, userid int) *models.Data {
 	userName := r.FormValue("userName")
 	Email := r.FormValue("userEmail")
 	if Email == "" {
-		// fmt.Println("email empty")
-		Database.QueryRow("SELECT userEmail FROM users WHERE userName = $1 ", userName).Scan(&Email)
+		stm, err := Database.Prepare("SELECT userEmail FROM users WHERE userName = ? ")
+		if err != nil {
+			logger.LogWithDetails(err)
+			return nil, err
+		}
+		stm.QueryRow(userName).Scan(&Email)
 	}
-
 	data.User.UserName = userName
 	data.User.UserEmail = Email
-	// fmt.Println(data.Userr.UserName, data.Userr.UserEmail, data.Userr.IsLoged, " after in data base ")
 
 	for rows.Next() {
 		post := &models.Post{}
@@ -96,20 +112,28 @@ func Fetch_Database(r *http.Request, query string, userid int) *models.Data {
 			&post.PostId, &post.PostTitle, &post.PostContent, &post.TotalLikes, &post.TotalDeslikes, &post.PostCreatedAt, &post.PostCreator, &post.UserID,
 		)
 		if err != nil {
-			log.Fatalf("Failed to scan row: %v", err)
+			logger.LogWithDetails(err)
+			return nil, err
 		}
 		// Fetch categories for the post
 		query := "SELECT category FROM categories WHERE post_id = ?"
-		rows2, err := Database.Query(query, post.PostId)
+		stm, err := Database.Prepare(query)
 		if err != nil {
-			log.Fatal(err)
+			logger.LogWithDetails(err)
+			return nil, err
+		}
+		rows2, err := stm.Query(post.PostId)
+		if err != nil {
+			logger.LogWithDetails(err)
+			return nil, err
 		}
 		defer rows2.Close()
 		for rows2.Next() {
 			categ := &models.Categorie{}
 			err := rows2.Scan(&categ.CatergoryName)
 			if err != nil {
-				log.Fatal(err)
+				logger.LogWithDetails(err)
+				return nil, err
 			}
 			post.Categories = append(post.Categories, *categ)
 		}
@@ -117,27 +141,36 @@ func Fetch_Database(r *http.Request, query string, userid int) *models.Data {
 	}
 
 	if err := rows.Err(); err != nil {
-		log.Fatal(err)
+		logger.LogWithDetails(err)
+		return nil, err
 	}
 	/// lets fetch cetegories
 	query2 := `SELECT category FROM stoke_categories`
-	rows, err = Database.Query(query2)
+	stm, err = Database.Prepare(query2)
 	if err != nil {
-		fmt.Println("Error executing query:", err)
-		log.Fatal("Error executing query:", err)
+		logger.LogWithDetails(err)
+		return nil, err
+	}
+
+	rows, err = stm.Query()
+	if err != nil {
+		logger.LogWithDetails(err)
+		return nil, err
 	}
 	defer rows.Close()
 	for rows.Next() {
 		category := &models.Categorie{}
 		err := rows.Scan(&category.CatergoryName)
 		if err != nil {
-			log.Fatalf("Failed to scan row: %v", err)
+			logger.LogWithDetails(err)
+			return nil, err
 		}
 		data.Categories = append(data.Categories, *category)
 	}
 	if err := rows.Err(); err != nil {
-		log.Fatal(err)
+		logger.LogWithDetails(err)
+		return nil, err
 	}
 
-	return data
+	return data, nil
 }

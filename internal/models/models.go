@@ -25,3 +25,11 @@ type Post struct { /// after use your own envpreption
 type Categorie struct {
 	CatergoryName string
 }
+
+type Comment struct {
+	CommentCretor    string
+	CommentCreatedAt string
+	CommentContent   string
+	CommentId        int
+	UserId           int
+}

@@ -2,11 +2,13 @@
 package auth
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"forum/internal/database"
 	"forum/internal/handlers"
+	"forum/pkg/logger"
 
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
@@ -16,39 +18,44 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.ExecuteTemplate(w, "error.html", "method not allowed")
+		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
 		return
 	}
-	if IsCookieSet(r, "token") {
-		w.WriteHeader(http.StatusNotFound)
-		pages.ExecuteTemplate(w, "error.html", "you have a session")
-		return
-	}
-
 	userName := r.FormValue("userName")
 	userPassword := r.FormValue("userPassword")
 	Email := r.FormValue("userEmail")
 	Token := uuid.New().String()
-	// fmt.Println(userName, Email, "register form ")
 	if userName == "" || userPassword == "" || Email == "" {
+		logger.LogWithDetails(fmt.Errorf("%s", "empty fields in register form"))
 		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "Bad Request")
+		pages.ExecuteTemplate(w, "error.html", "400 Bad Request")
 		return
 	}
 	Hach_pass, err := bcrypt.GenerateFromPassword([]byte(userPassword), 10)
 	if err != nil {
+		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "error hasching passord")
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	var userExist bool
 	var emailExist bool
-	emailErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = $1)", Email).Scan(&emailExist)
-	userErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE userName = $1)", userName).Scan(&userExist)
+	stm , Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = ?)")
+	if Err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+
+	emailErr := stm.QueryRow( Email).Scan(&emailExist)
+	stm,Err = database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userName = ?)")
+	userErr := stm.QueryRow(userName).Scan(&userExist)
 
 	if userErr != nil || emailErr != nil {
+		logger.LogWithDetails(fmt.Errorf("%s, %s", userErr, emailErr))
 		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 
@@ -57,10 +64,19 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "User already exists")
 		return
 	} else {
-		_, err := database.Database.Exec("INSERT INTO users (userName,userEmail,userPassword,token) VALUES ($1, $2, $3 , $4 )", userName, Email, string(Hach_pass), Token)
+			stm , err := database.Database.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
+			if err != nil {
+				logger.LogWithDetails(err)
+				w.WriteHeader(http.StatusInternalServerError)
+				pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+				return
+			}
+
+		_, err = stm.Exec( userName, Email, string(Hach_pass), Token)
 		if err != nil {
+			logger.LogWithDetails(err)
 			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "Internal Server Error")
+			pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 			return
 		}
 		log.Printf("%s account has been created", userName)
