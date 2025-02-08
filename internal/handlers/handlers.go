@@ -1,57 +1,30 @@
 package handlers
 
 import (
-	"bytes"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"text/template"
 
+	"forum/internal"
+	"forum/internal/auth"
 	"forum/internal/database"
 	"forum/internal/models"
 	"forum/internal/utils"
 	"forum/pkg/logger"
 )
 
-type Pages struct {
-	All_Templates *template.Template
-	buf           bytes.Buffer
-}
-
-var Pagess Pages
-
-
-
-
-
-func ParseTemplates() {
-	var err error
-	Pagess.All_Templates, err = template.ParseGlob("./web/templates/*.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-	Pagess.All_Templates, err = Pagess.All_Templates.ParseGlob("./web/components/*.html")
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
 		return
 	}
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-
-
-
-
 
 	query := `
 	SELECT 
@@ -69,69 +42,75 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	if errr != nil {
 		log.Fatal(errr)
 	}
-	Pagess.buf.Reset()
-	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "home.html", data)
+	internal.Pagess.Buf.Reset()
+	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "home.html", data)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+	internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("inside Login")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
+
+	data, valid := auth.IsValidFormValues(auth.FormErrors)
+	if !valid {
+		fmt.Printf("data: %v\n", data)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+		return
+	}
+
 	if utils.IsCookieSet(r, "token") {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
 
-	Pagess.buf.Reset()
-	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "login.html", nil)
+	internal.Pagess.Buf.Reset()
+	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "login.html", nil)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
-	err = Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
-	fmt.Printf("err: %v\n", err)
+	err = internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
 	if utils.IsCookieSet(r, "token") {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
-	Pagess.buf.Reset()
-	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "register.html", nil)
+	internal.Pagess.Buf.Reset()
+	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "register.html", nil)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
-	err = Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+	err = internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
 	fmt.Printf("err: %v\n", err)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
 	query := `
@@ -148,24 +127,23 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	data, err := database.Fetch_Database(r, query, -1, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.buf.Reset()
-	err = Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "createpost.html", data)
+	internal.Pagess.Buf.Reset()
+	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "createpost.html", data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
+	internal.Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
 }
 
-// // todo : complete handeler for single post
 func Post(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
 	query := `
@@ -182,14 +160,14 @@ func Post(w http.ResponseWriter, r *http.Request) {
 `
 	data, _ := database.Fetch_Database(r, query, -1, false)
 	data.Posts = data.Posts[0:1]
-	fmt.Println(Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
+	fmt.Println(internal.Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
 }
 
 func MyPosts(w http.ResponseWriter, r *http.Request) {
 	// Check if the method is GET
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
 
@@ -201,14 +179,14 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	err = stm.QueryRow(Token.Value).Scan(&id)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	query := `
@@ -226,25 +204,23 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	data, err := database.Fetch_Database(r, query, id, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	err = Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "myposts.html", data)
+	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "myposts.html", data)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "myposts.html", data)
+	internal.Pagess.All_Templates.ExecuteTemplate(w, "myposts.html", data)
 }
-
-// todo : complete handeler for liked posts
 
 func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
 
@@ -253,7 +229,7 @@ func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	if err != nil || fileinfo.IsDir() {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusNotFound)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "404 page Not Found")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "404 page Not Found")
 		return
 	}
 	http.ServeFile(w, r, path)
@@ -262,14 +238,14 @@ func Serve_Files(w http.ResponseWriter, r *http.Request) {
 func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
 	Token, errToken := r.Cookie("token")
 	if errToken != nil {
 		logger.LogWithDetails(errToken)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", " 500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", " 500 Internal Server Error")
 		return
 	}
 	var id int
@@ -277,14 +253,14 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	err = stm.QueryRow(Token.Value).Scan(&id)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
 		return
 	}
 	query := `
@@ -305,16 +281,16 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	data, err := database.Fetch_Database(r, query, id, true)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
 		return
 	}
-	Pagess.buf.Reset()
-	err = Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "likedposts.html", data)
+	internal.Pagess.Buf.Reset()
+	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "likedposts.html", data)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "likedposts.html", data)
+	internal.Pagess.All_Templates.ExecuteTemplate(w, "likedposts.html", data)
 }

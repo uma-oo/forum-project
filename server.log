@@ -753,3 +753,35 @@ created by net/http.(*Server).Serve in goroutine 1
 2025/02/08 16:34:13 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:76)
 2025/02/08 16:34:13 asf logged in
 2025/02/08 16:34:13 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:47)
+2025/02/08 21:51:36 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:76)
+2025/02/08 21:51:36  logged in
+2025/02/08 21:51:36 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:49)
+2025/02/08 21:53:34 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:75)
+2025/02/08 21:53:34  logged in
+2025/02/08 21:53:34 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:49)
+2025/02/08 21:53:52 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:75)
+2025/02/08 21:53:52  logged in
+2025/02/08 21:53:52 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:49)
+2025/02/08 21:56:07 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:77)
+2025/02/08 21:56:07  logged in
+2025/02/08 21:56:07 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:50)
+2025/02/08 21:58:50 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:77)
+2025/02/08 21:58:50 asdfasdf logged in
+2025/02/08 21:58:50 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:53)
+2025/02/08 22:00:18 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:77)
+2025/02/08 22:00:18 asdfasdf logged in
+2025/02/08 22:00:18 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:56)
+2025/02/08 22:27:27 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:77)
+2025/02/08 22:27:27 asdfasdf logged in
+2025/02/08 22:27:27 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:55)
+2025/02/08 22:29:18 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:77)
+2025/02/08 22:29:24 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:45)
+2025/02/08 22:29:24 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:55)
+2025/02/08 22:29:24  account has been created
+2025/02/08 22:29:24 http: superfluous response.WriteHeader call from forum/internal/auth.Register (register.go:93)
+2025/02/08 23:02:11  logged in
+2025/02/08 23:03:31 A User logged out
+2025/02/08 23:03:36  logged in
+2025/02/08 23:03:36 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:52)
+2025/02/08 23:07:56  logged in
+2025/02/08 23:08:35  logged in

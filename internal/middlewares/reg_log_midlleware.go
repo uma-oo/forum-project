@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"forum/internal"
 	"forum/internal/auth"
-	"forum/internal/handlers"
 	"forum/internal/utils"
 
 	"golang.org/x/crypto/bcrypt"
@@ -18,7 +18,7 @@ var rateLimiter = auth.NewRateLimiter(5, time.Minute) // 5 requests per minute l
 func Reg_Log_Middleware(next http.Handler) http.Handler {
 	fmt.Println("inside the Reg_log_middleware")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pages := handlers.Pagess.All_Templates
+		pages := internal.Pagess.All_Templates
 		ip := r.RemoteAddr
 		// Check rate limit (applies to both login and registration)
 		if rateLimiter.CheckRateLimit(ip) {
@@ -31,52 +31,59 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 		email := r.FormValue("userEmail")
 		// Validate the registration form
 		if r.URL.Path == "/auth/register" {
+			fmt.Println("refister condintion")
 			if !utils.IsValidUsername(username) {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.InvalidUserName = "Username is invalid."
+				auth.FormErrors.InvalidUserName = "Username is invalid."
+				http.Redirect(w, r, "/register", http.StatusBadRequest)
 			}
 			_, exist := utils.IsExist("userName", "", username)
 			if exist {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.InvalidUserName = "Username is already taken."
+				auth.FormErrors.InvalidUserName = "Username is already taken."
+				http.Redirect(w, r, "/register", http.StatusBadRequest)
+
 			}
 			if !utils.IsValidEmail(email) {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.InvalidEmail = "Email is invalid."
+				auth.FormErrors.InvalidEmail = "Email is invalid."
+				http.Redirect(w, r, "/register", http.StatusBadRequest)
+				return
 			}
 			_, exist = utils.IsExist("userEmail", "", email)
 			if exist {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.InvalidEmail = "Email is already taken."
+				auth.FormErrors.InvalidEmail = "Email is already taken."
+				http.Redirect(w, r, "/register", http.StatusBadRequest)
 				return
 			}
 			// Validate password
 			if !utils.IsStrongPassword(password) {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.InvalidPassword = "Password is too weak."
+				auth.FormErrors.InvalidPassword = "Password is too weak."
+				http.Redirect(w, r, "/register", http.StatusBadRequest)
+				return
 			}
 		}
 		// validate login form
 		if r.URL.Path == "/auth/log_in" {
+			fmt.Println("login condintion")
 			// check if username is exist
 			pass, exist := utils.IsExist("userName", " , userPassword", username)
 			if !exist {
-				w.WriteHeader(http.StatusBadRequest)
-				handlers.LogRegFormsErrors.FormError = "Invalid Username or Password."
+				auth.FormErrors.FormError = "Invalid Username or Password."
+				http.Redirect(w, r, "/login", http.StatusBadRequest)
+				return
 			}
 
 			//if !utils.IsExist("userEmail", email) { // this if you are using email in login
-			//	w.WriteHeader(http.StatusBadRequest)
 			//	pages.ExecuteTemplate(w, "login.html", "Invalid Email or Password.")
 			//	return
 			//}
 
 			// lest check the pass
 			if err := bcrypt.CompareHashAndPassword([]byte(pass), []byte(password)); err != nil {
-				w.WriteHeader(http.StatusUnauthorized)
-				handlers.LogRegFormsErrors.FormError = "Invalid Username or Password."
+				auth.FormErrors.FormError = "Invalid Username or Password."
+				http.Redirect(w, r, "/login", http.StatusUnauthorized)
+				return
 			}
 		}
+		fmt.Println("here")
 		next.ServeHTTP(w, r)
 	})
 }

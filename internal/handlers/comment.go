@@ -4,18 +4,18 @@ import (
 	"fmt"
 	"net/http"
 
+	"forum/internal"
 	"forum/internal/database"
 )
 
-
 func AddPostComment(w http.ResponseWriter, r *http.Request) {
-	pages := Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
-	
+
 	user_id := 1
 	post_id := 1
 	comment := "hi there this is someone else"
@@ -39,7 +39,7 @@ func AddPostComment(w http.ResponseWriter, r *http.Request) {
 }
 
 func LikeComment(w http.ResponseWriter, r *http.Request) {
-	pages := Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "method not allowed")

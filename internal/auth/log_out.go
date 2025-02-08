@@ -4,12 +4,12 @@ import (
 	"log"
 	"net/http"
 
-	"forum/internal/handlers"
+	"forum/internal"
 	"forum/internal/utils"
 )
 
 func LogOut(w http.ResponseWriter, r *http.Request) {
-	pages := handlers.Pagess
+	pages := internal.Pagess
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")

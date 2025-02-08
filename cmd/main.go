@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"forum/internal"
 	"forum/internal/auth"
 	"forum/internal/database"
 	"forum/internal/handlers"
@@ -16,7 +17,7 @@ import (
 
 func init() {
 	database.Create_database()
-	handlers.ParseTemplates()
+	internal.ParseTemplates()
 }
 
 func main() {
@@ -42,7 +43,7 @@ func main() {
 	http.HandleFunc("/register", handlers.Register)
 
 	// routes for auth handlers in auth package we need to add the auth middleware for login and register likly deferrant
-	//http.HandleFunc("/auth/register", auth.Register)
+	// http.HandleFunc("/auth/register", auth.Register)
 	http.Handle("/auth/register", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.Register)))
 	http.Handle("/auth/log_in", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.LogIn)))
 	http.HandleFunc("/auth/logout", auth.LogOut)

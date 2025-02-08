@@ -1,12 +1,11 @@
-// internal/auth/auth.go
 package auth
 
 import (
 	"log"
 	"net/http"
 
+	"forum/internal"
 	"forum/internal/database"
-	"forum/internal/handlers"
 	"forum/pkg/logger"
 
 	"github.com/google/uuid"
@@ -14,7 +13,7 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	pages := handlers.Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
@@ -91,5 +90,4 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	http.SetCookie(w, cookie)
 	http.Redirect(w, r, "/", http.StatusFound)
-
 }

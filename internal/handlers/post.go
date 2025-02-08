@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"forum/internal"
 	"forum/internal/database"
 	"forum/pkg/logger"
 )
@@ -17,7 +18,7 @@ const (
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
-	pages := Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
@@ -43,7 +44,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
 	err = stm.QueryRow(cookie.Value).Scan(&userId)
@@ -106,7 +107,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostReactions(w http.ResponseWriter, r *http.Request) {
-	pages := Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
@@ -262,7 +263,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -280,7 +281,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( ReactionDislike, userid, postid)
+			_, err = stm.Exec(ReactionDislike, userid, postid)
 			if err != nil {
 				logger.LogWithDetails(err)
 				tx.Rollback()
@@ -296,7 +297,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -313,7 +314,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( Neutre, userid, postid)
+			_, err = stm.Exec(Neutre, userid, postid)
 			if err != nil {
 				logger.LogWithDetails(err)
 				tx.Rollback()
@@ -329,7 +330,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -346,7 +347,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( ReactionDislike, userid, postid)
+			_, err = stm.Exec(ReactionDislike, userid, postid)
 			if err != nil {
 				logger.LogWithDetails(err)
 				tx.Rollback()
@@ -362,7 +363,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -379,7 +380,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -411,7 +412,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -428,7 +429,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( ReactionLike, userid, postid)
+			_, err = stm.Exec(ReactionLike, userid, postid)
 			if err != nil {
 				tx.Rollback()
 				w.WriteHeader(http.StatusInternalServerError)
@@ -443,7 +444,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -459,7 +460,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 				return
 			}
-			_, err = stm.Exec( postid)
+			_, err = stm.Exec(postid)
 			if err != nil {
 				tx.Rollback()
 				logger.LogWithDetails(err)
@@ -468,8 +469,6 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
-
-		
 	}
 
 	err = tx.Commit()
