@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"forum/internal/database"
+	"forum/internal/models"
 	"forum/internal/utils"
 	"forum/pkg/logger"
 )
@@ -22,7 +23,6 @@ var Pagess Pages
 
 func ParseTemplates() {
 	var err error
-
 	Pagess.All_Templates, err = template.ParseGlob("./web/templates/*.html")
 	if err != nil {
 		log.Fatal(err)
@@ -88,7 +88,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "login.html", nil)
+	data := models.Data{}
+	data.User.CurrentPath = r.URL.Path
+	err = Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+	fmt.Printf("err: %v\n", err)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +111,10 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	Pagess.All_Templates.ExecuteTemplate(w, "register.html", nil)
+	data := models.Data{}
+	data.User.CurrentPath = r.URL.Path
+	err = Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+	fmt.Printf("err: %v\n", err)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -147,6 +153,27 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 
 // // todo : complete handeler for single post
 func Post(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		return
+	}
+	query := `
+	SELECT 
+		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
+		users.userName, users.id
+	FROM 
+		posts
+	INNER JOIN 
+		users
+	ON 
+		posts.user_id = users.id
+	ORDER BY 
+		posts.created_at DESC
+`
+	data, _ := database.Fetch_Database(r, query, -1, false)
+	data.Posts = data.Posts[0:1]
+	fmt.Println(Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
 	fmt.Println("inside single post")
 }
 

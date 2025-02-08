@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2025/02/07 18:39:01 2025-02-07T18:39:01+01:00 [Function: forum/internal/utils.IsExist] [Line: 63] sql: no rows in result set
 2025/02/07 18:39:01 2025-02-07T18:39:01+01:00 [Function: forum/internal/utils.IsExist] [Line: 63] sql: no rows in result set
 2025/02/07 18:39:01 test account has been created
@@ -53,3 +54,6 @@
 2025/02/08 10:26:57 2025-02-08T10:26:57+01:00 [Function: forum/internal/handlers.Serve_Files] [Line: 219] stat web/static/css/login.css: no such file or directory
 2025/02/08 10:26:58 2025-02-08T10:26:58+01:00 [Function: forum/internal/handlers.Serve_Files] [Line: 219] stat web/static/css/login.css: no such file or directory
 2025/02/08 10:27:21 hassan logged in
+=======
+2025/02/08 11:05:26 hassan account has been created
+>>>>>>> test
