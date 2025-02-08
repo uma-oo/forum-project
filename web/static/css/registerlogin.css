@@ -58,6 +58,15 @@
     border: solid 1px var(--color-primary) ;
 }
 
+.form-error {
+    color : var(--color-red);
+}
+.form-input-error {
+    font-size: 14px;
+    color : var(--color-red);
+}
+
+
 .register-login-section .alternative-action {
     margin-top: -5px;
     margin-left: auto;

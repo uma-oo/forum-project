@@ -7,11 +7,18 @@ type User struct {
 	UserEmail string
 	// Profile   string // about imges we can store them in databse as blob dont wory
 }
+type FormErrors struct {
+	FormError string
+	InvalidUserName string
+	InvalidEmail string
+	InvalidPassword string
+}
 
 type Data struct {
 	User        User
 	Posts       []Post
 	Categories  []Categorie
+	FormErrors
 }
 
 type Post struct { /// after use your own envpreption

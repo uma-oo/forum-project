@@ -16,21 +16,34 @@
             <div class="form-grp">
                 <label for="userName"><img src="/web/static/images/person.svg" alt=""><span>User Name:</span></label>
                 <input type="text" id="userName" name="userName" placeholder="Enter your user name...">
+                {{if .InvalidUserName}}
+                <p class="form-input-error">{{.InvalidUserName}}</p>
+                {{end}}
             </div>
             <div class="form-grp">
                 <label for="userEmail"><img src="/web/static/images/email.svg" alt=""><span>Email:</span></label>
                 <input type="email" id="userEmail" name="userEmail" placeholder="Enter your email...">
+                {{if .InvalidEmail}}
+                <p class="form-input-error">{{.InvalidEmail}}</p>
+                {{end}}
             </div>
             <div class="form-grp">
                 <label for="userPassword"><img src="/web/static/images/lock.svg" alt=""><span>Password:</span></label>
                 <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
+                {{if .InvalidPassword}}
+                <p class="form-input-error">{{.InvalidPassword}}</p>
+                {{end}}
             </div>
             <hr class="seperator">
+            {{if .FormError}}
+            <p class="form-error">{{.FormError}}</p>
+            {{end}}
             <div class="form_actions">
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Register</button>
             </div>
-            <div class="alternative-action txt-light txt-sm">Already have an account ?  <a href="/login">Log In.. </a></div>
+            <div class="alternative-action txt-light txt-sm">Already have an account ? <a href="/login">Log In.. </a>
+            </div>
         </form>
     </main>
 </body>
