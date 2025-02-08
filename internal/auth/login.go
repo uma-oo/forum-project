@@ -6,10 +6,13 @@ import (
 
 	"forum/internal/database"
 	"forum/internal/handlers"
+	"forum/internal/models"
 	"forum/pkg/logger"
 
 	"github.com/google/uuid"
 )
+
+var LogRegFormsErrors models.FormErrors
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	pages := handlers.Pagess
@@ -20,28 +23,6 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	UserName := r.FormValue("userName")
-	//Password := r.FormValue("userPassword")
-	/*
-		var pasword string
-		var username string
-
-		err := database.Database.QueryRow("SELECT userName , userPassword  FROM users WHERE  userName = ? ", UserName).Scan(&username, &pasword)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				w.WriteHeader(http.StatusUnauthorized)
-				pages.All_Templates.ExecuteTemplate(w, "error.html", "user not exist") // should execute login page here for no rows err
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
-			pages.All_Templates.ExecuteTemplate(w, "error.html", err)
-			return
-
-		}
-		if err := bcrypt.CompareHashAndPassword([]byte(pasword), []byte(Password)); err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			pages.All_Templates.ExecuteTemplate(w, "error.html", "Invalid Password or username or exist")
-			return
-		}*/
 	Token := uuid.New().String()
 	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
 	if err != nil {

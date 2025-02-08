@@ -740,3 +740,16 @@ net/http.(*conn).serve(0xc0000e6090, {0x96adf0, 0xc0001a1d70})
 	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
 created by net/http.(*Server).Serve in goroutine 1
 	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/02/08 13:49:08 test account has been created
+2025/02/08 13:57:22 A User logged out
+2025/02/08 15:54:28 test1 account has been created
+2025/02/08 15:55:45 A User logged out
+2025/02/08 16:31:07 http: superfluous response.WriteHeader call from main.main.Reg_Log_Middleware.func5 (reg_log_midlleware.go:82)
+2025/02/08 16:31:07  logged in
+2025/02/08 16:31:07 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:47)
+2025/02/08 16:33:15 http: superfluous response.WriteHeader call from main.main.Reg_Log_Middleware.func5 (reg_log_midlleware.go:82)
+2025/02/08 16:33:15 asdf logged in
+2025/02/08 16:33:15 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:47)
+2025/02/08 16:34:13 http: superfluous response.WriteHeader call from forum/internal/middlewares.Reg_Log_Middleware.func1 (reg_log_midlleware.go:76)
+2025/02/08 16:34:13 asf logged in
+2025/02/08 16:34:13 http: superfluous response.WriteHeader call from forum/internal/auth.LogIn (login.go:47)

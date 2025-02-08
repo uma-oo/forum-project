@@ -44,7 +44,6 @@ func main() {
 	// routes for auth handlers in auth package we need to add the auth middleware for login and register likly deferrant
 	//http.HandleFunc("/auth/register", auth.Register)
 	http.Handle("/auth/register", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.Register)))
-	//http.HandleFunc("/auth/log_in", auth.LogIn)
 	http.Handle("/auth/log_in", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.LogIn)))
 	http.HandleFunc("/auth/logout", auth.LogOut)
 
@@ -54,7 +53,7 @@ func main() {
 	http.Handle("/api/react_to_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.PostReactions)))
 	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPostComment)))
 	http.Handle("/api/react_to_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.LikeComment)))
-	
+
 	fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil))
 }

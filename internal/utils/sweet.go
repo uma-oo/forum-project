@@ -79,8 +79,8 @@ func IsCookieSet(r *http.Request, cookieName string) bool {
 	if cookie.Value == "" {
 		return false
 	}
+	
 	// lets extract the token value from the cookie and compare it with the one we have in databse
-
 	var tokenExist bool
 	// lets extract the token from users table
 	// be care full with  no token

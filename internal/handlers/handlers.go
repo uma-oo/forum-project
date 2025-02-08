@@ -21,6 +21,10 @@ type Pages struct {
 
 var Pagess Pages
 
+
+
+
+
 func ParseTemplates() {
 	var err error
 	Pagess.All_Templates, err = template.ParseGlob("./web/templates/*.html")
@@ -44,6 +48,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
 		return
 	}
+
+
+
+
+
 	query := `
 	SELECT 
 		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
@@ -72,6 +81,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("inside Login")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
@@ -80,6 +90,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if utils.IsCookieSet(r, "token") {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
+
 	Pagess.buf.Reset()
 	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "login.html", nil)
 	if err != nil {
@@ -133,7 +144,6 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 		users
 	ON 
 		posts.user_id = users.id
-
 `
 	data, err := database.Fetch_Database(r, query, -1, false)
 	if err != nil {
