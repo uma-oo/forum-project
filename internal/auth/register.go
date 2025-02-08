@@ -2,7 +2,6 @@
 package auth
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -25,12 +24,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userPassword := r.FormValue("userPassword")
 	Email := r.FormValue("userEmail")
 	Token := uuid.New().String()
-	if userName == "" || userPassword == "" || Email == "" {
-		logger.LogWithDetails(fmt.Errorf("%s", "empty fields in register form"))
-		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "400 Bad Request")
-		return
-	}
+
 	Hach_pass, err := bcrypt.GenerateFromPassword([]byte(userPassword), 10)
 	if err != nil {
 		logger.LogWithDetails(err)
@@ -38,9 +32,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	var userExist bool
+	/*var userExist bool
 	var emailExist bool
-	stm , Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = ?)")
+	stm, Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = ?)")
 	if Err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -48,8 +42,14 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	emailErr := stm.QueryRow( Email).Scan(&emailExist)
-	stm,Err = database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userName = ?)")
+	emailErr := stm.QueryRow(Email).Scan(&emailExist)
+	stm, Err = database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userName = ?)")
+	if Err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
 	userErr := stm.QueryRow(userName).Scan(&userExist)
 
 	if userErr != nil || emailErr != nil {
@@ -63,24 +63,24 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusBadRequest)
 		pages.ExecuteTemplate(w, "error.html", "User already exists")
 		return
-	} else {
-			stm , err := database.Database.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
-			if err != nil {
-				logger.LogWithDetails(err)
-				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-				return
-			}
+	} else {*/
 
-		_, err = stm.Exec( userName, Email, string(Hach_pass), Token)
-		if err != nil {
-			logger.LogWithDetails(err)
-			w.WriteHeader(http.StatusInternalServerError)
-			pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-			return
-		}
-		log.Printf("%s account has been created", userName)
+	stm, err := database.Database.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
 	}
+
+	_, err = stm.Exec(userName, Email, string(Hach_pass), Token)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+	log.Printf("%s account has been created", userName)
 
 	cookie := &http.Cookie{
 		Name:   "token",
@@ -90,7 +90,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, cookie)
-	r.AddCookie(cookie)
 	http.Redirect(w, r, "/", http.StatusFound)
-	return
+
 }
