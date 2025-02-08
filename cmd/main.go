@@ -21,7 +21,6 @@ func init() {
 
 func main() {
 	// Get the current working directory
-	// just for commentts
 	logger, err := logger.Create_Logger()
 	if err != nil {
 		log.Fatal(err)
@@ -42,9 +41,12 @@ func main() {
 	http.HandleFunc("/login", handlers.Login)
 	http.HandleFunc("/register", handlers.Register)
 	// routes for auth handlers in auth package we need to add the auth middleware for login and register likly deferrant
-	http.HandleFunc("/auth/register", auth.Register)
-	http.HandleFunc("/auth/log_in", auth.LogIn)
+	//http.HandleFunc("/auth/register", auth.Register)
+	http.Handle("/auth/register", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.Register)))
+	//http.HandleFunc("/auth/log_in", auth.LogIn)
+	http.Handle("/auth/log_in", middlewares.Reg_Log_Middleware(http.HandlerFunc(auth.LogIn)))
 	http.HandleFunc("/auth/logout", auth.LogOut)
+
 	// routes for forms actions
 	// http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.Handle("/api/add_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPost)))
