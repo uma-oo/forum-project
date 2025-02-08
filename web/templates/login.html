@@ -12,7 +12,7 @@
         <form class="login-form-container" method="post" action="/auth/log_in">
             <div class="form-grp">
                 <label for="userName"><img src="/static/images/person.svg" alt=""><span>User Name:</span></label>
-                <input type="text" id="userName" name="userName" value="{{.UserName}}" placeholder="Enter your user name...">
+                <input type="text" id="userName" name="userName" value="" placeholder="Enter your user name...">
             </div>
             <div class="form-grp">
                 <label for="userPassword"><img src="/static/images/lock.svg" alt=""><span>Password:</span></label>
@@ -20,7 +20,7 @@
             </div>
             <hr class="seperator">
             <div class="form_actions">
-                <p class="form_error_msg">{{ .Message}}</p>
+                <p class="form_error_msg">{{ . }}</p>
                 <button class="secondaryBtn" type="reset">Reset</button>
                 <button class="primaryBtn" type="submit">Log in</button>
             </div>
