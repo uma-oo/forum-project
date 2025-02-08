@@ -740,3 +740,4 @@ net/http.(*conn).serve(0xc0000e6090, {0x96adf0, 0xc0001a1d70})
 	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:2044 +0x5e8
 created by net/http.(*Server).Serve in goroutine 1
 	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
+2025/02/08 14:37:41 qydigux account has been created
