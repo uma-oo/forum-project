@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 	"text/template"
 
 	"forum/internal/database"
@@ -91,7 +92,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
 	err = Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
-	fmt.Printf("err: %v\n", err)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -114,7 +114,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
 	err = Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
-	fmt.Printf("err: %v\n", err)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
@@ -212,7 +211,7 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	ON 
 		posts.user_id = users.id
 	
-`
+    `
 	data, err := database.Fetch_Database(r, query, id, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -228,8 +227,6 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "myposts.html", data)
 }
-
-// todo : complete handeler for liked posts
 
 func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
@@ -307,4 +304,53 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	Pagess.All_Templates.ExecuteTemplate(w, "likedposts.html", data)
+}
+
+func FilterPosts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		return
+	}
+	r.ParseForm()
+	Categories := r.Form["filter-category"]
+	if len(Categories) == 0 {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	placeholders := strings.Repeat("?,", len(Categories)-1) + "?"
+	query := fmt.Sprintf(`
+		SELECT 
+			posts.id,
+			posts.title,
+			posts.content,
+			posts.total_likes,
+			posts.total_dislikes,
+			posts.created_at,
+			users.userName,
+			users.id
+		FROM posts
+		JOIN users ON posts.user_id = users.id
+		JOIN categories ON posts.id = categories.post_id
+		WHERE categories.category IN (%s)
+	`, placeholders)
+
+	for _, val := range Categories {
+		query = strings.Replace(query, "?", string('"')+val+string('"'), 1)
+	}
+	data, err := database.Fetch_Database(r, query, -1, true)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		return
+	}
+	Pagess.buf.Reset()
+	err = Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "home.html", data)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		return
+	}
+	Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
