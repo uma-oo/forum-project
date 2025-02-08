@@ -9,6 +9,7 @@ import (
 	"text/template"
 
 	"forum/internal/database"
+	"forum/internal/utils"
 	"forum/pkg/logger"
 )
 
@@ -76,6 +77,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
+	if utils.IsCookieSet(r, "token") {
+		http.Redirect(w, r, "/", http.StatusFound)
+	}
 	Pagess.buf.Reset()
 	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "login.html", nil)
 	if err != nil {
@@ -92,6 +96,9 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
+	}
+	if utils.IsCookieSet(r, "token") {
+		http.Redirect(w, r, "/", http.StatusFound)
 	}
 	Pagess.buf.Reset()
 	err := Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "register.html", nil)
