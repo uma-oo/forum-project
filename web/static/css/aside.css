@@ -1,0 +1,107 @@
+.aside {
+    border-right: solid 1px var(--color-dark-navy);
+    display: flex;
+    flex-direction: column;
+}
+
+.aside .filter_container {
+    flex-grow: 1 ;
+    button {
+        color: var(--color-dark-navy);
+    }
+}
+
+.aside nav a:last-child {
+    display: none;
+}
+
+.aside > nav > a{
+    padding: 20px 60px 20px 1rem;
+    border-bottom: solid 2px var(--color-dark-navy);
+    display: flex;
+    gap: 14px;
+    align-items: center;
+}
+
+.aside .filter_container {
+    padding: 1rem;
+}
+
+.aside .filter_container form {
+    border: none;
+    padding: 1rem;
+    display: flex;
+    gap: 5px;
+    flex-wrap: wrap;
+
+    button {
+        padding: 10px;
+        margin-top: 1rem;
+        width: 100%;
+        font-weight: 800px;
+    }
+}
+
+.aside .filter_container form .form-grp {
+    width: max-content;
+    padding: 2px 10px;
+    margin-bottom: .6rem;
+
+    label {
+        width: 100%;
+        cursor: pointer;
+        transition: all 0.1s ease-in-out;
+    }
+
+    label:hover {
+        color: var(--color-primary);
+    }
+}
+
+.aside .filter_container form .form_actions {
+    border: solid red ;
+    width: 100%;
+    color: var(--color-dark-navy) !important;
+}
+
+.aside .filter_container form .form-grp:has(input:checked) {
+    border: solid 1px;
+}
+
+@media (max-width: 576px) {
+    nav a:last-child{
+        display: block;
+        border: solid red ;
+    }
+}
+
+@media (max-width: 980px) {
+    .aside .overlay {
+        position: fixed;
+        top: 80px;
+        right: -100%;
+        width: calc(100% - 300px);
+        height: calc(100% - 80px);
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+    .aside {
+        max-width: 300px;
+        position: absolute;
+        top: 80px;
+        left: -100%;
+        height: calc(100% - 80px);
+        overlay: auto;
+        transition: left .5s ease-in;
+    }
+    .aside:has(#menu-toggle:checked) {
+        z-index: 10000;
+        display: flex;
+        position: absolute;
+        left: 0;
+        transition: left .5s ease-in;
+        .overlay {
+            right: 0;
+            transition: right 0s ease .5s;
+        }
+    }
+}

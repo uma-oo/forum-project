@@ -1,31 +1,46 @@
 {{define "PostsContainer"}}
+{{if .Posts}}
 {{ range .Posts }}
 <div class="post_card">
     <div class="post_header">
         <div class="post_creator_info_container">
-            {{template "avatar" }} 
+            {{template "avatar" }}
             <div class="post_creator_info">
                 <p>{{.PostCreator}}</p>
-                <p class="timestamp txt-light txt-sm">{{.PostCreatedAt}}</p> 
+                <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>
             </div>
         </div>
-        <div class="post_meta_data">
-            <a href="/{{.PostId}}"><h2>{{.PostTitle}}</h2></a>
-            {{template "TagsList" .Categories}} 
-        </div>
+        {{template "TagsList" .Categories}}
     </div>
     <div class="post_body">
+        <a href="/{{.PostId}}">
+            <h3>{{.PostTitle}}</h3>
+        </a>
         <p>
-          {{ .PostContent }}
+            {{ .PostContent }}
         </p>
     </div>
     <div class="post_footer">
-        <div class="reactions_container">
-            {{template "Likes" . }}
-            {{template "Dislikes" . }}
-            {{template "Comments" . }}
-        </div>
+        {{template "PostReactions" .}}
+    </div>
+    <div class="comment_form_container">
+        <form action="/api/add_post_comment" method="post">
+            <input name="postComment" id="postComment" placeholder="Add your comment here ..."></input>
+            <div class="form-actions">
+                <button type="reset">Reset</button>
+                <button type="submit">Comment</button>
+            </div>
+        </form>
+        <input type="number" value="{{.PostId}}" hidden name="post_id" id="post_id" value="{{.PostId}}">
+        <input type="checkbox" name="comment_form_toggle" id="comment_form_toggle" hidden>
     </div>
 </div>
- {{ end }}
+{{ end }}
+{{else}}
+<div class="empty_container">
+    <img src="/web/static/images/empty.png">
+    <p>There is no posts here yet.</p>
+</div>
+{{end}}
+
 {{end}}

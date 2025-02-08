@@ -1,44 +1,8 @@
-:root {
-    /** font variables */
-    --global-font-family: Verdana, sans-serif;
-    --global-font-size: 0.8rem;
-    --primary-title-size: 2rem;
 
-    /** layout  */
-    --padding-sm: 10px;
-    --padding-md: 25px;
-    --padding-lg: 50px;
 
-    /** color variables */
-    --bg-color-gray: #F2F2F2;
-    --bg-color-light-gray: #ccc;
-    --color-primary: #C56D48;
-    --color-dark-navy: #394349;
-    --main-text-color: var(--color-dark-navy);
-    --light-text-color: #8A98A4;
-    --border-color: #17202A;
-    /* --color-secondary: #779fa1;
-    --color-warning: #e28413;
-    --color-danger: #ff6542; */
-    /** border vaiables */
-    --border-radius-sm: 3px;
-    --border-radius-md: 10px;
-    --border-radius-round: 50%;
-}
-
-.create_post_section {
-    min-width: 300px;
-    width: 60%;
-    /* max-width: 600px; */
-    margin-inline: auto;
-    padding: 2rem 0;
-}
-
-.create_post_section h2 {
-    margin-bottom: 3rem;
-}
 
 .create_post_section form {
+    border: solid red 1px;
     display: flex;
     flex-direction: column;
     gap: 2rem;
@@ -85,8 +49,10 @@ textarea {
     justify-content: start;
     align-items: center;
     flex-wrap: wrap;
-    gap:10px;
+    gap: 5px;
+    row-gap: 15px;
 }
+
 .title-input {
     display: block;
     width: 100%;
@@ -108,12 +74,9 @@ textarea {
 .create_post_section .form_actions {
     display: flex;
     justify-content: end;
-    gap: 5px;
+    gap: 8px;
 }
 
-.create_post_section .form_actions button {
-    padding: 10px 32px;
-}
 
 .create_post_section .form_actions button[type="reset"] {
     background: none;

@@ -1,6 +1,7 @@
 package models
 
 type User struct {
+	CurrentPath string
 	IsLoged   bool
 	UserName  string
 	UserEmail string
@@ -8,9 +9,9 @@ type User struct {
 }
 
 type Data struct {
-	User       User
-	Posts      []Post
-	Categories []Categorie
+	User        User
+	Posts       []Post
+	Categories  []Categorie
 }
 
 type Post struct { /// after use your own envpreption

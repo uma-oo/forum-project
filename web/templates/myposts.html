@@ -4,16 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum</title>
-    <link rel="stylesheet" href="web/static/css/shared.css">
+    <link rel="stylesheet" href="web/static/css/styles.css">
 </head>
 <body>
-   <!-- web/components/header.html -->
    {{template "Header" .User }}
    {{template "Aside" .}}
    <main class="main">
-       <!-- web/components/aside.html -->
+    <h2>My Posts :</h2>
        {{template "PostsContainer" .}}
    </main>
-   {{template "Footer"}}
 </body>
 </html>
