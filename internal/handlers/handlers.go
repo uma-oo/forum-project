@@ -86,7 +86,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
-	err := Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+	err = Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
 	fmt.Printf("err: %v\n", err)
 }
 
@@ -106,45 +106,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	}
 	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
-	err := Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+	err = Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
 	fmt.Printf("err: %v\n", err)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
-		return
-	}
-	query := `
-	SELECT 
-		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
-		users.userName, users.id
-	FROM 
-		posts
-	INNER JOIN 
-		users
-	ON 
-		posts.user_id = users.id
-
-`
-	data, err := database.Fetch_Database(r, query, -1, false)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	Pagess.buf.Reset()
-	err = Pagess.All_Templates.ExecuteTemplate(&Pagess.buf, "createpost.html", data)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
-}
-
-func Post(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
@@ -198,7 +164,7 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	ORDER BY 
 		posts.created_at DESC
 `
-	data := database.Fetch_Database(r, query, -1)
+	data, _ := database.Fetch_Database(r, query, -1, false)
 	data.Posts = data.Posts[0:1]
 	fmt.Println(Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
 	fmt.Println("inside single post")

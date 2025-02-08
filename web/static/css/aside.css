@@ -5,7 +5,10 @@
 }
 
 .aside .filter_container {
-    flex-grow: 1 !important;
+    flex-grow: 1 ;
+    button {
+        color: var(--color-dark-navy);
+    }
 }
 
 .aside nav a:last-child {
@@ -56,7 +59,9 @@
 }
 
 .aside .filter_container form .form_actions {
+    border: solid red ;
     width: 100%;
+    color: var(--color-dark-navy) !important;
 }
 
 .aside .filter_container form .form-grp:has(input:checked) {
