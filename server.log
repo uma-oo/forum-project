@@ -829,3 +829,4 @@ net/http.(*conn).serve(0xc000212870, {0x96c0b0, 0xc0001a1cb0})
 created by net/http.(*Server).Serve in goroutine 1
 	/home/helouaziz/go/pkg/mod/golang.org/toolchain@v0.0.1-go1.22.5.linux-amd64/src/net/http/server.go:3290 +0x4b4
 2025/02/08 14:37:41 qydigux account has been created
+2025/02/08 16:30:47 jutax account has been created
