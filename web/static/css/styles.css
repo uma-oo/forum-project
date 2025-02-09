@@ -60,7 +60,7 @@ a {
 body {
     background: var(--color-dark) !important;
     color: var(--color-light) !important;
-    height: 100vh;
+    height: 100dvh;
     grid-template-columns: 300px auto;
     grid-template-rows: 80px auto;
     display: grid;
