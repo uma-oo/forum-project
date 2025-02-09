@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"forum/internal"
 	"forum/internal/auth"
@@ -15,7 +16,6 @@ import (
 )
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("inside Login")
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
@@ -23,8 +23,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	data, valid := auth.IsValidFormValues(auth.FormErrors)
 	if !valid {
-		fmt.Println(data)
-		fmt.Printf("data: %v\n", data)
 		w.WriteHeader(http.StatusBadRequest)
 		data.User.CurrentPath = "/login"
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
@@ -85,7 +83,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+	w.Write(internal.Pagess.Buf.Bytes())
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -97,7 +95,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	data, valid := auth.IsValidFormValues(auth.FormErrors)
 	if !valid {
-		fmt.Printf("data: %v\n", data)
 		data.User.CurrentPath = "/register"
 		w.WriteHeader(http.StatusBadRequest)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
@@ -215,7 +212,7 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	ON 
 		posts.user_id = users.id
 	
-`
+    `
 	data, err := database.Fetch_Database(r, query, id, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -308,4 +305,54 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	internal.Pagess.All_Templates.ExecuteTemplate(w, "likedposts.html", data)
+}
+
+func FilterPosts(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		return
+	}
+	r.ParseForm()
+	Categories := r.Form["filter-category"]
+	if len(Categories) == 0 {
+		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	placeholders := strings.Repeat("?,", len(Categories)-1) + "?"
+	query := fmt.Sprintf(`
+		SELECT 
+			posts.id,
+			posts.title,
+			posts.content,
+			posts.total_likes,
+			posts.total_dislikes,
+			posts.created_at,
+			users.userName,
+			users.id
+		FROM posts
+		JOIN users ON posts.user_id = users.id
+		JOIN categories ON posts.id = categories.post_id
+		WHERE categories.category IN (%s)
+	`, placeholders)
+
+	for _, val := range Categories {
+		query = strings.Replace(query, "?", string('"')+val+string('"'), 1)
+	}
+	data, err := database.Fetch_Database(r, query, -1, true)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		return
+	}
+	internal.Pagess.Buf.Reset()
+	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "home.html", data)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		return
+	}
+	w.Write(internal.Pagess.Buf.Bytes())
+	// internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }

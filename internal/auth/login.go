@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"reflect"
@@ -20,7 +19,6 @@ var (
 )
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("inside aut log")
 	pages := internal.Pagess
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -59,7 +57,6 @@ func IsValidFormValues(FormErrors models.FormErrors) (*models.Data, bool) {
 	values := reflect.ValueOf(FormErrors)
 	for i := 0; i < values.NumField(); i++ {
 		if values.Field(i).String() != "" {
-			fmt.Println(values.Field(i).String())
 			data := &models.Data{
 				FormsData: FormsData,
 			}

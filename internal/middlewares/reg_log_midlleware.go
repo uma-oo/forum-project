@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"net/http"
 	"time"
 
@@ -16,7 +15,6 @@ var rateLimiter = auth.NewRateLimiter(5, time.Minute) // 5 requests per minute l
 
 // Custom middleware to validate the registration form
 func Reg_Log_Middleware(next http.Handler) http.Handler {
-	fmt.Println("inside the Reg_log_middleware")
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		pages := internal.Pagess.All_Templates
 		ip := r.RemoteAddr
@@ -26,13 +24,12 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 			pages.ExecuteTemplate(w, "error.html", "Too many requests. Please try again later.")
 			return
 		}
-		auth.FormsData.UserNameInput= r.FormValue("userName")
-		auth.FormsData.UserEmailInput= r.FormValue("userEmail")
-		auth.FormsData.UserPasswordInput= r.FormValue("userPassword")
+		auth.FormsData.UserNameInput = r.FormValue("userName")
+		auth.FormsData.UserEmailInput = r.FormValue("userEmail")
+		auth.FormsData.UserPasswordInput = r.FormValue("userPassword")
 		// Validate the registration form
 		invalidFormdata := false
 		if r.URL.Path == "/auth/register" {
-			fmt.Println("refister condintion")
 			if !utils.IsValidUsername(auth.FormsData.UserNameInput) {
 				auth.FormErrors.InvalidUserName = "Username is invalid."
 				invalidFormdata = true
@@ -63,18 +60,12 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 		}
 		// validate login form
 		if r.URL.Path == "/auth/log_in" {
-			fmt.Println("login condintion")
 			// check if username is exist
 			pass, exist := utils.IsExist("userName", " , userPassword", auth.FormsData.UserNameInput)
 			if !exist {
 				auth.FormErrors.FormError = "Invalid Username or Password."
 				invalidFormdata = true
 			}
-
-			//if !utils.IsExist("userEmail", auth.FormsData.UserEmailInput) { // this if you are using auth.FormsData.UserEmailInput in login
-			//	pages.ExecuteTemplate(w, "login.html", "Invalid Email or Password.")
-			//	return
-			//}
 
 			// lest check the pass
 			if err := bcrypt.CompareHashAndPassword([]byte(pass), []byte(auth.FormsData.UserPasswordInput)); err != nil {
@@ -86,7 +77,6 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 				return
 			}
 		}
-		fmt.Println("going next")
 		next.ServeHTTP(w, r)
 	})
 }

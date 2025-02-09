@@ -13,7 +13,7 @@ import (
 
 func IsValidUsername(username string) bool {
 	// Example: Allow only alphanumeric characters and underscores
-	match, _ := regexp.MatchString("^[a-zA-Z0-9_]{3,15}$", username) // we can add length like {3,15} and remove the +
+	match, _ := regexp.MatchString("^[a-zA-Z0-9_]{3,50}$", username) // we can add length like {3,15} and remove the +
 	return match && !isReservedUsername(username)
 }
 
@@ -35,11 +35,12 @@ func isReservedUsername(username string) bool {
 
 func IsStrongPassword(password string) bool {
 	// Ensure password is at least 6 characters long
-	if len(password) < 8 {
+	if len(password) <= 8 || len(password) >= 100 {
 		return false
 	}
 
 	hasLower := false
+	hasUpper := false
 	hasDigit := false
 
 	// Loop through the password to check for lowercase letters and digits
@@ -47,13 +48,16 @@ func IsStrongPassword(password string) bool {
 		if char >= 'a' && char <= 'z' {
 			hasLower = true
 		}
+		if char >= 'A' && char <= 'Z' {
+			hasUpper = true
+		}
 		if char >= '0' && char <= '9' {
 			hasDigit = true
 		}
 	}
 
 	// Password is strong if it contains at least one lowercase letter and one digit
-	return hasLower && hasDigit
+	return hasLower && hasDigit && hasUpper
 }
 
 func IsExist(collumn0, collumn1, value string) (string, bool) {
