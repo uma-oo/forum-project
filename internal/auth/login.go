@@ -14,7 +14,10 @@ import (
 	"github.com/google/uuid"
 )
 
-var FormErrors models.FormErrors
+var (
+	FormErrors = models.FormErrors{}
+	FormsData  = models.FormsData{}
+)
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("inside aut log")
@@ -24,7 +27,7 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
 		return
 	}
-	
+
 	UserName := r.FormValue("userName")
 	Token := uuid.New().String()
 	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ?")
@@ -56,9 +59,12 @@ func IsValidFormValues(FormErrors models.FormErrors) (*models.Data, bool) {
 	values := reflect.ValueOf(FormErrors)
 	for i := 0; i < values.NumField(); i++ {
 		if values.Field(i).String() != "" {
-			return &models.Data{
-				FormErrors: FormErrors,
-			},false
+			fmt.Println(values.Field(i).String())
+			data := &models.Data{
+				FormsData: FormsData,
+			}
+			data.FormsData.FormErrors = FormErrors
+			return data, false
 		}
 	}
 	return &models.Data{}, true

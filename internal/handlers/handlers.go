@@ -14,6 +14,41 @@ import (
 	"forum/pkg/logger"
 )
 
+func Login(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("inside Login")
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		return
+	}
+	data, valid := auth.IsValidFormValues(auth.FormErrors)
+	if !valid {
+		fmt.Println(data)
+		fmt.Printf("data: %v\n", data)
+		w.WriteHeader(http.StatusBadRequest)
+		data.User.CurrentPath = "/login"
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+		auth.FormErrors = models.FormErrors{}
+		auth.FormsData = models.FormsData{}
+		return
+	}
+
+	if utils.IsCookieSet(r, "token") {
+		http.Redirect(w, r, "/", http.StatusFound)
+	}
+
+	internal.Pagess.Buf.Reset()
+	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "login.html", nil)
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		return
+	}
+	data.User.CurrentPath = r.URL.Path
+	internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+}
+
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
 		w.WriteHeader(http.StatusNotFound)
@@ -53,8 +88,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
 
-func Login(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("inside Login")
+func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
@@ -64,32 +98,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	data, valid := auth.IsValidFormValues(auth.FormErrors)
 	if !valid {
 		fmt.Printf("data: %v\n", data)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+		data.User.CurrentPath = "/register"
+		w.WriteHeader(http.StatusBadRequest)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+		auth.FormErrors = models.FormErrors{}
+		auth.FormsData = models.FormsData{}
 		return
 	}
 
-	if utils.IsCookieSet(r, "token") {
-		http.Redirect(w, r, "/", http.StatusFound)
-	}
-
-	internal.Pagess.Buf.Reset()
-	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "login.html", nil)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	data.User.CurrentPath = r.URL.Path
-	err = internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
-}
-
-func Register(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
-		return
-	}
 	if utils.IsCookieSet(r, "token") {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
@@ -101,7 +117,6 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	data := models.Data{}
 	data.User.CurrentPath = r.URL.Path
 	err = internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
 	fmt.Printf("err: %v\n", err)
