@@ -15,12 +15,11 @@
         <form class="login-form-container" method="post" action="/auth/log_in">
             <div class="form-grp">
                 <label for="userName"><img src="/web/static/images/person.svg" alt=""><span class="txt-light">User Name.</span></label>
-                <input type="text" id="userName" name="userName" placeholder="Enter your user name...">
-                
+                <input type="text" id="userName" name="userName" placeholder="Enter your user name..." {{if .UserNameInput}}value="{{.UserNameInput}}"{{end}}>
             </div>
             <div class="form-grp">
                 <label for="userPassword"><img src="/web/static/images/lock.svg" alt=""><span class="txt-light">Password.</span></label>
-                <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password...">
+                <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password..." {{if .UserPasswordInput}}value="{{.UserPasswordInput}}"{{end}}>
                 
             </div>
             <hr class="seperator">

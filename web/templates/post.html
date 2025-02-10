@@ -6,16 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/web/static/css/styles.css">
-
 </head>
 
 <body>
-    {{template "Header" .User }}
+    {{template "Header" .User}}
     {{template "Aside" .}}
     <main class="main post">
         {{range .Posts}}
         <div class="post_creator_info_container">
-            {{template "avatar" }}
+            {{template "avatar"}}
             <div class="post_creator_info">
                 <p>{{.PostCreator}}</p>
                 <p class=" txt-light txt-sm">{{.PostCreatedAt}}</p>

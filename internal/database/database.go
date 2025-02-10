@@ -62,13 +62,16 @@ func Create_database() {
 	fmt.Println("data base creatd succesfully")
 }
 
+//  fetchdata(r, func())
+
 func Fetch_Database(r *http.Request, query string, userid int, liked bool) (*models.Data, error) {
 	var finalQuery string
-	if userid > 0 && !liked {
-		finalQuery = fmt.Sprintf("%s WHERE users.id = %d ORDER  BY posts.created_at DESC;", query, userid)
-	} else if userid > 0 && liked {
+
+	if userid > 0 && !liked { // posts of a single user
+		finalQuery = fmt.Sprintf("%s WHERE users.id = %d ORDER  BY posts.created_at DESC;", query, userid) 
+	} else if userid > 0 && liked { // liked posts
 		finalQuery = fmt.Sprintf("%s WHERE  post_reaction.user_id = %d AND  post_reaction.reaction = 1", query, userid)
-	} else {
+	} else { // all posts
 		finalQuery = fmt.Sprintf("%s ORDER BY posts.created_at DESC", query)
 	}
 

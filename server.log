@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 2025/02/08 13:22:06 hassan account has been created
 2025/02/08 13:22:33 2025-02-08T13:22:33+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 77] near "ORDER": syntax error
 2025/02/08 13:22:33 http: panic serving [::1]:45524: runtime error: invalid memory address or nil pointer dereference
@@ -836,3 +837,12 @@ created by net/http.(*Server).Serve in goroutine 1
 2025/02/09 13:34:55 fygizope account has been created
 2025/02/09 13:35:13 2025-02-09T13:35:13+01:00 [Function: forum/internal/handlers.AddPost] [Line: 32] empty post content or title
 2025/02/09 13:35:19 2025-02-09T13:35:19+01:00 [Function: forum/internal/handlers.AddPost] [Line: 32] empty post content or title
+=======
+2025/02/09 17:03:07 zobypix account has been created
+2025/02/09 17:03:42 2025-02-09T17:03:42+01:00 [Function: forum/internal/handlers.AddPost] [Line: 33] empty post content or title
+2025/02/09 17:04:52 A User logged out
+2025/02/09 17:05:58 nogan account has been created
+2025/02/09 17:12:28 2025-02-09T17:12:28+01:00 [Function: forum/internal/handlers.Home] [Line: 81] template: home.html:15:23: executing "home.html" at <.asdf>: can't evaluate field asdf in type *models.Data
+2025/02/09 17:12:43 2025-02-09T17:12:43+01:00 [Function: forum/internal/handlers.Home] [Line: 81] template: home.html:15:23: executing "home.html" at <.asdf>: can't evaluate field asdf in type *models.Data
+2025/02/09 17:12:45 2025-02-09T17:12:45+01:00 [Function: forum/internal/handlers.Home] [Line: 81] template: home.html:15:23: executing "home.html" at <.asdf>: can't evaluate field asdf in type *models.Data
+>>>>>>> d933084e60a86056f46d0b0e262c3c6c1553412e

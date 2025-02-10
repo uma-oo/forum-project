@@ -32,7 +32,7 @@
             </div>
         </form>
         <input type="number" value="{{.PostId}}" hidden name="post_id" id="post_id" value="{{.PostId}}">
-        <input type="checkbox" name="comment_form_toggle" id="comment_form_toggle" hidden>
+        <input type="checkbox" id="comment_form_toggle{{.PostId}}" hidden >
     </div>
 </div>
 {{ end }}

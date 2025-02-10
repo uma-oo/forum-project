@@ -3,16 +3,23 @@ package auth
 import (
 	"log"
 	"net/http"
+	"reflect"
 
+	"forum/internal"
 	"forum/internal/database"
-	"forum/internal/handlers"
+	"forum/internal/models"
 	"forum/pkg/logger"
 
 	"github.com/google/uuid"
 )
 
+var (
+	FormErrors = models.FormErrors{}
+	FormsData  = models.FormsData{}
+)
+
 func LogIn(w http.ResponseWriter, r *http.Request) {
-	pages := handlers.Pagess
+	pages := internal.Pagess
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
@@ -20,37 +27,14 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	UserName := r.FormValue("userName")
-	//Password := r.FormValue("userPassword")
-	/*
-		var pasword string
-		var username string
-
-		err := database.Database.QueryRow("SELECT userName , userPassword  FROM users WHERE  userName = ? ", UserName).Scan(&username, &pasword)
-		if err != nil {
-			if err == sql.ErrNoRows {
-				w.WriteHeader(http.StatusUnauthorized)
-				pages.All_Templates.ExecuteTemplate(w, "error.html", "user not exist") // should execute login page here for no rows err
-				return
-			}
-			w.WriteHeader(http.StatusInternalServerError)
-			pages.All_Templates.ExecuteTemplate(w, "error.html", err)
-			return
-
-		}
-		if err := bcrypt.CompareHashAndPassword([]byte(pasword), []byte(Password)); err != nil {
-			w.WriteHeader(http.StatusUnauthorized)
-			pages.All_Templates.ExecuteTemplate(w, "error.html", "Invalid Password or username or exist")
-			return
-		}*/
 	Token := uuid.New().String()
-	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ? ")
+	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-
 	_, err = stm.Exec(Token, UserName)
 	if err != nil {
 		logger.LogWithDetails(err)
@@ -67,4 +51,18 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 	log.Println(UserName, "logged in")
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func IsValidFormValues(FormErrors models.FormErrors) (*models.Data, bool) {
+	values := reflect.ValueOf(FormErrors)
+	for i := 0; i < values.NumField(); i++ {
+		if values.Field(i).String() != "" {
+			data := &models.Data{
+				FormsData: FormsData,
+			}
+			data.FormsData.FormErrors = FormErrors
+			return data, false
+		}
+	}
+	return &models.Data{}, true
 }

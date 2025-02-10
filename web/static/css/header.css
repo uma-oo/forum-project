@@ -8,6 +8,7 @@
 }
 
 .header-left {
+    display: flex;
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -87,13 +88,16 @@
 .seperator {
     background-color: var(--color-dark);
 }
+
 .header-right .user_menu:has( #user_menu_toggle:checked ){
     display: flex;
 }
 
-
 @media (max-width: 576px) {
-    
+    .header-right > a {
+        display: none !important;
+        border: solid red ;
+    }
 }
 
 @media only screen and (max-width: 980px) {
@@ -101,14 +105,12 @@
         display: block;
     }
     /* border: solid red; */
-
     .header {
         backdrop-filter: blur(8px);
         top: 0;
         position: sticky;
     }
     
-   
     .header-left .menu-toggle {
         display: flex;
     }

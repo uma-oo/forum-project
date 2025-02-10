@@ -2,6 +2,8 @@
     border-right: solid 1px var(--color-dark-navy);
     display: flex;
     flex-direction: column;
+    z-index: 10;
+
 }
 
 .aside .filter_container {
@@ -11,8 +13,8 @@
     }
 }
 
-.aside nav a:last-child {
-    display: none;
+.nav_addpost_btn {
+    display: none !important;
 }
 
 .aside > nav > a{
@@ -59,7 +61,6 @@
 }
 
 .aside .filter_container form .form_actions {
-    border: solid red ;
     width: 100%;
     color: var(--color-dark-navy) !important;
 }
@@ -69,9 +70,8 @@
 }
 
 @media (max-width: 576px) {
-    nav a:last-child{
-        display: block;
-        border: solid red ;
+    .nav_addpost_btn {
+        display: flex !important;
     }
 }
 
@@ -94,7 +94,6 @@
         transition: left .5s ease-in;
     }
     .aside:has(#menu-toggle:checked) {
-        z-index: 10000;
         display: flex;
         position: absolute;
         left: 0;

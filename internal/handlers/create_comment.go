@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"forum/internal"
 	"forum/internal/database"
 )
 
@@ -11,7 +12,7 @@ import (
 // let's add the authentication
 
 func CreateComment(w http.ResponseWriter, r *http.Request) {
-	pages := Pagess.All_Templates
+	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "Method Not Allowed")
@@ -39,4 +40,3 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	// nwita jdiiida
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
-

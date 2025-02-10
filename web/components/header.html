@@ -1,10 +1,10 @@
 <!-- web/components/header.html -->
 {{define "Header"}}
 <header class="header">
-    <div class="header-left flex">
+    <div class="header-left">
         {{ if and (ne .CurrentPath "/login") (ne .CurrentPath "/register")}}
         <label class="menu-toggle" for="menu-toggle">
-            <div></div>
+            <img src="/web/static/images/menu_toggle.svg">
         </label>
         {{end}}
         <h1 class="logo"><a href="/">Forum</a></h1>

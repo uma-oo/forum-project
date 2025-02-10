@@ -72,12 +72,13 @@
     }
 
     p {
+        width: 100%;
         overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis !important;
-        text-indent: 10px;
-        margin-top: 1rem;
-        border: solid 1px red;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* number of lines to show */
+                line-clamp: 3;
+        -webkit-box-orient: vertical;
     }
 
     /* padding:5% 10%; */

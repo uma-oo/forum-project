@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 
+	"forum/internal"
 	"forum/internal/auth"
 	"forum/internal/database"
 	"forum/internal/handlers"
@@ -16,7 +17,7 @@ import (
 
 func init() {
 	database.Create_database()
-	handlers.ParseTemplates()
+	internal.ParseTemplates()
 }
 
 func main() {
@@ -49,8 +50,6 @@ func main() {
 	http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.Handle("/api/add_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPost)))
 	http.Handle("/api/react_to_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.PostReactions)))
-	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPostComment)))
-	http.Handle("/api/react_to_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.LikeComment)))
 
 	fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil))
