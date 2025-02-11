@@ -8,6 +8,7 @@ import (
 
 	"forum/internal"
 	"forum/internal/database"
+	"forum/internal/models"
 	"forum/pkg/logger"
 )
 
@@ -17,6 +18,12 @@ const (
 	Neutre          = 0
 )
 
+var (
+	CreatePostFormData   = models.FormsData{}
+	CreatePostFormErrors = models.FormErrors{}
+	InvalidCreatePostForm = false
+)
+
 func AddPost(w http.ResponseWriter, r *http.Request) {
 	pages := internal.Pagess.All_Templates
 	if r.Method != http.MethodPost {
@@ -24,17 +31,20 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
 		return
 	}
+
 	r.ParseForm() ///////////////////////////
-	categories := r.Form["post-categorie"]
-	postContent := r.FormValue("postBody")
-	postTitle := r.FormValue("postTitle")
-	// lets check for emptyness
-	if postContent == "" || postTitle == "" {
-		logger.LogWithDetails(fmt.Errorf("%s", "empty post content or title"))
-		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "400 bad request")
+	CreatePostFormData.PostGategoriesInput = r.Form["post-categorie"]
+	CreatePostFormData.PostContentInput = r.FormValue("postBody")
+	CreatePostFormData.PostTitleInput = r.FormValue("postTitle")
+	fmt.Println(CreatePostFormData.PostGategoriesInput)
+	IsValidCreatePostForm()
+	if InvalidCreatePostForm {
+		fmt.Println("redirecting ")
+		http.Redirect(w, r, "/create_post", http.StatusFound)
 		return
 	}
+	// lets check for emptyness
+
 	// get the user ID from the session
 	cookie, _ := r.Cookie("token")
 
@@ -44,7 +54,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
 		return
 	}
 	err = stm.QueryRow(cookie.Value).Scan(&userId)
@@ -63,7 +73,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	_, err = stm.Exec(userId, postTitle, postContent)
+	_, err = stm.Exec(userId, CreatePostFormData.PostTitleInput, CreatePostFormData.PostContentInput)
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -94,8 +104,9 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
-	for _, category := range categories {
-		_, err = stm.Exec(category, postId)
+	for _, category := range CreatePostFormData.InvalidPostCategories {
+		
+		_, err = stm.Exec(string(category), postId)
 		if err != nil {
 			logger.LogWithDetails(err)
 			w.WriteHeader(http.StatusInternalServerError)
@@ -480,4 +491,28 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, "/", http.StatusFound)
+}
+
+func IsValidCreatePostForm() {
+	if CreatePostFormData.PostTitleInput == "" {
+		CreatePostFormErrors.InvalidPostTitle = "Post title is required"
+		InvalidCreatePostForm = true
+
+	}
+	if len(CreatePostFormData.PostTitleInput) > 50 {
+		CreatePostFormErrors.InvalidPostTitle = "Exeeded post title length (50)"
+		InvalidCreatePostForm = true
+	}
+	if CreatePostFormData.PostContentInput == "" {
+		CreatePostFormErrors.InvalidPostContent = "Post content is required"
+		InvalidCreatePostForm = true
+	}
+	if len(CreatePostFormData.PostContentInput) >= 10000 {
+		CreatePostFormErrors.InvalidPostContent = "Exeeded post content length (10000)"
+		InvalidCreatePostForm = true
+	}
+	if len(CreatePostFormData.PostGategoriesInput) == 0 {
+		CreatePostFormErrors.InvalidPostCategories = "Post categories are required - pick at least one"
+		InvalidCreatePostForm = true
+	}
 }

@@ -12,6 +12,9 @@ type FormsData struct {
 	UserNameInput string 
 	UserEmailInput string 
 	UserPasswordInput string 
+	PostGategoriesInput []string
+	PostTitleInput string
+	PostContentInput string
 	FormErrors
 }
 
@@ -20,6 +23,9 @@ type FormErrors struct {
 	InvalidUserName string
 	InvalidEmail string
 	InvalidPassword string
+	InvalidPostTitle string
+	InvalidPostContent string
+	InvalidPostCategories string
 }
 
 type Data struct {

@@ -136,17 +136,30 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	ON 
 		posts.user_id = users.id
 `
+
 	data, err := database.Fetch_Database(r, query, -1, false)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
+
 	internal.Pagess.Buf.Reset()
 	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "createpost.html", data)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		logger.LogWithDetails(err)
+		return
+	}
+	if InvalidCreatePostForm {
+		w.WriteHeader(http.StatusBadRequest)
+		data.FormsData = CreatePostFormData
+		data.FormsData.FormErrors = CreatePostFormErrors
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
+		data.FormsData = models.FormsData{}
+		data.FormsData.FormErrors = models.FormErrors{}
+		InvalidCreatePostForm = false
 		return
 	}
 	internal.Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
@@ -217,6 +230,7 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		logger.LogWithDetails(err)
 		return
 	}
 	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "myposts.html", data)
@@ -355,4 +369,20 @@ func FilterPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Write(internal.Pagess.Buf.Bytes())
 	// internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+}
+func Gategoties_Checker( Gategories []string) (int64, error) {
+	for _, val := range Gategories {
+		stm, Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM  stoke_categories WHERE category = ?)")
+		if Err != nil {
+
+			return 500, Err
+		}
+		var exists bool
+		stm.QueryRow(val).Scan(&exists)
+		fmt.Println(exists)
+		if !exists {
+			return 400, fmt.Errorf("%s", "category does not exist")
+		}
+	}
+	return 200, nil
 }
