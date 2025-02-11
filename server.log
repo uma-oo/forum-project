@@ -846,3 +846,4 @@ created by net/http.(*Server).Serve in goroutine 1
 2025/02/09 17:12:43 2025-02-09T17:12:43+01:00 [Function: forum/internal/handlers.Home] [Line: 81] template: home.html:15:23: executing "home.html" at <.asdf>: can't evaluate field asdf in type *models.Data
 2025/02/09 17:12:45 2025-02-09T17:12:45+01:00 [Function: forum/internal/handlers.Home] [Line: 81] template: home.html:15:23: executing "home.html" at <.asdf>: can't evaluate field asdf in type *models.Data
 >>>>>>> d933084e60a86056f46d0b0e262c3c6c1553412e
+2025/02/11 09:54:11 tilojeboq account has been created
