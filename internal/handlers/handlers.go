@@ -329,8 +329,21 @@ func FilterPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	r.ParseForm()
 	Categories := r.Form["filter-category"]
+
 	if len(Categories) == 0 {
 		http.Redirect(w, r, "/", http.StatusFound)
+		return
+	}
+	errNum, err := Gategoties_Checker(Categories)
+	if errNum == 500 {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	} else if errNum == 400 {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusBadRequest)
+		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "400 Bad Request ")
 		return
 	}
 	placeholders := strings.Repeat("?,", len(Categories)-1) + "?"
@@ -370,11 +383,11 @@ func FilterPosts(w http.ResponseWriter, r *http.Request) {
 	w.Write(internal.Pagess.Buf.Bytes())
 	// internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
 }
-func Gategoties_Checker( Gategories []string) (int64, error) {
+
+func Gategoties_Checker(Gategories []string) (int64, error) {
 	for _, val := range Gategories {
 		stm, Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM  stoke_categories WHERE category = ?)")
 		if Err != nil {
-
 			return 500, Err
 		}
 		var exists bool

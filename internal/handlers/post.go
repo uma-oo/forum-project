@@ -37,6 +37,19 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	CreatePostFormData.PostContentInput = r.FormValue("postBody")
 	CreatePostFormData.PostTitleInput = r.FormValue("postTitle")
 	fmt.Println(CreatePostFormData.PostGategoriesInput)
+	errNum , err := Gategoties_Checker(CreatePostFormData.PostGategoriesInput)
+	if errNum == 500 {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return 
+	} else if errNum == 400 {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusBadRequest)
+		pages.ExecuteTemplate(w, "error.html", "400 Bad Request ")
+		return 
+	}
+
 	IsValidCreatePostForm()
 	if InvalidCreatePostForm {
 		fmt.Println("redirecting ")
@@ -104,9 +117,8 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
 		return
 	}
-	for _, category := range CreatePostFormData.InvalidPostCategories {
-		
-		_, err = stm.Exec(string(category), postId)
+	for _, category := range CreatePostFormData.PostGategoriesInput {
+		_, err = stm.Exec(category, postId)
 		if err != nil {
 			logger.LogWithDetails(err)
 			w.WriteHeader(http.StatusInternalServerError)
