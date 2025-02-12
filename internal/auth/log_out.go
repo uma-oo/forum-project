@@ -1,14 +1,10 @@
 package auth
 
 import (
-	"log"
 	"net/http"
-	"time"
 
-	"forum/internal/database"
 	"forum/internal/models"
 	"forum/internal/utils"
-	"forum/pkg/logger"
 )
 
 func LogOut(w http.ResponseWriter, r *http.Request) {
@@ -39,7 +35,6 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 		// 	utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		// 	return
 		// }
-
 	} else {
 		utils.RenderTemplate(w, "error.html", models.PageNotFound, http.StatusNotFound)
 		return
