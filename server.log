@@ -1,0 +1,4 @@
+2025/02/12 10:16:56 jazibobi account has been created
+2025/02/12 10:32:38 2025-02-12T10:32:38+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 95] near "FROM": syntax error
+2025/02/12 10:32:42 2025-02-12T10:32:42+01:00 [Function: forum/internal/database.Fetch_Database] [Line: 95] near "FROM": syntax error
+2025/02/12 11:01:34 biximoni account has been created

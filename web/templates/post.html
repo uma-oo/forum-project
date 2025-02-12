@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+    <link rel="stylesheet" href="/web/static/css/styles.css">
+</head>
+
+<body>
+    {{template "Header".User}}
+    {{template "Aside" .}}
+    {{$post := index .Posts 0 }}
+    <main class="main post">
+        <div class="post_creator_info_container">
+            {{template "avatar"}}
+            <div class="post_creator_info">
+                <p>{{$post.PostCreator}}</p>
+
+                <p class=" txt-light txt-sm">{{$post.PostCreatedAt}}</p>
+            </div>
+        </div>
+        <h1>{{$post.PostTitle}}</h1>
+
+        {{template "TagsList" $post.Categories}}
+        <p>{{$post.PostContent}}</p>
+        {{template "PostReactions" $post}}
+        <div class="comment_form_container">
+            <form action="/api/add_post_comment" method="post">
+                <input name="comment" id="postComment" placeholder="Add your comment here ..."></input>
+                <div class="form-actions">
+                    <button type="reset">Reset</button>
+                    <button type="submit">Comment</button>
+                </div>
+                <input type="hidden" name="post_id" id="post_id" value="{{$post.PostId}}">
+            </form>
+            <input type="checkbox" id="comment_form_toggle{{$post.PostId}}" hidden>
+        </div>
+
+        <h4>Comments :</h4>
+        {{range $comment := $post.Comments}}
+        <div class="post_comments">
+            <div class="post_container">
+                {{template "avatar"}}
+                <div class="post_comment_content">
+                    <div class="post_creator_info">
+                        <p>{{$comment.CommentCreator}}</p>
+                        <p class=" txt-light txt-sm">{{$comment.CommentCreatedAt}}</p>
+                    </div>
+                    <p>{{$comment.CommentContent}}</p>
+                    {{template "CommentReactions" $comment}}
+                </div>
+            </div>
+            {{end}}
+
+    </main>
+</body>
+
+</html>

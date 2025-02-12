@@ -1,0 +1,61 @@
+<!-- web/templates/createpost.html -->
+<!-- web/templates/home.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="/web/static/css/styles.css">
+    <link rel="stylesheet" href="/web/static/css/createpost.css">
+</head>
+
+<body>
+    {{template "Header" .User }}
+    {{template "Aside" .}}
+    <main class="main create_post_section">
+        <h2>Create New Post </h2>
+        <form method="post" action="/api/add_post">
+            <div class=" form-grp">
+                <label>Categories: </label>
+                <div class="category_list">
+                    {{ range .Categories }}
+                    <label for="{{ .CatergoryName }}"> {{.CatergoryName}}
+                        <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie"
+                            value="{{ .CatergoryName }}" hidden >
+                    </label></br>
+                    {{ end }}
+                </div>
+            </div>
+            {{if .InvalidPostCategories}}
+            <p class="form-input-error">{{.InvalidPostCategories}}</p>
+            {{end}}
+            </div>
+            <div class="form-grp">
+                <label for="postTitle">Title</label>
+                <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit"
+                    value="{{.PostTitleInput}}">
+                {{if .InvalidPostTitle}}
+                <p class="form-input-error">{{.InvalidPostTitle}}</p>
+                {{end}}
+            </div>
+            <div class="form-grp">
+                <label for="postBody">Content</label>
+                <textarea name="postBody" id="postBody"
+                    placeholder="Share your knowledg here.">{{.PostContentInput}}</textarea>
+                {{if .InvalidPostContent}}
+                <p class="form-input-error">{{.InvalidPostContent}}</p>
+                {{end}}
+            </div>
+            <div class="form_actions">
+                <button type="reset" class="secondaryBtn">Cancel</button>
+                <button type="submit" class="primaryBtn">Create Post</button>
+
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>
