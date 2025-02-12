@@ -24,7 +24,7 @@ type Database struct {
 // Open forum database
 func NewDatabase() (*Database, error) {
 	dbPath := os.Getenv("DB_PATH")
-	//fmt.Printf("dbPath: %v\n", dbPath)
+	// fmt.Printf("dbPath: %v\n", dbPath)
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		logger.LogWithDetails(err)
@@ -205,7 +205,7 @@ func Triggers() error {
 				SET total_comments=total_comments+1 
 				WHERE posts.id = NEW.post_id;
 			END;`
-	trigger2 := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_likes_comments_insert
+	trigger_total_likes_comments_insert := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_likes_comments_insert
 	   AFTER INSERT ON comment_reactions
 		FOR EACH ROW
 		BEGIN
@@ -216,7 +216,7 @@ func Triggers() error {
 		AND NEW.reaction_id = 1 ;
 		END;`
 
-	trigger3 := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_likes_comments_update
+	trigger_total_likes_comments_update := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_likes_comments_update
 		AFTER UPDATE ON comment_reactions
 		FOR EACH ROW
 		BEGIN
@@ -249,7 +249,7 @@ func Triggers() error {
 		AND NEW.reaction_id = 0;
 		END;`
 
-	trigger4 := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_dislikes_comments_insert
+	trigger_total_dislikes_comments_insert := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_dislikes_comments_insert
 	   AFTER INSERT ON comment_reactions
 		FOR EACH ROW
 		BEGIN
@@ -259,7 +259,7 @@ func Triggers() error {
 		WHERE comments.id = NEW.comment_id
 		AND NEW.reaction_id = -1 ;
 		END;`
-	trigger5 := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_dislikes_comments_update
+	trigger_total_dislikes_comments_update := `CREATE TRIGGER IF NOT EXISTS increment_or_decrement_total_dislikes_comments_update
 		AFTER UPDATE ON comment_reactions
 		FOR EACH ROW
 		BEGIN
@@ -290,7 +290,11 @@ func Triggers() error {
 		AND OLD.reaction_id=-1
 		AND NEW.reaction_id = 0;
 		END;`
-	triggers := []string{trigger_total_comments, trigger2, trigger3, trigger4, trigger5}
+	triggers := []string{
+		trigger_total_comments, trigger_total_likes_comments_insert,
+		trigger_total_likes_comments_update, trigger_total_dislikes_comments_insert,
+		trigger_total_dislikes_comments_update,
+	}
 	for _, query := range triggers {
 		statement, err := db.Prepare(query)
 		if err != nil {
