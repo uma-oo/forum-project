@@ -1,8 +1,0 @@
-2025/01/22 16:19:14 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:20:10 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:20:35 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:22:12 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:22:38 Error opening .env file: open variables.env: no such file or directory
-2025/01/22 16:25:28 open variables.env: no such file or directory
-2025/01/22 16:26:19 open variables.env: no such file or directory
-2025/01/23 10:46:47 listen tcp :8080: bind: address already in use
