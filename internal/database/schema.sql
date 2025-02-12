@@ -7,7 +7,9 @@ CREATE TABLE
         userEmail VARCHAR(100) NOT NULL,
         userPassword VARCHAR(100) NOT NULL,
         token VARCHAR(255) NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP /*for the user*/   
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, /*for the user*/   
+        token_created_at DATETIME ,
+        expiration_date DATETIME
     );
 
 -- table of session ??

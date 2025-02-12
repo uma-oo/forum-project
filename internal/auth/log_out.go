@@ -3,14 +3,17 @@ package auth
 import (
 	"log"
 	"net/http"
+	"time"
 
+	"forum/internal/database"
 	"forum/internal/models"
 	"forum/internal/utils"
+	"forum/pkg/logger"
 )
 
 func LogOut(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		utils.RenderTemplate(w, "error.html",models.MethodNotAllowed,http.StatusMethodNotAllowed)
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -22,10 +25,23 @@ func LogOut(w http.ResponseWriter, r *http.Request) {
 			MaxAge: -1,      // set expiration time to a time in the past
 			Path:   "/",     // scope of the cookie
 		})
-		log.Print("A User logged out")
+		// db, err := database.NewDatabase()
+		// log.Print("A User logged out")
+		// stm, err := db.Prepare("UPDATE users SET token = ? , token_created_at = ? , expiration_date = ? where userName = ?")
+		// if err != nil {
+		// 	logger.LogWithDetails(err)
+		// 	utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		// 	return
+		// }
+		// _, err = stm.Exec("", time.Now(), time.Now().Add(60*time.Minute), "")
+		// if err != nil {
+		// 	logger.LogWithDetails(err)
+		// 	utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		// 	return
+		// }
 
 	} else {
-		utils.RenderTemplate(w, "error.html",models.PageNotFound,http.StatusNotFound)
+		utils.RenderTemplate(w, "error.html", models.PageNotFound, http.StatusNotFound)
 		return
 	}
 	http.Redirect(w, r, "/", http.StatusFound)

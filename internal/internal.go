@@ -18,3 +18,4 @@ func ParseTemplates() {
 		log.Fatal(err)
 	}
 }
+

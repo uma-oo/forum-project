@@ -3,6 +3,7 @@ package auth
 import (
 	"log"
 	"net/http"
+	"time"
 
 	"forum/internal"
 	"forum/internal/database"
@@ -36,7 +37,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.LogWithDetails(err)
 	}
-	stm, err := db.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
+	stm, err := db.Prepare("INSERT INTO users (userName,userEmail,userPassword,token, token_created_at, expiration_date) VALUES (?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -44,7 +45,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err = stm.Exec(userName, Email, string(Hach_pass), Token)
+	_, err = stm.Exec(userName, Email, string(Hach_pass), Token, time.Now(), time.Now().Add(60*time.Minute))
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)

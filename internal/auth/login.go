@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"reflect"
+	"time"
 
 	"forum/internal/database"
 	"forum/internal/models"
@@ -29,15 +30,16 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
+	defer db.Close()
 	UserName := r.FormValue("userName")
 	Token := uuid.New().String()
-	stm, err := db.Prepare("UPDATE users SET token = ? where userName = ?")
+	stm, err := db.Prepare("UPDATE users SET token = ? , token_created_at = ? , expiration_date = ? where userName = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
 		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	_, err = stm.Exec(Token, UserName)
+	_, err = stm.Exec(Token, time.Now(), time.Now().Add(60*time.Minute), UserName)
 	if err != nil {
 		logger.LogWithDetails(err)
 		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
@@ -49,8 +51,11 @@ func LogIn(w http.ResponseWriter, r *http.Request) {
 		MaxAge: 3600,
 		Path:   "/",
 	}
+
 	http.SetCookie(w, cookie)
+
 	log.Println(UserName, "logged in")
+
 	http.Redirect(w, r, "/", http.StatusFound)
 }
 
