@@ -20,7 +20,7 @@
         <p>
             {{ .PostContent }}
         </p>
-        <a class="read_more" href="/{{.PostId}}">Read more...</a>
+        <a class="read_more" href="posts?id={{.PostId}}">Read more...</a>
     </div>
     <div class="post_footer">
         {{template "PostReactions" .}}
