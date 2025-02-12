@@ -2,11 +2,9 @@ package handlers
 
 import (
 	"database/sql"
-	"fmt"
 	"net/http"
 	"strconv"
 
-	"forum/internal"
 	"forum/internal/database"
 	"forum/internal/models"
 	"forum/internal/utils"
@@ -127,351 +125,94 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
 
-func PostReactions(w http.ResponseWriter, r *http.Request) {
-	pages := internal.Templates
-	if r.Method != http.MethodPost {
-		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
+func PostReactions(res http.ResponseWriter, req *http.Request) {
+	conn, err := database.NewDatabase()
+	if err != nil {
+		utils.RenderTemplate(res, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-
-	err := r.ParseForm()
+	var reaction_found string
+	if req.Method != http.MethodPost {
+		utils.RenderTemplate(res, "error.html", http.StatusMethodNotAllowed, http.StatusMethodNotAllowed)
+		return
+	}
+	reaction := req.FormValue("reaction")
+	post_id := req.FormValue("post_id")
+	user, err := UserData(req, "token", req.URL.Path)
+	if err != nil {
+		utils.RenderTemplate(res, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	query := `SELECT reaction_id FROM post_reaction WHERE  post_id= ? AND user_id =? `
+	statement, err := conn.Prepare(query)
 	if err != nil {
 		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.BadRequest, http.StatusBadRequest)
+		utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
 		return
 	}
-
-	postid, errpost := strconv.Atoi(r.FormValue("post_id"))
-	reaction, errreaction := strconv.Atoi(r.FormValue("reaction"))
-	Token, terr := r.Cookie("token")
-	if terr != nil {
-		logger.LogWithDetails(terr)
-		utils.RenderTemplate(w, "error.html", models.BadRequest, http.StatusBadRequest)
-		return
-	}
-	if errpost != nil || errreaction != nil {
-		logger.LogWithDetails(fmt.Errorf("%s", " Itoi Errors"))
-		utils.RenderTemplate(w, "error.html", models.BadRequest, http.StatusBadRequest)
-		return
-	}
-
-	_, postExists := utils.IsExist("posts", "id", "", strconv.Itoa(postid))
-	if !postExists {
-		logger.LogWithDetails(fmt.Errorf("%s", "Post id don't exists"))
-		utils.RenderTemplate(w, "error.html", models.BadRequest, http.StatusBadRequest)
-		return
-	}
-
-	db, err := database.NewDatabase()
-	if err != nil {
-		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-		return
-	}
-
-	var reactionExist int
-	var userid int
-	stm, err := db.Prepare("SELECT id FROM users WHERE token = ?")
-	if err != nil {
-		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-		return
-	}
-	err = stm.QueryRow(Token.Value).Scan(&userid)
-	if err != nil {
-		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-		return
-	}
-
-	// Start a transaction
-	tx, err := db.Begin()
-	if err != nil {
-		tx.Rollback()
-		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-		return
-	}
-
-	// Check if the user has already reacted
-	stm, err = tx.Prepare("SELECT reaction FROM post_reaction WHERE user_id = ? AND post_id = ?")
-	if err != nil {
-		tx.Rollback()
-		logger.LogWithDetails(err)
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-		return
-	}
-	err = stm.QueryRow(userid, postid).Scan(&reactionExist)
+	err = statement.QueryRow(post_id, user.UserId).Scan(&reaction_found)
 	if err == sql.ErrNoRows {
-
-		// No existing like, insert new like
-		stm, err = tx.Prepare("INSERT INTO post_reaction (user_id, post_id, reaction) VALUES (?, ?, ?)")
-		if err != nil {
-			tx.Rollback()
-			logger.LogWithDetails(err)
-			utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-			return
-		}
-		_, err = stm.Exec(userid, postid, reaction)
+		query = `INSERT INTO post_reaction (user_id ,post_id,reaction_id) VALUES (?,?,?)`
+		statement, err = conn.Prepare(query)
 		if err != nil {
 			logger.LogWithDetails(err)
-			tx.Rollback()
-			utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+			utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
 			return
 		}
-		if reaction == 1 {
-			stm, err = tx.Prepare("UPDATE posts SET total_likes =   total_likes  + 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		} else {
-			stm, err = tx.Prepare("UPDATE posts SET total_dislikes = total_dislikes + 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		}
+		statement.Exec(user.UserId, post_id, reaction)
 
 	} else if err != nil {
 		logger.LogWithDetails(err)
-		tx.Rollback()
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
 		return
-	} else {
-		if reactionExist == Neutre && reaction == ReactionLike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(ReactionLike, userid, postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes + 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
+	}
+	if reaction == reaction_found {
+		query = `UPDATE post_reaction SET reaction_id = ? WHERE post_id = ? AND user_id = ?`
+		statement, err = conn.Prepare(query)
+		if err != nil {
+			logger.LogWithDetails(err)
+			utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+			return
+		}
+		statement.Exec("0", post_id, user.UserId)
+	} else if reaction_found == "0" || reaction_found == "1" || reaction_found == "-1" {
+		query = `UPDATE post_reaction SET reaction_id = ? WHERE post_id = ? AND user_id = ?`
+		statement, err = conn.Prepare(query)
+		if err != nil {
+			logger.LogWithDetails(err)
+			utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+			return
+		}
+		statement.Exec(reaction, post_id, user.UserId)
+	}
 
-		} else if reactionExist == Neutre && reaction == ReactionDislike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(ReactionDislike, userid, postid)
-			if err != nil {
-				logger.LogWithDetails(err)
-				tx.Rollback()
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		} else if reactionExist == ReactionLike && reaction == ReactionLike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(Neutre, userid, postid)
-			if err != nil {
-				logger.LogWithDetails(err)
-				tx.Rollback()
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		} else if reactionExist == ReactionLike && reaction == ReactionDislike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(ReactionDislike, userid, postid)
-			if err != nil {
-				logger.LogWithDetails(err)
-				tx.Rollback()
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes + 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
+	var PostData models.Post
 
-			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes - 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		} else if reactionExist == ReactionDislike && reaction == ReactionDislike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(Neutre, userid, postid)
-			if err != nil {
-				tx.Rollback()
-				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error25828588589")
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-		} else if reactionExist == ReactionDislike && reaction == ReactionLike {
-			stm, err = tx.Prepare("UPDATE post_reaction SET reaction = ? WHERE user_id = ? AND post_id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(ReactionLike, userid, postid)
-			if err != nil {
-				tx.Rollback()
-				w.WriteHeader(http.StatusInternalServerError)
-				pages.ExecuteTemplate(w, "error.html", "internal server error258285885825")
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_dislikes  = total_dislikes - 1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			stm, err = tx.Prepare("UPDATE posts SET total_likes = total_likes +1 WHERE id = ?")
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
-			_, err = stm.Exec(postid)
-			if err != nil {
-				tx.Rollback()
-				logger.LogWithDetails(err)
-				utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
-				return
-			}
+	query = `SELECT * FROM posts WHERE id = ?`
+	if err := conn.QueryRow(query, post_id).Scan(&PostData.PostId, &PostData.PostCreatedAt,
+		&PostData.UserID, &PostData.PostTitle, &PostData.PostContent, &PostData.TotalLikes,
+		&PostData.TotalDeslikes, &PostData.TotalComments); err != nil {
+		if err != sql.ErrNoRows {
+			logger.LogWithDetails(err)
+			utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+			return
 		}
 	}
 
-	err = tx.Commit()
+	PostData.PostCreator, err = FetchPostCreator(strconv.Itoa(PostData.UserID))
 	if err != nil {
-		tx.Rollback()
-		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
 		return
 	}
-	fmt.Println(r.Referer())
-	http.Redirect(w, r, r.Referer(), http.StatusFound)
+	PostData.Categories, err = FetchCategories(post_id)
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(res, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(res, req, req.Referer(), http.StatusSeeOther)
 }
 
 func IsValidCreatePostForm() {
