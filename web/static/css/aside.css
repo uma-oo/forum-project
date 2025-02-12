@@ -67,6 +67,8 @@
 
 .aside .filter_container form .form-grp:has(input:checked) {
     border: solid 1px;
+    border-radius: 10px ;
+    color: var(--color-primary);
 }
 
 @media (max-width: 576px) {

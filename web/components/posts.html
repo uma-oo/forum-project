@@ -1,6 +1,7 @@
 {{define "PostsContainer"}}
 {{if .Posts}}
 {{ range .Posts }}
+
 <div class="post_card">
     <div class="post_header">
         <div class="post_creator_info_container">
@@ -13,25 +14,28 @@
         {{template "TagsList" .Categories}}
     </div>
     <div class="post_body">
-        <a href="/{{.PostId}}">
+        <a href="posts?id={{.PostId}}">
             <h3>{{.PostTitle}}</h3>
         </a>
         <p>
             {{ .PostContent }}
         </p>
+        <a class="read_more" href="/{{.PostId}}">Read more...</a>
     </div>
     <div class="post_footer">
         {{template "PostReactions" .}}
     </div>
     <div class="comment_form_container">
         <form action="/api/add_post_comment" method="post">
-            <input name="postComment" id="postComment" placeholder="Add your comment here ..."></input>
+            <input name="comment" id="postComment" placeholder="Add your comment here ..."></input>
             <div class="form-actions">
                 <button type="reset">Reset</button>
                 <button type="submit">Comment</button>
             </div>
+            <input type="hidden"  name="post_id" id="post_id" value="{{.PostId}}">
+
         </form>
-        <input type="number" value="{{.PostId}}" hidden name="post_id" id="post_id" value="{{.PostId}}">
+        <!-- <input type="number" value="{{.PostId}}" hidden name="post_id" id="post_id" value="{{.PostId}}"> -->
         <input type="checkbox" id="comment_form_toggle{{.PostId}}" hidden >
     </div>
 </div>

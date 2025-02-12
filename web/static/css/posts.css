@@ -67,12 +67,14 @@
     text-wrap: 1;
 
     h3 {
-        overflow-wrap: anywhere;
+        overflow-wrap: auto ;
         text-decoration: underline solid 1px;
+        margin-bottom:.5rem ;
     }
 
     p {
         width: 100%;
+        opacity: .8;
         overflow: hidden;
         text-overflow: ellipsis;
         display: -webkit-box;
@@ -81,8 +83,14 @@
         -webkit-box-orient: vertical;
     }
 
+    .read_more {
+        color: var(--color-primary);
+        font-size: 14px;
+        font-weight: 300;
+    }
     /* padding:5% 10%; */
 }
+
 
 .post_footer {
     display: flex;
@@ -96,6 +104,7 @@
 
 .reactions_container {
     display: flex;
+    align-items: center;
     gap: 25px;
 }
 

@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"reflect"
 
-	"forum/internal"
 	"forum/internal/database"
 	"forum/internal/models"
+	"forum/internal/utils"
 	"forum/pkg/logger"
 
 	"github.com/google/uuid"
@@ -19,27 +19,28 @@ var (
 )
 
 func LogIn(w http.ResponseWriter, r *http.Request) {
-	pages := internal.Pagess
 	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
-
-	UserName := r.FormValue("userName")
-	Token := uuid.New().String()
-	stm, err := database.Database.Prepare("UPDATE users SET token = ? where userName = ?")
+	db, err := database.NewDatabase()
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	UserName := r.FormValue("userName")
+	Token := uuid.New().String()
+	stm, err := db.Prepare("UPDATE users SET token = ? where userName = ?")
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
 	_, err = stm.Exec(Token, UserName)
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.All_Templates.ExecuteTemplate(w, "error.html", "500 internal server error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
 	cookie := &http.Cookie{

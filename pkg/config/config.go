@@ -6,16 +6,13 @@ import (
 	"os"
 	"strconv"
 	"strings"
+
+	"forum/pkg/logger"
 )
 
 // Config holds application configuration
 type Config struct {
-	Port      int
-	DBHost    string
-	DBPort    int
-	DBUser    string
-	DBPass    string
-	JWTSecret string
+	Port int
 }
 
 // LoadConfig reads configuration from a .env file
@@ -23,33 +20,25 @@ func LoadConfig() *Config {
 	// Load environment variables from file
 	err := loadEnvFile("./pkg/config/variables.env")
 	if err != nil {
+		logger.LogWithDetails(err)
 		log.Fatal(err)
 	}
 
 	port, err := strconv.Atoi(getEnv("PORT", "8080"))
 	if err != nil {
+		logger.LogWithDetails(err)
 		log.Fatalf("Invalid PORT value: %v", err)
 	}
 
-	dbPort, err := strconv.Atoi(getEnv("DB_PORT", "5432"))
-	if err != nil {
-		log.Fatalf("Invalid DB_PORT value: %v", err)
-	}
-
 	return &Config{
-		Port:      port,
-		DBHost:    getEnv("DB_HOST", "localhost"),
-		DBPort:    dbPort,
-		DBUser:    getEnv("DB_USER", "user"),
-		DBPass:    getEnv("DB_PASS", "password"),
-		JWTSecret: getEnv("JWT_SECRET", "mysecret"),
+		Port: port,
 	}
 }
 
 func loadEnvFile(filepath string) error {
 	file, err := os.Open(filepath)
 	if err != nil {
-		// log.Fatalf("Error opening .env file: %v", err)
+		logger.LogWithDetails(err)
 		return err
 	}
 	defer file.Close()
@@ -72,6 +61,7 @@ func loadEnvFile(filepath string) error {
 	}
 
 	if err := scanner.Err(); err != nil {
+		logger.LogWithDetails(err)
 		return err
 	}
 	return nil

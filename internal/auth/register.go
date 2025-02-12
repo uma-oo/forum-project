@@ -13,7 +13,7 @@ import (
 )
 
 func Register(w http.ResponseWriter, r *http.Request) {
-	pages := internal.Pagess.All_Templates
+	pages := internal.Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
@@ -31,40 +31,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		return
 	}
-	/*var userExist bool
-	var emailExist bool
-	stm, Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userEmail = ?)")
-	if Err != nil {
+
+	db, err := database.NewDatabase()
+	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
 	}
-
-	emailErr := stm.QueryRow(Email).Scan(&emailExist)
-	stm, Err = database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM users WHERE userName = ?)")
-	if Err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	userErr := stm.QueryRow(userName).Scan(&userExist)
-
-	if userErr != nil || emailErr != nil {
-		logger.LogWithDetails(fmt.Errorf("%s, %s", userErr, emailErr))
-		w.WriteHeader(http.StatusInternalServerError)
-		pages.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-
-	if userExist || emailExist {
-		w.WriteHeader(http.StatusBadRequest)
-		pages.ExecuteTemplate(w, "error.html", "User already exists")
-		return
-	} else {*/
-
-	stm, err := database.Database.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
+	stm, err := db.Prepare("INSERT INTO users (userName,userEmail,userPassword,token) VALUES (?, ?, ?, ? )")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)

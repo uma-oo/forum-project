@@ -1,23 +1,34 @@
-# Step 1: Use the official Golang image as the base image
-FROM golang:1.22.5-alpine
+# Use the official Alpine Linux image
+FROM golang:alpine
+# Install Go and required libraries
+RUN apk add --no-cache go sqlite libc6-compat
 
-# Step 2: Set the working directory inside the container
-WORKDIR /Forum
-
-# Step 3: Copy the go.mod and go.sum files first to leverage Docker's caching mechanism
+# Set working directory inside the container
+WORKDIR /app
+# Copy the Go modules files and download dependencies
 COPY go.mod go.sum ./
+RUN go mod download
 
-# Step 4: Run `go mod tidy` to download dependencies
-RUN go mod tidy
-
-# Step 5: Copy the rest of your application source code into the container
+# Copy the rest of the application files
 COPY . .
 
-# Step 6: Build your Go application
+# Build the Go application from the cmd directory
 RUN go build -o main ./cmd/main.go
 
-# Step 7: Expose port 8080 (or your application's port)
-EXPOSE 8080
+# Copy the database and schema files
+COPY internal/database/forum.db ./internal/database/forum.db
+COPY internal/database/schema.sql ./internal/database/schema.sql
 
-# Step 8: Define the default command to run your application
+# Ensure the binary is executable
+RUN chmod +x /app/main
+
+# Set environment variables inside the container
+ENV PORT=8081
+ENV DB_PATH=/app/internal/database/forum.db
+ENV SCHEMA_PATH=/app/internal/database/schema.sql
+
+# Expose the application port
+EXPOSE 8081
+
+# Run the application
 CMD ["./main"]

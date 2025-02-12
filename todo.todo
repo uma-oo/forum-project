@@ -11,4 +11,9 @@ SQLMap: A tool to test for SQL injection vulnerabilities.
 
 OWASP ZAP: A security testing tool for web applications.
 5. Implement rate limiting and account lockout to prevent brute-force attacks.
-recover Error
+context 
+AST) that represents the query.
+Locking sqlite 
+Journaling sqlite 
+Page Cache  sqlite
+B-Tree Indexes sqlite

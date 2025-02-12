@@ -9,6 +9,7 @@ import (
 	"forum/internal"
 	"forum/internal/database"
 	"forum/internal/models"
+	"forum/internal/utils"
 	"forum/pkg/logger"
 )
 
@@ -19,67 +20,70 @@ const (
 )
 
 var (
-	CreatePostFormData   = models.FormsData{}
-	CreatePostFormErrors = models.FormErrors{}
+	CreatePostFormData    = models.FormsData{}
+	CreatePostFormErrors  = models.FormErrors{}
 	InvalidCreatePostForm = false
 )
 
 func AddPost(w http.ResponseWriter, r *http.Request) {
-	pages := internal.Pagess.All_Templates
+	pages := internal.Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
 		return
 	}
-
-	r.ParseForm() ///////////////////////////
+	db, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+	r.ParseForm()
 	CreatePostFormData.PostGategoriesInput = r.Form["post-categorie"]
 	CreatePostFormData.PostContentInput = r.FormValue("postBody")
 	CreatePostFormData.PostTitleInput = r.FormValue("postTitle")
-	fmt.Println(CreatePostFormData.PostGategoriesInput)
-	errNum , err := Gategoties_Checker(CreatePostFormData.PostGategoriesInput)
+	errNum, err := Gategoties_Checker(CreatePostFormData.PostGategoriesInput)
 	if errNum == 500 {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
-		return 
+		return
 	} else if errNum == 400 {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusBadRequest)
 		pages.ExecuteTemplate(w, "error.html", "400 Bad Request ")
-		return 
-	}
-
-	IsValidCreatePostForm()
-	if InvalidCreatePostForm {
-		fmt.Println("redirecting ")
-		http.Redirect(w, r, "/create_post", http.StatusFound)
 		return
 	}
 	// lets check for emptyness
-
+	IsValidCreatePostForm()
+	if InvalidCreatePostForm {
+		http.Redirect(w, r, "/create_post", http.StatusFound)
+		return
+	}
 	// get the user ID from the session
 	cookie, _ := r.Cookie("token")
-
 	// get the user ID from the users table
 	var userId int
-	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
+	stm, err := db.Prepare("SELECT id FROM users WHERE token = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		internal.Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
 		return
 	}
 	err = stm.QueryRow(cookie.Value).Scan(&userId)
 	if err != nil {
-		fmt.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		pages.ExecuteTemplate(w, "error.html", "internal server error")
 		return
 	}
-
+	db, err = database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+	}
 	// lets insert this data to our database
-	stm, err = database.Database.Prepare("INSERT INTO posts (user_id,title,content) VALUES ( ?,?,?)")
+	stm, err = db.Prepare("INSERT INTO posts (user_id,title,content) VALUES ( ?,?,?)")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -95,7 +99,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 	}
 	// get the last inserted post id
 	var postId int
-	stm, err = database.Database.Prepare("SELECT last_insert_rowid()")
+	stm, err = db.Prepare("SELECT last_insert_rowid()")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -110,7 +114,14 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// insert categories
-	stm, err = database.Database.Prepare("INSERT INTO categories (category, post_id) VALUES (?, ?)")
+	db, err = database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+	stm, err = db.Prepare("INSERT INTO post_categories (category, post_id) VALUES (?, ?)")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -130,7 +141,7 @@ func AddPost(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostReactions(w http.ResponseWriter, r *http.Request) {
-	pages := internal.Pagess.All_Templates
+	pages := internal.Templates
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		pages.ExecuteTemplate(w, "error.html", "405 method not allowed")
@@ -154,7 +165,6 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 		pages.ExecuteTemplate(w, "error.html", "400 bad request")
 		return
 	}
-
 	if errpost != nil || errreaction != nil {
 		logger.LogWithDetails(fmt.Errorf("%s", " Itoi Errors"))
 		w.WriteHeader(http.StatusBadRequest)
@@ -162,9 +172,25 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	_, postExists := utils.IsExist("posts", "id", "", strconv.Itoa(postid))
+	if !postExists {
+		logger.LogWithDetails(fmt.Errorf("%s", "Post id don't exists"))
+		w.WriteHeader(http.StatusBadRequest)
+		pages.ExecuteTemplate(w, "error.html", "400 bad request")
+		return
+	}
+
+	db, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		pages.ExecuteTemplate(w, "error.html", "500 internal server error")
+		return
+	}
+
 	var reactionExist int
 	var userid int
-	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
+	stm, err := db.Prepare("SELECT id FROM users WHERE token = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
 		w.WriteHeader(http.StatusInternalServerError)
@@ -180,7 +206,7 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Start a transaction
-	tx, err := database.Database.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		tx.Rollback()
 		logger.LogWithDetails(err)
@@ -502,14 +528,13 @@ func PostReactions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.Redirect(w, r, "/", http.StatusFound)
+	http.Redirect(w, r, r.Referer(), http.StatusFound)
 }
 
 func IsValidCreatePostForm() {
 	if CreatePostFormData.PostTitleInput == "" {
 		CreatePostFormErrors.InvalidPostTitle = "Post title is required"
 		InvalidCreatePostForm = true
-
 	}
 	if len(CreatePostFormData.PostTitleInput) > 50 {
 		CreatePostFormErrors.InvalidPostTitle = "Exeeded post title length (50)"

@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"forum/internal/database"
+	"forum/pkg/logger"
 )
 
 func IsValidUsername(username string) bool {
@@ -60,11 +61,15 @@ func IsStrongPassword(password string) bool {
 	return hasLower && hasDigit && hasUpper
 }
 
-func IsExist(collumn0, collumn1, value string) (string, bool) {
+func IsExist(table, collumn0, collumn1, value string) (string, bool) {
+	db, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+	}
 	// Check if the field exists in database sqlite3 in users table
-	db := database.Database
+
 	var user, pass string
-	err := db.QueryRow("SELECT "+collumn0+collumn1+" FROM users WHERE  "+collumn0+"  = ?", value).Scan(&user, &pass)
+	err = db.QueryRow("SELECT "+collumn0+collumn1+" FROM "+table+" WHERE  "+collumn0+"  = ?", value).Scan(&user, &pass)
 	if err != nil {
 		// logger.LogWithDetails(err)
 		if err == sql.ErrNoRows {
@@ -83,12 +88,16 @@ func IsCookieSet(r *http.Request, cookieName string) bool {
 	if cookie.Value == "" {
 		return false
 	}
-	
+	db, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+	}
+
 	// lets extract the token value from the cookie and compare it with the one we have in databse
 	var tokenExist bool
 	// lets extract the token from users table
 	// be care full with  no token
-	tokenErr := database.Database.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE token = $1)", cookie.Value).Scan(&tokenExist)
+	tokenErr := db.QueryRow("SELECT EXISTS (SELECT 1 FROM users WHERE token = $1)", cookie.Value).Scan(&tokenExist)
 	if tokenErr != nil || !tokenExist {
 		return false
 	}

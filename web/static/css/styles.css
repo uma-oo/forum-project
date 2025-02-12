@@ -4,6 +4,7 @@
 @import url("registerlogin.css");
 @import url("posts.css");
 @import url("post.css");
+@import url("error.css");
 
 :root {
     /** font variables */
@@ -91,7 +92,12 @@ svg {
     overflow: auto;
     padding: 2rem 1rem 2rem 2rem;
     h2 {
+        max-width: 700px; 
+        margin-inline: auto;
         margin-bottom: 1rem;
+        /* background-color: var(--bg-color); */
+        padding-left: 10px;
+        border-left: solid 6px var(--color-primary);
     }
 }
 

@@ -29,9 +29,12 @@ func (l *Logger) Close() {
 	}
 }
 
-func   LogWithDetails(message error) {
+func LogWithDetails(message error) {
 	// Get the current caller details (the calling function)
-	pc, _, line, _ := runtime.Caller(1)
+	pc, _, line, ok := runtime.Caller(1)
+	if !ok {
+		log.Println("Failed to get caller information")
+	}
 
 	// Get the function name from the program counter (pc)
 	funcName := runtime.FuncForPC(pc).Name()

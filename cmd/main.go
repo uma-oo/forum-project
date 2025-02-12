@@ -15,11 +15,6 @@ import (
 	"forum/pkg/logger"
 )
 
-func init() {
-	database.Create_database()
-	internal.ParseTemplates()
-}
-
 func main() {
 	// Get the current working directory
 	logger, err := logger.Create_Logger()
@@ -29,12 +24,15 @@ func main() {
 	defer logger.Close()
 	// lets load the configuration
 	configuration := config.LoadConfig()
+	database.Create_database()
+	internal.ParseTemplates()
 
 	// server static files
 	http.HandleFunc("/web/", handlers.Serve_Files)
 
 	// routes for pages handling and rendering
 	http.HandleFunc("/", handlers.Home)
+	http.HandleFunc("/posts", handlers.Post)
 	http.Handle("/create_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.CreatePost)))
 	http.Handle("/my_posts", middlewares.Auth_Middleware(http.HandlerFunc(handlers.MyPosts)))
 	http.Handle("/liked_posts", middlewares.Auth_Middleware(http.HandlerFunc(handlers.LikedPosts)))
@@ -46,11 +44,15 @@ func main() {
 	http.HandleFunc("/auth/logout", auth.LogOut)
 
 	// routes for forms actions
-	http.HandleFunc("/post", handlers.Post)
+	// http.HandleFunc("/post", handlers.Post)
 	http.HandleFunc("/filter_posts", handlers.FilterPosts)
 	http.Handle("/api/add_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.AddPost)))
 	http.Handle("/api/react_to_post", middlewares.Auth_Middleware(http.HandlerFunc(handlers.PostReactions)))
+	http.Handle("/api/add_post_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.CreateComment)))
+	http.Handle("/api/react_comment", middlewares.Auth_Middleware(http.HandlerFunc(handlers.ReactComment)))
 
-	fmt.Printf("Server starting on port: %d >>> http://localhost:8080\n", configuration.Port)
+	// http.HandleFunc("/api/dislike_comment", handlers.DislikeComment)
+	// fmt.Println("server is running on port 8080 ... http://localhost:8080")
+	fmt.Printf("Server starting on port: %d >>> http://localhost:%d\n", configuration.Port, configuration.Port)
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", configuration.Port), nil))
 }

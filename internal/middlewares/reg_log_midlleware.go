@@ -11,12 +11,12 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var rateLimiter = auth.NewRateLimiter(5, time.Minute) // 5 requests per minute limit
+var rateLimiter = auth.NewRateLimiter(10, time.Minute) // 5 requests per minute limit
 
 // Custom middleware to validate the registration form
 func Reg_Log_Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pages := internal.Pagess.All_Templates
+		pages := internal.Templates
 		ip := r.RemoteAddr
 		// Check rate limit (applies to both login and registration)
 		if rateLimiter.CheckRateLimit(ip) {
@@ -34,7 +34,7 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 				auth.FormErrors.InvalidUserName = "Username is invalid."
 				invalidFormdata = true
 			}
-			_, exist := utils.IsExist("userName", "", auth.FormsData.UserNameInput)
+			_, exist := utils.IsExist("users", "userName", "", auth.FormsData.UserNameInput)
 			if exist {
 				auth.FormErrors.InvalidUserName = "Username is already taken."
 				invalidFormdata = true
@@ -43,7 +43,7 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 				auth.FormErrors.InvalidEmail = "Email is invalid."
 				invalidFormdata = true
 			}
-			_, exist = utils.IsExist("userEmail", "", auth.FormsData.UserEmailInput)
+			_, exist = utils.IsExist("users", "userEmail", "", auth.FormsData.UserEmailInput)
 			if exist {
 				auth.FormErrors.InvalidEmail = "Email is already taken."
 				invalidFormdata = true
@@ -61,7 +61,7 @@ func Reg_Log_Middleware(next http.Handler) http.Handler {
 		// validate login form
 		if r.URL.Path == "/auth/log_in" {
 			// check if username is exist
-			pass, exist := utils.IsExist("userName", " , userPassword", auth.FormsData.UserNameInput)
+			pass, exist := utils.IsExist("users", "userName", " , userPassword", auth.FormsData.UserNameInput)
 			if !exist {
 				auth.FormErrors.FormError = "Invalid Username or Password."
 				invalidFormdata = true

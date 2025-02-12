@@ -18,29 +18,33 @@
     <main class="main create_post_section">
         <h2>Create New Post </h2>
         <form method="post" action="/api/add_post">
-            <label>Categories: </label>
-            <div class="category_list">
-                {{ range .Categories }}
-                <label for="{{ .CatergoryName }}"> {{.CatergoryName}}
-                    <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie" value="{{ .CatergoryName }} "
-                        hidden>
-                </label></br>
-                {{ end }}
+            <div class=" form-grp">
+                <label>Categories: </label>
+                <div class="category_list">
+                    {{ range .Categories }}
+                    <label for="{{ .CatergoryName }}"> {{.CatergoryName}}
+                        <input type="checkbox" id="{{ .CatergoryName }}" name="post-categorie"
+                            value="{{ .CatergoryName }}" hidden >
+                    </label></br>
+                    {{ end }}
+                </div>
             </div>
             {{if .InvalidPostCategories}}
             <p class="form-input-error">{{.InvalidPostCategories}}</p>
             {{end}}
             </div>
-            <div class="form-grp-title">
+            <div class="form-grp">
                 <label for="postTitle">Title</label>
-                <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit">
+                <input class="title-input" type="text" id="postTitle" name="postTitle" placeholder="Shoose a tit"
+                    value="{{.PostTitleInput}}">
                 {{if .InvalidPostTitle}}
                 <p class="form-input-error">{{.InvalidPostTitle}}</p>
                 {{end}}
             </div>
-            <div class="form-grp-body">
+            <div class="form-grp">
                 <label for="postBody">Content</label>
-                <textarea name="postBody" id="postBody" placeholder="Share your knowledg here."></textarea>
+                <textarea name="postBody" id="postBody"
+                    placeholder="Share your knowledg here.">{{.PostContentInput}}</textarea>
                 {{if .InvalidPostContent}}
                 <p class="form-input-error">{{.InvalidPostContent}}</p>
                 {{end}}
@@ -48,7 +52,7 @@
             <div class="form_actions">
                 <button type="reset" class="secondaryBtn">Cancel</button>
                 <button type="submit" class="primaryBtn">Create Post</button>
-                
+
             </div>
         </form>
     </main>

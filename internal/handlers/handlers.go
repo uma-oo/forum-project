@@ -1,10 +1,11 @@
 package handlers
 
 import (
+	"database/sql"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	"forum/internal"
@@ -17,51 +18,38 @@ import (
 
 func Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
+		return
+	}
+	if utils.IsCookieSet(r, "token") {
+		http.Redirect(w, r, "/", http.StatusFound)
 		return
 	}
 	data, valid := auth.IsValidFormValues(auth.FormErrors)
 	if !valid {
 		w.WriteHeader(http.StatusBadRequest)
 		data.User.CurrentPath = "/login"
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+		internal.Templates.ExecuteTemplate(w, "login.html", data)
 		auth.FormErrors = models.FormErrors{}
 		auth.FormsData = models.FormsData{}
 		return
 	}
-
-	if utils.IsCookieSet(r, "token") {
-		http.Redirect(w, r, "/", http.StatusFound)
-	}
-
-	internal.Pagess.Buf.Reset()
-	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "login.html", nil)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
 	data.User.CurrentPath = r.URL.Path
-	internal.Pagess.All_Templates.ExecuteTemplate(w, "login.html", data)
+	utils.RenderTemplate(w, "login.html", data, http.StatusOK)
 }
 
 func Home(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		w.WriteHeader(http.StatusNotFound)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Page Not Found")
+		utils.RenderTemplate(w, "error.html", models.PageNotFound, http.StatusNotFound)
 		return
 	}
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
-
 	query := `
 	SELECT 
-		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
+		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.total_comments,posts.created_at,
 		users.userName, users.id
 	FROM 
 		posts
@@ -69,27 +57,17 @@ func Home(w http.ResponseWriter, r *http.Request) {
 		users
 	ON 
 		posts.user_id = users.id
-	
 `
 	data, errr := database.Fetch_Database(r, query, -1, false)
 	if errr != nil {
-		log.Fatal(errr)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 	}
-	internal.Pagess.Buf.Reset()
-	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "home.html", data)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	w.Write(internal.Pagess.Buf.Bytes())
+	utils.RenderTemplate(w, "home.html", data, http.StatusOK)
 }
 
 func Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -97,7 +75,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if !valid {
 		data.User.CurrentPath = "/register"
 		w.WriteHeader(http.StatusBadRequest)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
+		internal.Templates.ExecuteTemplate(w, "register.html", data)
 		auth.FormErrors = models.FormErrors{}
 		auth.FormsData = models.FormsData{}
 		return
@@ -106,117 +84,142 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if utils.IsCookieSet(r, "token") {
 		http.Redirect(w, r, "/", http.StatusFound)
 	}
-	internal.Pagess.Buf.Reset()
-	err := internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "register.html", nil)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
 	data.User.CurrentPath = r.URL.Path
-	err = internal.Pagess.All_Templates.ExecuteTemplate(w, "register.html", data)
-	fmt.Printf("err: %v\n", err)
+	utils.RenderTemplate(w, "register.html", nil, http.StatusOK)
 }
 
 func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
-	query := `
-	SELECT 
-		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
-		users.userName, users.id
-	FROM 
-		posts
-	INNER JOIN 
-		users
-	ON 
-		posts.user_id = users.id
-`
-
-	data, err := database.Fetch_Database(r, query, -1, false)
+	data := models.Data{}
+	var err error
+	data.Categories, err = AllCategories()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-
-	internal.Pagess.Buf.Reset()
-	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "createpost.html", data)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
+	user, err := UserData(r, "token", "")
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	data.User = *user
+	// if err != nil {
+	// 	fmt.Printf("err: %v\n", err)
+	// 	utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+	// 	return
+	// }
 	if InvalidCreatePostForm {
-		w.WriteHeader(http.StatusBadRequest)
 		data.FormsData = CreatePostFormData
 		data.FormsData.FormErrors = CreatePostFormErrors
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
-		data.FormsData = models.FormsData{}
-		data.FormsData.FormErrors = models.FormErrors{}
+		utils.RenderTemplate(w, "createpost.html", data, http.StatusOK)
+		CreatePostFormErrors = models.FormErrors{}
+		CreatePostFormData = models.FormsData{}
 		InvalidCreatePostForm = false
 		return
 	}
-	internal.Pagess.All_Templates.ExecuteTemplate(w, "createpost.html", data)
+	utils.RenderTemplate(w, "createpost.html", data, http.StatusOK)
 }
 
 func Post(w http.ResponseWriter, r *http.Request) {
+	var data models.Data
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
-	query := `
-	SELECT 
-		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
-		users.userName, users.id
-	FROM 
-		posts
-	INNER JOIN 
-		users
-	ON 
-		posts.user_id = users.id
+	conn, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	var PostData models.Post
+	PostId := r.URL.Query().Get("id")
+	query := `SELECT * FROM posts WHERE id = ?`
+	if err := conn.QueryRow(query, PostId).Scan(&PostData.PostId, &PostData.PostCreatedAt,
+		&PostData.UserID, &PostData.PostTitle, &PostData.PostContent, &PostData.TotalLikes,
+		&PostData.TotalDeslikes, &PostData.TotalComments); err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Println("No Post Data Found for this id")
+			utils.RenderTemplate(w, "error.html", models.PageNotFound, http.StatusNotFound)
+			return
+		}
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	PostData.PostCreator, err = FetchPostCreator(strconv.Itoa(PostData.UserID))
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+		return
+	}
+	PostData.Categories, err = FetchCategories(PostId)
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+		return
+	}
+	PostData.Comments, err = FetchComments(PostId)
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+		return
+	}
 
-`
-	data, _ := database.Fetch_Database(r, query, -1, false)
-	data.Posts = data.Posts[0:1]
-	fmt.Println(internal.Pagess.All_Templates.ExecuteTemplate(w, "post.html", data))
+	data.Posts = append(data.Posts, PostData)
+	data_user, err := UserData(r, "token", "/posts")
+	data.User = *data_user
+	if err != nil {
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	data_categories, err := AllCategories()
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", http.StatusInternalServerError, http.StatusInternalServerError)
+		return
+	}
+	data.Categories = data_categories
+	utils.RenderTemplate(w, "post.html", data, http.StatusOK)
 }
 
 func MyPosts(w http.ResponseWriter, r *http.Request) {
 	// Check if the method is GET
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 
 	// Retrieve the user token from the cookie
 	Token, _ := r.Cookie("token")
-
-	var id int
-	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
+	db, err := database.NewDatabase()
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	err = stm.QueryRow(Token.Value).Scan(&id)
+
+	var id int
+	stmt, err := db.Prepare("SELECT id FROM users WHERE token = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	err = stmt.QueryRow(Token.Value).Scan(&id)
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
 	query := `
 	SELECT 
-		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.created_at,
+		posts.id,posts.title, posts.content, posts.total_likes, posts.total_dislikes, posts.total_comments,posts.created_at,
 		users.userName, users.id
 	FROM 
 		posts
@@ -228,25 +231,16 @@ func MyPosts(w http.ResponseWriter, r *http.Request) {
     `
 	data, err := database.Fetch_Database(r, query, id, false)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
 		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "myposts.html", data)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
-		return
-	}
-	internal.Pagess.All_Templates.ExecuteTemplate(w, "myposts.html", data)
+	utils.RenderTemplate(w, "myposts.html", data, http.StatusOK)
 }
 
 func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -254,8 +248,7 @@ func Serve_Files(w http.ResponseWriter, r *http.Request) {
 	fileinfo, err := os.Stat(path)
 	if err != nil || fileinfo.IsDir() {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusNotFound)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "404 page Not Found")
+		utils.RenderTemplate(w, "error.html", models.PageNotFound, http.StatusNotFound)
 		return
 	}
 	http.ServeFile(w, r, path)
@@ -263,30 +256,32 @@ func Serve_Files(w http.ResponseWriter, r *http.Request) {
 
 func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
-	Token, errToken := r.Cookie("token")
-	if errToken != nil {
-		logger.LogWithDetails(errToken)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", " 500 Internal Server Error")
+	db, err := database.NewDatabase()
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
+		return
+	}
+	Token, err := r.Cookie("token") // Is this is not handelled with the middleware ????????????
+	if err != nil {
+		logger.LogWithDetails(err)
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 	var id int
-	stm, err := database.Database.Prepare("SELECT id FROM users WHERE token = ?")
+	stmt, err := db.Prepare("SELECT id FROM users WHERE token = ?")
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	err = stm.QueryRow(Token.Value).Scan(&id)
+	err = stmt.QueryRow(Token.Value).Scan(&id)
 	if err != nil {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
 	query := `
@@ -296,6 +291,7 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 			posts.content,
 			posts.total_likes,
 			posts.total_dislikes,
+			posts.total_comments,
 			posts.created_at,
 			users.userName,
 			users.id
@@ -306,25 +302,16 @@ func LikedPosts(w http.ResponseWriter, r *http.Request) {
 	`
 	data, err := database.Fetch_Database(r, query, id, true)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	internal.Pagess.Buf.Reset()
-	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "likedposts.html", data)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
-		return
-	}
-	internal.Pagess.All_Templates.ExecuteTemplate(w, "likedposts.html", data)
+	utils.RenderTemplate(w, "likedposts.html", data, http.StatusOK)
 }
 
 func FilterPosts(w http.ResponseWriter, r *http.Request) {
-	if r.Method != http.MethodPost {
-		w.WriteHeader(http.StatusMethodNotAllowed)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "405 Method Not Allowed")
+	if r.Method != http.MethodGet {
+		fmt.Println("NOT ALLOWED")
+		utils.RenderTemplate(w, "error.html", models.MethodNotAllowed, http.StatusMethodNotAllowed)
 		return
 	}
 	r.ParseForm()
@@ -337,30 +324,29 @@ func FilterPosts(w http.ResponseWriter, r *http.Request) {
 	errNum, err := Gategoties_Checker(Categories)
 	if errNum == 500 {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 internal server error")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	} else if errNum == 400 {
 		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusBadRequest)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "400 Bad Request ")
+		utils.RenderTemplate(w, "error.html", models.BadRequest, http.StatusBadRequest)
 		return
 	}
 	placeholders := strings.Repeat("?,", len(Categories)-1) + "?"
 	query := fmt.Sprintf(`
-		SELECT 
+		SELECT DISTINCT
 			posts.id,
 			posts.title,
 			posts.content,
 			posts.total_likes,
 			posts.total_dislikes,
+			posts.total_comments,
 			posts.created_at,
 			users.userName,
 			users.id
 		FROM posts
 		JOIN users ON posts.user_id = users.id
-		JOIN categories ON posts.id = categories.post_id
-		WHERE categories.category IN (%s)
+		JOIN post_categories ON posts.id = post_categories.post_id
+		WHERE post_categories.category IN (%s)
 	`, placeholders)
 
 	for _, val := range Categories {
@@ -368,31 +354,25 @@ func FilterPosts(w http.ResponseWriter, r *http.Request) {
 	}
 	data, err := database.Fetch_Database(r, query, -1, true)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
+		utils.RenderTemplate(w, "error.html", models.InternalServerError, http.StatusInternalServerError)
 		return
 	}
-	internal.Pagess.Buf.Reset()
-	err = internal.Pagess.All_Templates.ExecuteTemplate(&internal.Pagess.Buf, "home.html", data)
-	if err != nil {
-		logger.LogWithDetails(err)
-		w.WriteHeader(http.StatusInternalServerError)
-		internal.Pagess.All_Templates.ExecuteTemplate(w, "error.html", "500 Internal Server Error ")
-		return
-	}
-	w.Write(internal.Pagess.Buf.Bytes())
-	// internal.Pagess.All_Templates.ExecuteTemplate(w, "home.html", data)
+	utils.RenderTemplate(w, "home.html", data, http.StatusOK)
 }
 
 func Gategoties_Checker(Gategories []string) (int64, error) {
+	db, err := database.NewDatabase()
+	if err != nil {
+		return 500, err
+	}
+	defer db.Close()
 	for _, val := range Gategories {
-		stm, Err := database.Database.Prepare("SELECT EXISTS (SELECT 1 FROM  stoke_categories WHERE category = ?)")
+		stmt, Err := db.Prepare("SELECT EXISTS (SELECT 1 FROM  categories WHERE category = ?)")
 		if Err != nil {
 			return 500, Err
 		}
 		var exists bool
-		stm.QueryRow(val).Scan(&exists)
-		fmt.Println(exists)
+		stmt.QueryRow(val).Scan(&exists)
 		if !exists {
 			return 400, fmt.Errorf("%s", "category does not exist")
 		}
