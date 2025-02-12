@@ -35,10 +35,8 @@ func LogWithDetails(message error) {
 	if !ok {
 		log.Println("Failed to get caller information")
 	}
-
 	// Get the function name from the program counter (pc)
 	funcName := runtime.FuncForPC(pc).Name()
-
 	// Log the message with the function name and line number
 	log.Printf("%s [Function: %s] [Line: %d] %s", time.Now().Format(time.RFC3339), funcName, line, message)
 }
