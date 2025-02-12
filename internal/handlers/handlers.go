@@ -116,7 +116,7 @@ func CreatePost(w http.ResponseWriter, r *http.Request) {
 	if InvalidCreatePostForm {
 		data.FormsData = CreatePostFormData
 		data.FormsData.FormErrors = CreatePostFormErrors
-		utils.RenderTemplate(w, "createpost.html", data, http.StatusOK)
+		utils.RenderTemplate(w, "createpost.html", data, http.StatusBadRequest)
 		CreatePostFormErrors = models.FormErrors{}
 		CreatePostFormData = models.FormsData{}
 		InvalidCreatePostForm = false

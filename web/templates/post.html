@@ -39,11 +39,13 @@
             <input type="checkbox" id="comment_form_toggle{{$post.PostId}}" hidden>
         </div>
 
-        <h4>Comments :</h4>
+        <h3>Comments :</h3>
         {{range $comment := $post.Comments}}
         <div class="post_comments">
             <div class="post_container">
-                {{template "avatar"}}
+                <div class="post_left">
+                    {{template "avatar"}}
+                </div>
                 <div class="post_comment_content">
                     <div class="post_creator_info">
                         <p>{{$comment.CommentCreator}}</p>

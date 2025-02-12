@@ -90,5 +90,5 @@ var (
 	PageNotFound        = PageError{404, "Page Not Found"}
 	MethodNotAllowed    = PageError{405, "Method Not Allowed"}
 	Unauthorized        = PageError{403, "Access Forbidden"}
-	InternalServerError = PageError{500, "Bad Request"}
+	InternalServerError = PageError{500, "Internal server error"}
 )

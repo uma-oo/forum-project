@@ -60,10 +60,11 @@ CREATE TABLE IF NOT EXISTS post_reaction (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     post_id INTEGER NOT NULL,
-    reaction INTEGER  CHECK (reaction IN (-1,0,1)) DEFAULT 0,
+    reaction_id INTEGER NOT NULL,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (post_id) REFERENCES posts (id),
+    FOREIGN KEY (reaction_id) REFERENCES reaction (id), 
     CONSTRAINT unique_columns UNIQUE (user_id, post_id)
 );
 
