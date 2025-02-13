@@ -1,0 +1,224 @@
+/** posts and post cards styling  */
+.post_card {
+    margin: auto;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    width: 100%;
+    padding: 1rem;
+    padding-left: 2rem;
+    background-color: var();
+    border-left: solid 4px var(--color-primary);
+    background-color: var(--bg-color);
+}
+
+.post_header {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+}
+
+.post_creator_info_container {
+    width: max-content;
+    /* border: solid red 1px ; */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post_creator_info_container .avatar {
+    width: 34px;
+    height: 34px;
+}
+
+
+.post_meta_data {
+    flex-grow: 1;
+    border: solid;
+}
+
+.tags_list {
+    align-self: self-start;
+    flex-grow: 1;
+    display: flex;
+    justify-content: end;
+    flex-wrap: wrap;
+    gap: 10px;
+    /* scale: .8; */
+}
+
+.tag {
+    width: max-content;
+    border: dashed 1px;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-size: 12px;
+}
+
+.tag:hover {
+    border-color: var(--color-primary);
+}
+
+.post_body {
+    width: 80%;
+    margin: auto;
+    text-overflow: auto;
+    text-wrap: 1;
+
+    h3 {
+        overflow-wrap: auto ;
+        text-decoration: underline solid 1px;
+        margin-bottom:.5rem ;
+    }
+
+    p {
+        width: 100%;
+        opacity: .8;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3; /* number of lines to show */
+                line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .read_more {
+        color: var(--color-primary);
+        font-size: 14px;
+        font-weight: 300;
+    }
+    /* padding:5% 10%; */
+}
+
+
+.post_footer {
+    display: flex;
+    margin-top: 2rem;
+}
+
+.post_footer form {
+    padding: unset !important;
+}
+
+
+.reactions_container {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.reaction_container button {
+    padding: unset;
+    background-color: transparent;
+    bottom: 0;
+}
+
+.reaction_container {
+    width: max-content;
+    position: relative;
+}
+
+.reaction_icon {
+    fill: var(--color-light);
+}
+
+.reaction_icon:hover {
+    fill: var(--color-primary);
+    cursor: pointer;
+}
+
+.reaction_container p {
+    position: absolute;
+    font-size: 14px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    justify-content: center;
+    display: grid;
+    align-items: center;
+    top: 40%;
+    left: 70%;
+}
+
+.empty_container {
+    max-width: 500px;
+    width: 100%;
+    /* border: solid red; */
+    margin: auto;
+    p {
+        /* width: max-content; */
+        border: dashed 2px ;
+        text-align: center;
+        font-weight: 600;
+        padding: 1rem 2rem;
+        margin: auto;
+        color : var(--color-dark-navy);
+        width: 70%;
+    }
+    img {
+        display: block;
+        width: 70%;
+        margin: auto;
+        opacity: .5;
+    }
+}
+
+.comment_form_container {
+    padding: 1rem;
+    display: none;
+}
+
+.comment_form_container:has(input:checked){
+    display: flex;
+}
+
+.comment_form_container form {
+    display: flex;
+    width: 100%;
+    gap: 1rem;
+    input {
+        all :unset; 
+        flex-grow: 1;
+        border: solid 1px var(--color-dark-navy);
+        padding-left: 1rem;
+        height: 32px;
+    }
+    button {
+        color: var(--color-light);
+        background-color: transparent;
+        border: solid 1px ;
+    }
+    button[type="submit"] {
+        border-color: var(--color-primary);
+        color: var(--color-light);
+        background-color: var(--color-primary);
+    }
+}
+
+@media (max-width: 576px) {
+    .post_header {
+        gap: 10px;
+        /* border: solid red; */
+        flex-direction: column;
+        align-items: start;
+    }
+    .post_header .tags_list {
+        align-self: self-end;
+    }
+    .post_meta_data {
+        text-align: center;
+    }
+    .post_creator_info {
+        display: flex;
+        flex-direction: column;
+    }
+    .comment_form_container {
+        padding: 0;
+        padding-top: 1rem;
+    }
+    .comment_form_container form {
+        flex-direction: column;
+        /* align-items: end; */
+    }
+}

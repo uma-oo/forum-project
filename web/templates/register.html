@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="web/static/css/styles.css">
+</head>
+
+<body>
+    {{template "Header" .User }}
+    <main class="flex main register-login-section">
+        <h2>create your new account :</h2>
+        <form class="register-form-container" method="post" action="/auth/register">
+            <div class="form-grp">
+                <div class="form-grp-info-container">
+                    <img src="/web/static/images/info.svg">
+                    <div class="form-grp-info">
+                        <ul>
+                            <p><strong>Username Requirements:</strong></p>
+                            <li>Must be between <strong>3 to 50 characters</strong></li>
+                            <li>Can only contain <strong>letters (A-Z, a-z) and numbers (0-9)</strong></li>
+                            <li>No spaces or special characters allowed</li>
+                        </ul>
+                    </div>
+                </div>
+                <label for="userName"><img src="/web/static/images/person.svg" alt=""><span>User Name:</span></label>
+                <input type="text" id="userName" name="userName" placeholder="Enter your user name..." {{if .UserNameInput}}value="{{.UserNameInput}}"{{end}}>
+                {{if .InvalidUserName}}
+                <p class="form-input-error">{{.InvalidUserName}}</p>
+                {{end}}
+            </div>
+            <div class="form-grp">
+                <div class="form-grp-info-container">
+                    <img src="/web/static/images/info.svg">
+                    <div class="form-grp-info">
+                        <ul>
+                            <p><strong>Email Requirements:</strong></p>
+                            <li>Must be a <strong>valid email format</strong> (e.g., user@example.com)</li>
+                            <li>Should not contain spaces or invalid characters</li>
+                            <li>Must use a recognized domain (e.g., .com, .net, .org)</li>
+                        </ul>
+                    </div>
+                </div>
+                <label for="userEmail"><img src="/web/static/images/email.svg" alt=""><span>Email:</span></label>
+                <input type="email" id="userEmail" name="userEmail" placeholder="Enter your email..." {{if .UserEmailInput}}value="{{.UserEmailInput}}"{{end}}>
+                {{if .InvalidEmail}}
+                <p class="form-input-error">{{.InvalidEmail}}</p>
+                {{end}}
+            </div>
+            <div class="form-grp">
+                <div class="form-grp-info-container">
+                    <img src="/web/static/images/info.svg">
+                    <div class="form-grp-info">
+                        <ul>
+                            <p><strong>Password Requirements:</strong></p>
+                            <li>Must be at least <strong>8 characters</strong> long</li>
+                            <li>Include at least <strong>one uppercase letter</strong> (A-Z)</li>
+                            <li>Include at least <strong>one lowercase letter</strong> (a-z)</li>
+                            <li>Include at least <strong>one number</strong> (0-9)</li>
+                            <li>Avoid common or easily guessed passwords</li>
+                        </ul>
+                    </div>
+                </div>
+                <label for="userPassword"><img src="/web/static/images/lock.svg" alt=""><span>Password:</span></label>
+                <input type="password" id="userPassword" name="userPassword" placeholder="Enter your password..." {{if .UserPasswordInput}}value="{{.UserPasswordInput}}"{{end}}>
+                {{if .InvalidPassword}}
+                <p class="form-input-error">{{.InvalidPassword}}</p>
+                {{end}}
+            </div>
+            <hr class="seperator">
+            {{if .FormError}}
+            <p class="form-error">{{.FormError}}</p>
+            {{end}}
+            <div class="form_actions">
+                <button class="secondaryBtn" type="reset">Reset</button>
+                <button class="primaryBtn" type="submit">Register</button>
+            </div>
+            <div class="alternative-action txt-light txt-sm">Already have an account ? <a href="/login">Log In.. </a>
+            </div>
+        </form>
+    </main>
+</body>
+
+</html>

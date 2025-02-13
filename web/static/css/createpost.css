@@ -1,0 +1,86 @@
+
+
+
+.create_post_section form {
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.form-grp {
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+}
+
+
+
+.create_post_section form  .form-grp > label {
+    /* border: solid; */
+    padding: 3px 10px ;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.create_post_section form .form-grp input[type="text"],
+textarea {
+    color: var(--light-text-color);
+    font-size: 16px;
+    padding: .8rem;
+    outline: none;
+    border: none;
+    background-color: var(--color-dark-navy);
+    width: 100%;
+}
+
+.category_list label {
+    padding: 3px 10px ;
+    cursor : pointer;
+    border: solid 1px ;
+    border-radius: 10px;
+}
+
+.category_list {
+    justify-content: center;
+    padding: 2px ;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    row-gap: 15px;
+}
+
+.title-input {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background-color: #80808070;
+    border: none;
+}
+
+.category_list > label:has(input:checked) {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.create_post_section textarea {
+    resize: vertical;
+    height: 250px;
+}
+
+.create_post_section .form_actions {
+    display: flex;
+    justify-content: end;
+    gap: 8px;
+}
+
+
+.create_post_section .form_actions button[type="reset"] {
+    background: none;
+    color: var(--bg-color-light-gray);
+    border: solid 2px;
+}

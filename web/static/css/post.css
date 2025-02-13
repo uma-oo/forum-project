@@ -1,0 +1,70 @@
+.post {
+    margin-inline: auto;
+    max-width: 700px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+.post .input  {
+    width: 500px;
+    flex: 1 ;
+}
+#postComment {
+    width: 95%;
+}
+.post .avatar {
+    width: 42px;
+    height: 42px;
+}
+
+
+.post h1 {
+    width: 100%;
+    margin-bottom: 0px !important; 
+    overflow-wrap: anywhere;
+}
+.post .tags_list {
+    all: unset;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    color: var(--color-primary);
+}
+
+.post > p , .post_comment_content > p{
+    overflow-wrap:anywhere;
+}
+
+.post > h3 {
+    /* color: var(--color-primary); */
+    text-decoration:  underline  ;
+    font-weight: x-small;
+}
+
+
+.post_comments {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.post_container {
+    background-color: var(--bg-color);
+    padding: 1rem ;
+    display: flex;
+    gap: 1rem;
+}
+
+.post_container .avatar {
+    width: 32px;
+    height: 32px;
+}
+
+.post_comment_content {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}

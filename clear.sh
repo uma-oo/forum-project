@@ -1,0 +1,1 @@
+rm  server.log internal/database/forum.db
