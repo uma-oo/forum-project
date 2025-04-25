@@ -16,7 +16,7 @@ This project is a web forum that allows users to communicate, associate categori
 - Filtering posts by categories, created posts, and liked posts
 
  ## Usage
-Clone the repository: https://learn.zone01oujda.ma/git/helouaziz/forum.git
+Clone the repository and then ./runner.sh will start the server for you.
 
 Change into the project directory: cd web-forum
 
@@ -26,13 +26,7 @@ Run the Docker container: docker run -p 8081:8080 web-forum
 
 Open a web browser and navigate to http://localhost:8080
 
-## API Documentation
-For detailed information about the API endpoints, please see the API Documentation.
-
-
-
-
-## Acknowledgments
+## Dependencies
 This project was built using the following technologies:
 
 - Go 1.17 or higher
